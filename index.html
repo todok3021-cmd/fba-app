@@ -965,6 +965,7 @@
 
           <div class="gh" style="padding-top:22px"><span>데이터</span></div>
           <button class="addbtn" style="border-color:#c8dce0;color:#0F6E6C;margin-bottom:6px" data-action="open-join">🔗 공유 코드로 참가 (다른 교사 학생)</button>
+          <button class="addbtn" style="border-color:#c8dce0;color:#0F6E6C;margin-bottom:6px" data-action="manual-migrate-v2">🔄 데이터 업그레이드 (문제 시 실행)</button>
           <button class="addbtn" style="border-color:#f0d0c8;color:#c0392b" data-action="reset-all">기록 전체 초기화</button>
           <div style="height:24px"></div>
         </div>
@@ -1539,37 +1540,46 @@ async function loadData(){
 // ── 기존 userData → 새 구조 마이그레이션 ──
 async function migrateFromUserData(){
   try{
+    console.log('[마이그레이션] userData 읽기 시도...');
     const legacySnap = await fbStore.collection('userData').doc(fbUser.uid).get();
-    if(!legacySnap.exists) return null;
-
+    if(!legacySnap.exists){
+      console.log('[마이그레이션] userData 없음 — 새 사용자');
+      return null;
+    }
     const data = legacySnap.data();
-    if(data._migratedV2) return null; // 이미 마이그레이션 완료
+    if(data._migratedV2){
+      console.log('[마이그레이션] 이미 완료됨');
+      return null;
+    }
 
+    console.log('[마이그레이션] 시작 — 학생:', data.students?.length, '기록:', data.records?.length);
     setSyncStatus('ok', '데이터 업그레이드 중…');
     const students = data.students || [];
 
     for(const s of students){
-      // 학생 문서 생성
+      console.log('[마이그레이션] 학생 저장:', s.name);
       await FS.student(s.id).set({
-        name:      s.name,
-        color:     s.color,
-        sub:       s.sub || '',
-        behaviorOrder: s.behaviorOrder || [],
-        shareCode: null,
+        name:           s.name,
+        color:          s.color,
+        sub:            s.sub || '',
+        behaviorOrder:  s.behaviorOrder || [],
+        shareCode:      null,
         shareCodeExpiresAt: null,
-        ownerUid:  fbUser.uid,
-        members:   [fbUser.uid],
-        _updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+        ownerUid:       fbUser.uid,
+        members:        [fbUser.uid],
+        _updatedAt:     firebase.firestore.FieldValue.serverTimestamp(),
       });
-      // 기록 서브컬렉션에 저장
+
+      // 기록 개별 저장 (배치 대신 — 안정성 우선)
       const sRecords = (data.records || []).filter(r => r.sid === s.id);
-      const batch = fbStore.batch();
-      sRecords.forEach(r => {
-        batch.set(FS.record(s.id, r.id), r);
-      });
-      if(sRecords.length) await batch.commit();
+      console.log('[마이그레이션]', s.name, '기록:', sRecords.length, '건');
+      for(const r of sRecords){
+        await FS.record(s.id, r.id).set(r);
+      }
     }
+
     // 설정 저장
+    console.log('[마이그레이션] 설정 저장...');
     await FS.settings(fbUser.uid).set({
       behaviors:   data.behaviors   || [],
       aChips:      data.aChips      || [],
@@ -1578,14 +1588,15 @@ async function migrateFromUserData(){
       ivQuestions: data.ivQuestions || [],
       _updatedAt:  firebase.firestore.FieldValue.serverTimestamp(),
     });
-    // 마이그레이션 완료 플래그
-    await fbStore.collection('userData').doc(fbUser.uid)
-      .update({_migratedV2: true});
 
+    // 완료 플래그
+    await fbStore.collection('userData').doc(fbUser.uid).update({_migratedV2: true});
+    console.log('[마이그레이션] 완료!');
     toast(`데이터 업그레이드 완료 (${students.length}명)`);
-    return await loadData(); // 새 구조로 재로드
+    return await loadData();
   }catch(e){
-    console.warn('마이그레이션 오류:', e);
+    console.error('[마이그레이션] 오류:', e.code, e.message);
+    toast('업그레이드 오류: ' + e.message);
     return null;
   }
 }
@@ -3872,6 +3883,13 @@ document.addEventListener('click',e=>{
     else if(a==='iv-editor-del')delIvEditor();
     else if(a==='iv-editor-cancel')closeIvEditor();
     else if(a==='export-pdf')exportPdf();
+    else if(a==='manual-migrate-v2'){
+      if(!fbUser){toast('로그인 후 사용하세요');return;}
+      migrateFromUserData().then(result=>{
+        if(result){ db=result; reindex(); refreshAll(); toast('업그레이드 완료!'); }
+        else { toast('이미 업그레이드됐거나 데이터가 없어요'); }
+      });
+    }
     else if(a==='open-order')openOrderSheet();
     else if(a==='open-join')openJoinSheet();
     else if(a==='close-join')closeJoinSheet();
