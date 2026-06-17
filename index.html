@@ -924,18 +924,25 @@
           <div id="setStudents"></div>
           <button class="addbtn" data-action="add-student">＋ 학생 추가</button>
 
-          <div class="gh"><span>행동 정의</span></div>
-          <div id="setBehaviors"></div>
-          <button class="addbtn" data-action="add-behavior">＋ 행동 추가</button>
+          <div class="gh"><span>기록 항목</span></div>
+          <div class="row" style="cursor:pointer" data-action="open-behavior-manager">
+            <div class="rdisc" style="background:#0F6E6C">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v5M12 16v5M3 12h5M16 12h5M6 6l3 3M15 15l3 3M18 6l-3 3M9 15l-3 3"/></svg>
+            </div>
+            <div class="rmeta"><b>행동정의 편집</b><span id="behaviorManagerSub">행동 0개</span></div>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9aa6aa" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          </div>
+          <div class="row" style="cursor:pointer" data-action="open-a-manager">
+            <div class="rdisc" style="background:#7a8a3a">A</div>
+            <div class="rmeta"><b>선행사건 편집</b><span id="antecedentManagerSub">선행사건 0개</span></div>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9aa6aa" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          </div>
+          <div class="row" style="cursor:pointer" data-action="open-c-manager">
+            <div class="rdisc" style="background:#b4502f">C</div>
+            <div class="rmeta"><b>후속결과 편집</b><span id="consequenceManagerSub">후속결과 0개</span></div>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9aa6aa" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          </div>
           <button class="addbtn" style="margin-top:6px;border-color:#c8e0dc;color:#0F6E6C" data-action="open-order">↕ 현재 학생 행동 순서 편집</button>
-
-          <div class="gh"><span>선행사건 (A)</span><em style="font-weight:500;color:#9aa6aa;font-style:normal">★ = 시트 상단 고정</em></div>
-          <div class="chiprow" id="setAchips"></div>
-          <div class="addchip"><input id="addA" placeholder="새 선행사건 입력" maxlength="20"><button data-action="add-chip-a">추가</button></div>
-
-          <div class="gh" style="padding-top:18px"><span>후속결과 (C)</span></div>
-          <div class="chiprow" id="setCchips"></div>
-          <div class="addchip"><input id="addC" placeholder="새 후속결과 입력" maxlength="20"><button data-action="add-chip-c">추가</button></div>
 
           <div class="gh" style="padding-top:22px"><span>행동평정척도 (MAS)</span></div>
           <div class="row" style="cursor:pointer" data-action="open-mas-manager">
@@ -965,7 +972,6 @@
 
           <div class="gh" style="padding-top:22px"><span>데이터</span></div>
           <button class="addbtn" style="border-color:#c8dce0;color:#0F6E6C;margin-bottom:6px" data-action="open-join">🔗 공유 코드로 참가 (다른 교사 학생)</button>
-          <button class="addbtn" style="border-color:#c8dce0;color:#0F6E6C;margin-bottom:6px" data-action="manual-migrate-v2">🔄 데이터 업그레이드 (문제 시 실행)</button>
           <button class="addbtn" style="border-color:#f0d0c8;color:#c0392b" data-action="reset-all">기록 전체 초기화</button>
           <div style="height:24px"></div>
         </div>
@@ -997,6 +1003,49 @@
       <div style="overflow-y:auto;flex:1;padding:14px 18px 8px">
         <div id="ivManagerList"></div>
         <button class="addbtn" style="margin-top:4px;margin-bottom:20px" data-action="add-iv-question">＋ 질문 추가</button>
+      </div>
+    </div>
+
+    <!-- 행동정의 관리 시트 -->
+    <div class="scrim" id="behaviorManagerScrim" data-action="close-behavior-manager"></div>
+    <div class="sheet" id="behaviorManagerSheet" style="max-height:92%">
+      <div class="grab"></div>
+      <div class="sheet-head">
+        <div class="stit"><b>행동정의 편집</b><span id="behaviorManagerCount"></span></div>
+        <button class="ghostbtn" data-action="close-behavior-manager">닫기</button>
+      </div>
+      <div style="overflow-y:auto;flex:1;padding:14px 18px 8px">
+        <div id="behaviorManagerList"></div>
+        <button class="addbtn" style="margin-top:4px;margin-bottom:10px" data-action="add-behavior">＋ 행동 추가</button>
+        <button class="addbtn" style="border-color:#c8e0dc;color:#0F6E6C;margin-bottom:20px" data-action="open-order">↕ 현재 학생 행동 순서 편집</button>
+      </div>
+    </div>
+
+    <!-- 선행사건 관리 시트 -->
+    <div class="scrim" id="antecedentManagerScrim" data-action="close-a-manager"></div>
+    <div class="sheet" id="antecedentManagerSheet" style="max-height:92%">
+      <div class="grab"></div>
+      <div class="sheet-head">
+        <div class="stit"><b>선행사건 편집</b><span id="antecedentManagerCount"></span></div>
+        <button class="ghostbtn" data-action="close-a-manager">닫기</button>
+      </div>
+      <div style="overflow-y:auto;flex:1;padding:14px 18px 8px">
+        <div id="antecedentManagerList"></div>
+        <button class="addbtn" style="margin-top:4px;margin-bottom:20px" data-action="add-chip-manager-a">＋ 선행사건 추가</button>
+      </div>
+    </div>
+
+    <!-- 후속결과 관리 시트 -->
+    <div class="scrim" id="consequenceManagerScrim" data-action="close-c-manager"></div>
+    <div class="sheet" id="consequenceManagerSheet" style="max-height:92%">
+      <div class="grab"></div>
+      <div class="sheet-head">
+        <div class="stit"><b>후속결과 편집</b><span id="consequenceManagerCount"></span></div>
+        <button class="ghostbtn" data-action="close-c-manager">닫기</button>
+      </div>
+      <div style="overflow-y:auto;flex:1;padding:14px 18px 8px">
+        <div id="consequenceManagerList"></div>
+        <button class="addbtn" style="margin-top:4px;margin-bottom:20px" data-action="add-chip-manager-c">＋ 후속결과 추가</button>
       </div>
     </div>
 
@@ -1570,28 +1619,31 @@ async function saveRecord(rec){
 let persistTimer = null;
 let pendingRecords = new Set(); // 저장 대기 중인 record id
 
+async function persistNow(){
+  clearTimeout(persistTimer);
+  if(!fbUser || !db) return;
+  try{
+    syncActiveCaseFromDb();
+    // 1. 케이스 문서 저장
+    for(const s of (db.students || [])){
+      await saveStudent(s);
+    }
+    // 2. dirty 기록만 저장
+    const dirty = (db.records || []).filter(r => r.dirty && !r.deleted);
+    for(const rec of dirty){
+      await saveRecord(rec);
+      rec.dirty = false;
+    }
+    updateSyncUI();
+  }catch(e){
+    console.warn('persist 실패:', e);
+    updateSyncUI('err');
+  }
+}
+
 function persist(){
   clearTimeout(persistTimer);
-  persistTimer = setTimeout(async ()=>{
-    if(!fbUser || !db) return;
-    try{
-      syncActiveCaseFromDb();
-      // 1. 케이스 문서 저장
-      for(const s of (db.students || [])){
-        await saveStudent(s);
-      }
-      // 2. dirty 기록만 저장
-      const dirty = (db.records || []).filter(r => r.dirty && !r.deleted);
-      for(const rec of dirty){
-        await saveRecord(rec);
-        rec.dirty = false;
-      }
-      updateSyncUI();
-    }catch(e){
-      console.warn('persist 실패:', e);
-      updateSyncUI('err');
-    }
-  }, 600);
+  persistTimer = setTimeout(persistNow, 600);
 }
 
 async function deleteDocsInBatches(docs){
@@ -1606,6 +1658,51 @@ async function deleteDocsInBatches(docs){
 async function deleteCollectionDocs(colRef){
   const snap = await colRef.get();
   await deleteDocsInBatches(snap);
+}
+
+function stopCaseRealtime(sid){
+  if(recordListeners[sid]){ recordListeners[sid](); delete recordListeners[sid]; }
+  if(studentListeners[sid]){ studentListeners[sid](); delete studentListeners[sid]; }
+  if(recordRetryTimers[sid]){ clearTimeout(recordRetryTimers[sid]); delete recordRetryTimers[sid]; }
+}
+
+function removeStudentLocal(sid){
+  stopCaseRealtime(sid);
+  db.students = (db.students || []).filter(s => s.id !== sid);
+  db.records = (db.records || []).filter(r => r.sid !== sid);
+  db.notes = (db.notes || []).filter(n => n.sid !== sid);
+  db.interviews = (db.interviews || []).filter(n => n.sid !== sid);
+  db.masScores = (db.masScores || []).filter(n => n.sid !== sid);
+  if(state.sid === sid) state.sid = db.students[0]?.id || '';
+  if(state.sid){
+    const next = db.students.find(s=>s.id===state.sid) || db.students[0];
+    if(next) applyCaseToDb(next);
+  }
+  reindex();
+}
+
+async function deleteStudentCase(sid){
+  if(!fbUser || !db) return false;
+  const s = db.students.find(x=>x.id===sid);
+  if(!s) return false;
+
+  clearTimeout(persistTimer);
+
+  if(s.ownerUid && s.ownerUid !== fbUser.uid){
+    await FS.student(sid).update({
+      memberUids: firebase.firestore.FieldValue.arrayRemove(fbUser.uid)
+    });
+    await FS.member(sid, fbUser.uid).delete().catch(()=>{});
+    removeStudentLocal(sid);
+    return 'left';
+  }
+
+  await deleteCollectionDocs(FS.records(sid));
+  await deleteCollectionDocs(FS.student(sid).collection('members'));
+  if(s.shareCode) await FS.code(s.shareCode).delete().catch(()=>{});
+  await FS.student(sid).delete();
+  removeStudentLocal(sid);
+  return 'deleted';
 }
 
 async function resetCloudDataForCurrentUser(){
@@ -1912,7 +2009,10 @@ function startSync(){
       snap.docChanges().forEach(change => {
         const sid = change.doc.id;
         const data = normalizeCase(change.doc.data(), sid);
-        if(change.type === 'removed') return;
+        if(change.type === 'removed'){
+          removeStudentLocal(sid);
+          return;
+        }
         // 케이스 정보 업데이트
         const idx = db.students.findIndex(s => s.id === sid);
         if(idx >= 0) db.students[idx] = {...db.students[idx], ...data};
@@ -2113,11 +2213,8 @@ async function leaveShared(sid){
       memberUids: firebase.firestore.FieldValue.arrayRemove(fbUser.uid)
     });
     await FS.member(sid, fbUser.uid).delete();
-    if(recordListeners[sid]){ recordListeners[sid](); delete recordListeners[sid]; }
-    if(recordRetryTimers[sid]){ clearTimeout(recordRetryTimers[sid]); delete recordRetryTimers[sid]; }
-    db.students = db.students.filter(s => s.id !== sid);
-    db.records  = db.records.filter(r => r.sid !== sid);
-    reindex(); refreshAll();
+    removeStudentLocal(sid);
+    refreshAll();
     toast('공유 관찰에서 나왔어요');
   }catch(e){ console.warn('나가기 오류:', e); }
 }
@@ -2125,6 +2222,7 @@ async function leaveShared(sid){
 // ── 로그아웃 ──
 async function doSignout(){
   if(!confirm('로그아웃 하시겠어요?')) return;
+  try{ await persistNow(); }catch(e){ console.warn('로그아웃 전 저장 실패:', e); }
   if(unsubSync){ unsubSync(); unsubSync = null; }
   Object.values(studentListeners).forEach(u => u());
   Object.values(recordListeners).forEach(u => u());
@@ -2585,22 +2683,64 @@ function renderSettings(){
   if(!db) return;
   renderMasSettings();
   renderShareSection();
-  $('#setStudents').innerHTML=db.students.map(s=>`
+  const studentsEl = $('#setStudents');
+  if(studentsEl) studentsEl.innerHTML=db.students.map(s=>`
     <div class="row">
       <div class="rdisc" style="background:${s.color}">${s.name[0]}</div>
-      <div class="rmeta"><b>${s.name}</b><span>${s.sub||'설명 없음'}</span></div>
+      <div class="rmeta"><b>${s.name}</b><span>${s.ownerUid&&s.ownerUid!==fbUser?.uid?'공유받은 학생':(s.sub||'설명 없음')}</span></div>
       <button class="iconbtn" title="${s.shareCode?'공유 코드: '+s.shareCode:'공유 코드 생성'}" data-share-sid="${s.id}" style="color:${s.shareCode?'#0F6E6C':'var(--sub)'}">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
       </button>
       <button class="iconbtn" data-edit-student="${s.id}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4v16h16v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4z"/></svg></button>
     </div>`).join('');
-  $('#setBehaviors').innerHTML=db.behaviors.map(b=>`
-    <div class="row"><div class="rdisc" style="background:${b.color}">${svg(b.icon)}</div>
-    <div class="rmeta"><b>${b.name}</b><span>${b.type==='freq'?'빈도 — 누를 때마다 +1':'지속시간 — 시작/종료 타이머'}</span></div>
-    <span class="pill-tag" style="background:${b.type==='freq'?'#eef3f1':'#fbeee9'};color:${b.type==='freq'?'#3a6f63':'#b4502f'}">${b.type==='freq'?'빈도형':'시간형'}</span>
-    <button class="iconbtn" data-edit-behavior="${b.id}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4v16h16v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4z"/></svg></button></div>`).join('');
-  $('#setAchips').innerHTML=sortedChips(db.aChips).map(c=>`<div class="schip ${c.fav?'fav':''}" data-edit-chip="a:${c.id}">${c.fav?'<span class="star">★</span>':''}${c.text}</div>`).join('')||'<span style="font-size:12.5px;color:#9aa6aa">칩이 없어요</span>';
-  $('#setCchips').innerHTML=sortedChips(db.cChips).map(c=>`<div class="schip ${c.fav?'fav':''}" data-edit-chip="c:${c.id}">${c.fav?'<span class="star">★</span>':''}${c.text}</div>`).join('')||'<span style="font-size:12.5px;color:#9aa6aa">칩이 없어요</span>';
+  const setText=(sel,text)=>{const el=$(sel); if(el) el.textContent=text;};
+  setText('#behaviorManagerSub','행동 '+(db.behaviors||[]).length+'개');
+  setText('#antecedentManagerSub','선행사건 '+(db.aChips||[]).length+'개');
+  setText('#consequenceManagerSub','후속결과 '+(db.cChips||[]).length+'개');
+  if($('#behaviorManagerSheet')?.classList.contains('open')) renderBehaviorManagerList();
+  if($('#antecedentManagerSheet')?.classList.contains('open')) renderChipManager('a');
+  if($('#consequenceManagerSheet')?.classList.contains('open')) renderChipManager('c');
+}
+
+function openBehaviorManager(){
+  renderBehaviorManagerList();
+  $('#behaviorManagerScrim').classList.add('show');$('#behaviorManagerSheet').classList.add('open');
+}
+function closeBehaviorManager(){$('#behaviorManagerScrim').classList.remove('show');$('#behaviorManagerSheet').classList.remove('open');}
+function renderBehaviorManagerList(){
+  const list=db.behaviors||[];
+  const cnt=$('#behaviorManagerCount'); if(cnt)cnt.textContent='행동 '+list.length+'개';
+  const el=$('#behaviorManagerList'); if(!el)return;
+  el.innerHTML=list.length?list.map(b=>`<div class="mas-edit-item">
+    <div class="rdisc" style="width:34px;height:34px;border-radius:10px;background:${b.color};margin:-2px 0;color:#fff;display:flex;align-items:center;justify-content:center;flex:none">${svg(b.icon).replace('stroke="currentColor"','stroke="#fff"')}</div>
+    <div class="me-text">${b.name}</div>
+    <span class="me-func" style="background:${b.type==='freq'?'#eef3f1':'#fbeee9'};color:${b.type==='freq'?'#3a6f63':'#b4502f'}">${b.type==='freq'?'빈도형':'시간형'}</span>
+    <button class="iconbtn" data-edit-behavior="${b.id}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4v16h16v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4z"/></svg></button>
+  </div>`).join(''):'<div class="empty" style="padding:32px 12px">등록된 행동이 없어요.</div>';
+}
+
+function openChipManager(which){
+  renderChipManager(which);
+  const pre=which==='a'?'antecedent':'consequence';
+  $('#'+pre+'ManagerScrim').classList.add('show');$('#'+pre+'ManagerSheet').classList.add('open');
+}
+function closeChipManager(which){
+  const pre=which==='a'?'antecedent':'consequence';
+  $('#'+pre+'ManagerScrim').classList.remove('show');$('#'+pre+'ManagerSheet').classList.remove('open');
+}
+function renderChipManager(which){
+  const isA=which==='a';
+  const arr=sortedChips(isA?db.aChips:db.cChips);
+  const listSel=isA?'#antecedentManagerList':'#consequenceManagerList';
+  const countSel=isA?'#antecedentManagerCount':'#consequenceManagerCount';
+  const cnt=$(countSel); if(cnt)cnt.textContent=(isA?'선행사건 ':'후속결과 ')+arr.length+'개';
+  const el=$(listSel); if(!el)return;
+  el.innerHTML=arr.length?arr.map(c=>`<div class="mas-edit-item">
+    <div class="func-dot" style="background:${c.fav?'#E0972F':'#9aa6aa'}"></div>
+    <div class="me-text">${c.fav?'★ ':''}${c.text}</div>
+    <span class="me-func" style="background:${isA?'#eef3f1':'#fbeee9'};color:${isA?'#7a8a3a':'#b4502f'}">${c.fav?'상단 고정':'일반'}</span>
+    <button class="iconbtn" data-edit-chip="${which}:${c.id}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4v16h16v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4z"/></svg></button>
+  </div>`).join(''):'<div class="empty" style="padding:32px 12px">등록된 항목이 없어요.</div>';
 }
 
 // ============ editor ============
@@ -2639,11 +2779,11 @@ function renderEditor(){
   }
 }
 function syncEd(){const n=$('#edName');if(n)state.ed.text!==undefined?state.ed.text=n.value:state.ed.name=n.value;const s=$('#edSub');if(s)state.ed.sub=s.value;}
-function saveEditor(){
+async function saveEditor(){
   syncEd();const ed=state.ed;
   if(ed.kind==='student'){
     if(!ed.name.trim()){toast('이름을 입력하세요');return;}
-    if(ed.id){const s=sMap[ed.id];s.name=ed.name.trim();s.color=ed.color;s.sub=ed.sub;}
+    if(ed.id){const s=sMap[ed.id];if(s.ownerUid&&s.ownerUid!==fbUser?.uid){toast('공유받은 학생 정보는 만든 계정에서만 수정할 수 있어요');return;}s.name=ed.name.trim();s.color=ed.color;s.sub=ed.sub;}
     else{syncActiveCaseFromDb();const s={id:ulid(),name:ed.name.trim(),color:ed.color,sub:ed.sub,ownerUid:fbUser?.uid||null,memberUids:fbUser?[fbUser.uid]:[],members:fbUser?[fbUser.uid]:[],shareCode:null,shareCodeExpiresAt:null,...caseDefaults()};db.students.push(s);state.sid=s.id;applyCaseToDb(s);}
   }else if(ed.kind==='behavior'){
     if(!ed.name.trim()){toast('행동 이름을 입력하세요');return;}
@@ -2655,20 +2795,28 @@ function saveEditor(){
     if(ed.id){const c=arr.find(x=>x.id===ed.id);c.text=ed.text.trim();c.fav=ed.fav;}
     else arr.push({id:uid('ch'),text:ed.text.trim(),fav:ed.fav});
   }
-  reindex();persist();closeEditor();refreshAll();toast('저장됐어요');
+  reindex();closeEditor();refreshAll();
+  await persistNow();
+  refreshAll();
+  toast('저장됐어요');
 }
-function delEditor(){
+async function delEditor(){
   const ed=state.ed;
   if(ed.kind==='student'){
     if(db.students.length<=1){toast('최소 1명은 있어야 해요');return;}
-    db.students=db.students.filter(s=>s.id!==ed.id);db.records=db.records.filter(r=>r.sid!==ed.id);
-    if(state.sid===ed.id)state.sid=db.students[0].id;
+    const result = await deleteStudentCase(ed.id);
+    closeEditor();refreshAll();
+    toast(result==='left'?'공유 관찰에서 나왔어요':'학생과 기록을 삭제했어요');
+    return;
   }else if(ed.kind==='behavior'){
     db.behaviors=db.behaviors.filter(b=>b.id!==ed.id);
   }else{
     if(ed.which==='a')db.aChips=db.aChips.filter(c=>c.id!==ed.id);else db.cChips=db.cChips.filter(c=>c.id!==ed.id);
   }
-  reindex();persist();closeEditor();refreshAll();toast('삭제했어요');
+  reindex();closeEditor();refreshAll();
+  await persistNow();
+  refreshAll();
+  toast('삭제했어요');
 }
 
 function refreshAll(){paintStudent();renderSwitcher();renderGrid();renderSettings();if(state.tab==='review')renderTimeline();if(state.tab==='analysis')renderAnalysis();updateNoteBadge();updateSyncUI();if(isDesktop()&&db){renderStudioSidebar();switchStTab(stTab);updateStudioSync();}}
@@ -4213,8 +4361,8 @@ document.addEventListener('click',e=>{
     else if(a==='del-record')delRecord();
     else if(a==='add-student'){$('#switcher').classList.remove('open');openEditor('student',null);}
     else if(a==='add-behavior')openEditor('behavior',null);
-    else if(a==='add-chip-a'){const i=$('#addA');if(i.value.trim()){db.aChips.push({id:uid('ch'),text:i.value.trim(),fav:false});i.value='';persist();renderSettings();renderChips();}}
-    else if(a==='add-chip-c'){const i=$('#addC');if(i.value.trim()){db.cChips.push({id:uid('ch'),text:i.value.trim(),fav:false});i.value='';persist();renderSettings();renderChips();}}
+    else if(a==='add-chip-a'){const i=$('#addA');if(i&&i.value.trim()){db.aChips.push({id:uid('ch'),text:i.value.trim(),fav:false});i.value='';persist();renderSettings();renderChips();}}
+    else if(a==='add-chip-c'){const i=$('#addC');if(i&&i.value.trim()){db.cChips.push({id:uid('ch'),text:i.value.trim(),fav:false});i.value='';persist();renderSettings();renderChips();}}
     else if(a==='toggle-fav'){state.ed.fav=!state.ed.fav;renderEditor();}
     else if(a==='editor-save'){if(state.masEd)saveMasEditor();else if(state.ivEd)saveIvEditor();else saveEditor();}
     else if(a==='editor-del'){if(state.masEd)delMasEditor();else if(state.ivEd)delIvEditor();else delEditor();}
@@ -4228,6 +4376,14 @@ document.addEventListener('click',e=>{
     else if(a==='close-mas-manager')closeMasManager();
     else if(a==='open-iv-manager')openIvManager();
     else if(a==='close-iv-manager')closeIvManager();
+    else if(a==='open-behavior-manager')openBehaviorManager();
+    else if(a==='close-behavior-manager')closeBehaviorManager();
+    else if(a==='open-a-manager')openChipManager('a');
+    else if(a==='close-a-manager')closeChipManager('a');
+    else if(a==='open-c-manager')openChipManager('c');
+    else if(a==='close-c-manager')closeChipManager('c');
+    else if(a==='add-chip-manager-a')openEditor('chip','a:');
+    else if(a==='add-chip-manager-c')openEditor('chip','c:');
     else if(a==='add-mas-item'){openMasEditor(null);}
     else if(a==='mas-editor-save')saveMasEditor();
     else if(a==='mas-editor-del')delMasEditor();
