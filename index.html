@@ -916,6 +916,7 @@
 
           <div class="gh" style="padding-top:22px"><span>데이터</span></div>
           <button class="addbtn" style="border-color:#f0d0c8;color:#c0392b" data-action="reset-all">기록 전체 초기화</button>
+          <button class="addbtn" style="margin-top:6px;border-color:#c8dce0;color:#0F6E6C" data-action="manual-migrate">🔄 데이터 구조 업그레이드 (문제 시 사용)</button>
           <div style="height:24px"></div>
         </div>
       </div>
@@ -1384,12 +1385,15 @@ function buildStudentDoc(sid){
 async function loadData(){
   try{
     // 1. 기존 userData 마이그레이션 체크
-    const legacy=await legacyDocRef().get();
-    if(legacy.exists){
+    let legacy=null;
+    try{ legacy=await legacyDocRef().get(); }
+    catch(e){ console.warn('userData 접근 오류(무시):', e.code); }
+
+    if(legacy&&legacy.exists&&!legacy.data()?._migrated){
       const data=legacy.data();
-      // 기존 데이터를 새 구조로 마이그레이션
+      console.log('마이그레이션 시작 — 학생수:', data.students?.length||0);
+      setSyncStatus('ok','데이터 업그레이드 중…');
       await migrateFromLegacy(data);
-      // 마이그레이션 완료 후 기존 문서 삭제 방지 (참조만 제거)
       return null; // initApp에서 새 구조로 재로드
     }
 
@@ -1441,34 +1445,44 @@ function mergeStudentDocs(docs){
 
 // ── 기존 userData → sharedStudents 마이그레이션 ──
 async function migrateFromLegacy(data){
-  console.log('기존 데이터 마이그레이션 시작...');
   const students=data.students||[];
-  for(const s of students){
-    const sid=s.id||ulid();
-    const studentData={
-      studentInfo:{...s,id:sid},
-      records:(data.records||[]).filter(r=>r.sid===s.id),
-      notes:(data.notes||[]).filter(n=>n.sid===s.id),
-      interviews:(data.interviews||[]).filter(i=>i.sid===s.id),
-      masScores:(data.masScores||[]).filter(m=>m.sid===s.id),
-      behaviors:data.behaviors||[],
-      aChips:data.aChips||[],
-      cChips:data.cChips||[],
-      masItems:data.masItems||[],
-      ivQuestions:data.ivQuestions||[],
-      ownerUid:fbUser.uid,
-      members:[fbUser.uid],
-      shareCode:null,
-      _migratedAt:firebase.firestore.FieldValue.serverTimestamp(),
-      _updatedBy:fbUser.uid,
-      _updatedAt:firebase.firestore.FieldValue.serverTimestamp()
-    };
-    await fbStore.collection('sharedStudents').doc(sid).set(studentData);
+  if(!students.length){
+    // 학생 없는 경우도 완료 처리
+    await legacyDocRef().update({_migrated:true,_migratedAt:firebase.firestore.FieldValue.serverTimestamp()}).catch(()=>{});
+    toast('데이터 업그레이드 완료');
+    return;
   }
-  // 마이그레이션 완료 표시 (userData는 삭제 안 하고 플래그만)
-  await legacyDocRef().update({_migrated:true, _migratedAt:firebase.firestore.FieldValue.serverTimestamp()});
-  console.log('마이그레이션 완료');
-  toast('데이터를 새 구조로 업그레이드했어요');
+  let success=0;
+  for(const s of students){
+    try{
+      const sid=s.id||ulid();
+      const studentData={
+        studentInfo:{...s,id:sid},
+        records:(data.records||[]).filter(r=>r.sid===s.id),
+        notes:(data.notes||[]).filter(n=>n.sid===s.id),
+        interviews:(data.interviews||[]).filter(i=>i.sid===s.id),
+        masScores:(data.masScores||[]).filter(m=>m.sid===s.id),
+        behaviors:data.behaviors||[],
+        aChips:data.aChips||[],
+        cChips:data.cChips||[],
+        masItems:data.masItems||[],
+        ivQuestions:data.ivQuestions||[],
+        ownerUid:fbUser.uid,
+        members:[fbUser.uid],
+        shareCode:null,
+        _migratedAt:firebase.firestore.FieldValue.serverTimestamp(),
+        _updatedBy:fbUser.uid,
+        _updatedAt:firebase.firestore.FieldValue.serverTimestamp()
+      };
+      await fbStore.collection('sharedStudents').doc(sid).set(studentData);
+      success++;
+    }catch(e){ console.error('학생 마이그레이션 실패:', s.name, e); }
+  }
+  // 완료 플래그
+  try{
+    await legacyDocRef().update({_migrated:true,_migratedAt:firebase.firestore.FieldValue.serverTimestamp()});
+  }catch(e){ console.warn('완료 플래그 저장 실패:', e); }
+  toast(`데이터 업그레이드 완료 (${success}명)`);
 }
 
 // ── 실시간 동기화 (학생별 리스너) ──
@@ -3393,6 +3407,19 @@ document.addEventListener('click',e=>{
     else if(a==='iv-editor-del')delIvEditor();
     else if(a==='iv-editor-cancel')closeIvEditor();
     else if(a==='export-pdf')exportPdf();
+    else if(a==='manual-migrate'){
+      if(!fbUser){toast('로그인 후 사용하세요');return;}
+      setSyncStatus('ok','업그레이드 중…');
+      legacyDocRef().get().then(snap=>{
+        if(snap.exists&&!snap.data()?._migrated){
+          migrateFromLegacy(snap.data()).then(()=>initApp());
+        } else if(snap.exists&&snap.data()?._migrated){
+          toast('이미 업그레이드된 데이터예요');
+        } else {
+          toast('기존 데이터가 없어요');
+        }
+      }).catch(e=>toast('오류: '+e.message));
+    }
     else if(a==='open-order')openOrderSheet();
     else if(a==='open-interval-setup')openIntervalSetup();
     else if(a==='close-interval-setup')closeIntervalSetup();
