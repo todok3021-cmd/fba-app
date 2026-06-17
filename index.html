@@ -333,6 +333,186 @@
   .auth-submit:disabled{opacity:.6;cursor:not-allowed;}
   .auth-loading{text-align:center;padding:20px;color:var(--sub);font-size:14px;}
 
+/* ═══════════════════════════════════════
+   데스크톱 작업실 (≥ 1024px)
+   모바일 .wrap/.phone 구조와 완전히 분리
+═══════════════════════════════════════ */
+@media(min-width:1024px){
+  body{background:#eceae4;overflow:auto;}
+
+  /* 모바일 앱 숨김 */
+  .wrap{display:none!important;}
+
+  /* 작업실 레이아웃 */
+  #studio{display:flex;height:100vh;min-height:600px;overflow:hidden;width:100%;}
+
+  /* 사이드바 */
+  #studioSide{
+    width:240px;min-width:240px;max-width:240px;flex:0 0 240px;
+    background:#1e2d31;
+    display:flex;flex-direction:column;
+    overflow:hidden;
+    box-sizing:border-box;
+  }
+  .st-logo{
+    padding:22px 20px 16px;
+    display:flex;align-items:center;gap:10px;
+    border-bottom:1px solid rgba(255,255,255,.08);
+  }
+  .st-logo-icon{
+    width:34px;height:34px;border-radius:10px;
+    background:var(--primary);
+    display:flex;align-items:center;justify-content:center;flex:none;
+  }
+  .st-logo-icon svg{width:18px;height:18px;stroke:#fff;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;}
+  .st-logo-text{font-size:14px;font-weight:800;color:#fff;letter-spacing:-.01em;}
+  .st-logo-text span{display:block;font-size:10px;font-weight:500;color:rgba(255,255,255,.45);margin-top:1px;}
+
+  /* 학생 목록 */
+  .st-section-label{
+    font-size:10px;font-weight:700;color:rgba(255,255,255,.35);
+    letter-spacing:.08em;text-transform:uppercase;
+    padding:16px 20px 8px;
+  }
+  .st-student-list{flex:1;overflow-y:auto;padding:0 10px;}
+  .st-student-item{
+    display:flex;align-items:center;gap:10px;
+    padding:9px 10px;border-radius:11px;cursor:pointer;
+    transition:background .15s;margin-bottom:2px;
+  }
+  .st-student-item:hover{background:rgba(255,255,255,.07);}
+  .st-student-item.on{background:rgba(255,255,255,.12);}
+  .st-student-av{
+    width:30px;height:30px;border-radius:9px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:13px;font-weight:800;color:#fff;flex:none;
+  }
+  .st-student-name{font-size:13px;font-weight:700;color:#fff;flex:1;min-width:0;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .st-student-badge{
+    font-size:10px;font-weight:800;
+    background:rgba(255,255,255,.15);color:rgba(255,255,255,.7);
+    padding:2px 7px;border-radius:6px;flex:none;
+  }
+
+  /* 사이드바 하단 메뉴 */
+  .st-bottom{border-top:1px solid rgba(255,255,255,.08);padding:10px;}
+  .st-menu-item{
+    display:flex;align-items:center;gap:10px;
+    padding:9px 10px;border-radius:10px;cursor:pointer;
+    color:rgba(255,255,255,.55);font-size:13px;font-weight:600;
+    transition:all .15s;
+  }
+  .st-menu-item:hover{background:rgba(255,255,255,.07);color:rgba(255,255,255,.85);}
+  .st-menu-item.on{background:rgba(255,255,255,.1);color:#fff;}
+  .st-menu-item svg{width:16px;height:16px;flex:none;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+
+  /* 메인 캔버스 */
+  #studioMain{
+    flex:1;min-width:0;display:flex;flex-direction:column;overflow:hidden;
+    background:#f5f2ec;
+  }
+
+  /* 캔버스 헤더 */
+  .st-header{
+    background:#fff;border-bottom:1px solid var(--line);
+    padding:0 28px;height:56px;
+    display:flex;align-items:center;justify-content:space-between;flex:none;
+  }
+  .st-header-left{display:flex;align-items:center;gap:16px;}
+  .st-student-title{font-size:16px;font-weight:800;color:var(--ink);}
+  .st-student-sub{font-size:12px;color:var(--sub);}
+  .st-header-right{display:flex;align-items:center;gap:10px;}
+  .st-sync{font-size:11.5px;color:var(--sub);display:flex;align-items:center;gap:5px;}
+  .st-sync .dot{width:6px;height:6px;border-radius:50%;background:#7fd9c4;}
+
+  /* 캔버스 탭바 */
+  .st-tabbar{
+    background:#fff;border-bottom:1px solid var(--line);
+    padding:0 28px;display:flex;gap:2px;flex:none;
+  }
+  .st-tab{
+    padding:12px 16px;font-size:13.5px;font-weight:700;
+    color:var(--sub);border:none;background:none;cursor:pointer;
+    border-bottom:2.5px solid transparent;font-family:inherit;
+    transition:.15s;
+  }
+  .st-tab:hover{color:var(--ink);}
+  .st-tab.on{color:var(--primary);border-bottom-color:var(--primary);}
+
+  /* 캔버스 본문 */
+  .st-body{flex:1;overflow-y:auto;padding:28px;}
+
+  /* 대시보드 카드 그리드 */
+  .dash-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-bottom:24px;}
+  .dash-card{
+    background:#fff;border-radius:16px;border:1px solid var(--line);
+    padding:18px 20px;cursor:pointer;transition:.15s;
+  }
+  .dash-card:hover{box-shadow:0 4px 20px rgba(0,0,0,.08);transform:translateY(-1px);}
+  .dash-card.active{border-color:var(--primary);box-shadow:0 0 0 2px rgba(15,110,108,.15);}
+  .dash-card-head{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+  .dash-card-av{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:800;color:#fff;flex:none;}
+  .dash-card-name{font-size:15px;font-weight:800;color:var(--ink);}
+  .dash-card-sub{font-size:11.5px;color:var(--sub);margin-top:2px;}
+  .dash-stats{display:flex;gap:0;border-top:1px solid var(--line2);padding-top:12px;margin-top:4px;}
+  .dash-stat{flex:1;text-align:center;}
+  .dash-stat+.dash-stat{border-left:1px solid var(--line2);}
+  .dash-stat b{display:block;font-size:19px;font-weight:800;color:var(--ink);}
+  .dash-stat span{font-size:10.5px;color:var(--sub);}
+
+  /* 섹션 타이틀 */
+  .st-section-title{
+    font-size:18px;font-weight:800;color:var(--ink);
+    letter-spacing:-.02em;margin-bottom:16px;
+  }
+  .st-section-title span{font-size:13px;font-weight:600;color:var(--sub);margin-left:8px;}
+
+  /* 분석 패널 */
+  .analysis-panels{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .analysis-panel{background:#fff;border-radius:16px;border:1px solid var(--line);padding:20px;}
+  .analysis-panel.wide{grid-column:1/-1;}
+  .ap-title{font-size:13px;font-weight:800;color:var(--primary);
+    border-left:3px solid var(--primary);padding-left:8px;margin-bottom:14px;}
+
+  /* 가설 카드 */
+  .hyp-card{background:#eef6f5;border:1px solid #c8e0dc;border-radius:12px;padding:16px 18px;}
+  .hyp-flow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px;}
+  .hyp-box{padding:6px 14px;border-radius:8px;font-size:12.5px;font-weight:700;border:1.5px solid;}
+  .hyp-box.a{border-color:#3E86C0;background:#eaf1f9;color:#3E86C0;}
+  .hyp-box.b{border-color:var(--primary);background:#eef6f5;color:var(--primary);}
+  .hyp-box.c{border-color:#C77A1E;background:#fdf3e7;color:#C77A1E;}
+  .hyp-verdict{font-size:12.5px;color:#444;line-height:1.6;}
+
+  /* 노트 패널 */
+  .note-panels{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;}
+  .note-panel{background:#fff;border-radius:16px;border:1px solid var(--line);padding:20px;}
+  .note-panel-title{font-size:13px;font-weight:800;color:var(--ink);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+  .note-empty{font-size:13px;color:var(--sub);text-align:center;padding:20px 0;}
+  .note-memo-item{padding:10px 0;border-bottom:1px solid var(--line2);font-size:13px;color:var(--ink);line-height:1.5;}
+  .note-memo-tag{display:inline-block;font-size:10px;font-weight:800;padding:2px 7px;border-radius:5px;margin-right:6px;}
+  .note-memo-time{font-size:11px;color:var(--sub);margin-top:3px;}
+
+  /* PDF 버튼 */
+  .st-pdf-btn{
+    display:inline-flex;align-items:center;gap:8px;
+    background:var(--primary);color:#fff;border:none;
+    padding:12px 22px;border-radius:12px;font-size:14px;font-weight:700;
+    cursor:pointer;font-family:inherit;transition:background .15s;
+  }
+  .st-pdf-btn:hover{background:var(--primary-press);}
+  .st-pdf-btn svg{width:16px;height:16px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+
+  /* 설정 패널 */
+  .settings-panels{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .settings-panel{background:#fff;border-radius:16px;border:1px solid var(--line);padding:20px;}
+}
+
+/* 모바일에서 작업실 숨김 */
+@media(max-width:1023px){
+  #studio{display:none!important;}
+}
+
 </style>
 <!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -368,6 +548,70 @@
         <div class="auth-err" id="suErr"></div>
         <button class="auth-submit" id="suBtn" onclick="doSignup()">가입하기</button>
       </div>
+    </div>
+  </div>
+
+
+  <!-- ═══ 데스크톱 작업실 ═══ -->
+  <div id="studio">
+    <!-- 사이드바 -->
+    <div id="studioSide">
+      <div class="st-logo">
+        <div class="st-logo-icon">
+          <svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        </div>
+        <div class="st-logo-text">FBA 작업실<span>데스크톱 분석 환경</span></div>
+      </div>
+
+      <div class="st-section-label">학생</div>
+      <div class="st-student-list" id="stStudentList"></div>
+
+      <div class="st-bottom">
+        <div class="st-menu-item on" data-stab="dashboard">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+          대시보드
+        </div>
+        <div class="st-menu-item" data-stab="analysis">
+          <svg viewBox="0 0 24 24"><line x1="4" y1="20" x2="4" y2="11"/><line x1="10" y1="20" x2="10" y2="4"/><line x1="16" y1="20" x2="16" y2="14"/><line x1="22" y1="20" x2="22" y2="8"/></svg>
+          분석
+        </div>
+        <div class="st-menu-item" data-stab="notes">
+          <svg viewBox="0 0 24 24"><path d="M14 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-9"/><path d="M14 3l5 5"/><path d="M9 13h6M9 17h4"/></svg>
+          관찰 노트
+        </div>
+        <div class="st-menu-item" data-stab="pdf">
+          <svg viewBox="0 0 24 24"><path d="M14 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V10z"/><polyline points="14 3 14 10 21 10"/></svg>
+          PDF 리포트
+        </div>
+        <div class="st-menu-item" data-stab="settings">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          설정
+        </div>
+        <div class="st-menu-item" style="color:rgba(255,255,255,.35);margin-top:8px" data-action="do-signout">
+          <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          <span id="stUserName">로그아웃</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 메인 캔버스 -->
+    <div id="studioMain">
+      <div class="st-header">
+        <div class="st-header-left">
+          <div>
+            <div class="st-student-title" id="stTitle">대시보드</div>
+            <div class="st-student-sub" id="stSub"></div>
+          </div>
+        </div>
+        <div class="st-header-right">
+          <div class="st-sync"><div class="dot" id="stDot"></div><span id="stSync">동기화됨</span></div>
+          <button class="st-pdf-btn" id="stPdfBtn" onclick="exportPdf()" style="display:none">
+            <svg viewBox="0 0 24 24"><path d="M14 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V10z"/><polyline points="14 3 14 10 21 10"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="12" y2="17"/></svg>
+            PDF 저장
+          </button>
+        </div>
+      </div>
+      <div class="st-body" id="stBody"></div>
     </div>
   </div>
 
@@ -928,6 +1172,8 @@ async function initApp(){
   const un=$('#settingUserName'), ue=$('#settingUserEmail');
   if(un) un.textContent=(fbUser?.displayName||fbUser?.email||'사용자')+' · 로그아웃';
   if(ue) ue.textContent=fbUser?.email||'';
+  // 데스크톱 작업실 초기화
+  if(isDesktop()) initStudio();
 }
 
 // ============ state ============
@@ -1316,7 +1562,7 @@ function delEditor(){
   reindex();persist();closeEditor();refreshAll();toast('삭제했어요');
 }
 
-function refreshAll(){paintStudent();renderSwitcher();renderGrid();renderSettings();if(state.tab==='review')renderTimeline();if(state.tab==='analysis')renderAnalysis();updateNoteBadge();updateSyncUI();}
+function refreshAll(){paintStudent();renderSwitcher();renderGrid();renderSettings();if(state.tab==='review')renderTimeline();if(state.tab==='analysis')renderAnalysis();updateNoteBadge();updateSyncUI();if(isDesktop()&&db){renderStudioSidebar();switchStTab(stTab);updateStudioSync();}}
 
 // ============ 관찰 노트 ============
 function getNotes(sid){return (db.notes||[]).filter(n=>n.sid===sid);}
@@ -2019,6 +2265,346 @@ function saveTimeEdit(){
   toast('기록 시간이 수정됐어요');
 }
 
+
+// ═══════════════════════════════════════
+// 데스크톱 작업실 JS
+// ═══════════════════════════════════════
+let stTab='dashboard', stSid=null;
+
+function isDesktop(){ return window.innerWidth>=1024; }
+
+// 작업실 진입점 — initApp 후 호출
+function initStudio(){
+  if(!isDesktop()) return;
+  stSid = state.sid || db.students[0]?.id || null;
+  renderStudioSidebar();
+  switchStTab('dashboard');
+  updateStudioSync();
+  // 사용자 이름
+  const un=$('#stUserName');
+  if(un) un.textContent=(fbUser?.displayName||fbUser?.email||'')+'  (로그아웃)';
+}
+
+// 사이드바 학생 목록
+function renderStudioSidebar(){
+  const list=$('#stStudentList'); if(!list) return;
+  list.innerHTML=(db.students||[]).map(s=>{
+    const recs=activeRecords().filter(r=>r.sid===s.id);
+    const today=recs.filter(r=>dkey(new Date(r.ts))===dkey(new Date())).length;
+    return `<div class="st-student-item ${s.id===stSid?'on':''}" data-stsid="${s.id}">
+      <div class="st-student-av" style="background:${s.color}">${s.name[0]}</div>
+      <div class="st-student-name">${s.name}</div>
+      ${today>0?`<div class="st-student-badge">${today}</div>`:''}
+    </div>`;
+  }).join('');
+}
+
+// 작업실 탭 전환
+function switchStTab(tab){
+  stTab=tab;
+  // 메뉴 활성
+  document.querySelectorAll('[data-stab]').forEach(el=>
+    el.classList.toggle('on', el.dataset.stab===tab)
+  );
+  // 헤더 타이틀
+  const titles={dashboard:'대시보드',analysis:'분석',notes:'관찰 노트',pdf:'PDF 리포트',settings:'설정'};
+  const titleEl=$('#stTitle'); if(titleEl) titleEl.textContent=titles[tab]||tab;
+  // PDF 버튼 — pdf 탭일 때만 표시
+  const pdfBtn=$('#stPdfBtn'); if(pdfBtn) pdfBtn.style.display=tab==='pdf'?'':'none';
+  // 본문 렌더
+  const body=$('#stBody'); if(!body) return;
+  if(tab==='dashboard')   renderStDashboard();
+  else if(tab==='analysis')  renderStAnalysis();
+  else if(tab==='notes')     renderStNotes();
+  else if(tab==='pdf')       renderStPdf();
+  else if(tab==='settings')  renderStSettings();
+}
+
+// ── 대시보드 ──
+function renderStDashboard(){
+  const body=$('#stBody'); if(!body) return;
+  const since=Date.now()-7*864e5;
+  const today=dkey(new Date());
+  const cards=(db.students||[]).map(s=>{
+    const all=activeRecords().filter(r=>r.sid===s.id);
+    const week=all.filter(r=>new Date(r.ts).getTime()>since);
+    const todayRecs=all.filter(r=>dkey(new Date(r.ts))===today);
+    const incomplete=week.filter(r=>!r.a.length&&!r.c.length).length;
+    const topBid=Object.entries(week.reduce((acc,r)=>{acc[r.bid]=(acc[r.bid]||0)+1;return acc;},{}))
+      .sort((a,b)=>b[1]-a[1])[0];
+    const topB=topBid?bMap[topBid[0]]:null;
+    return `<div class="dash-card ${s.id===stSid?'active':''}" data-stsid="${s.id}">
+      <div class="dash-card-head">
+        <div class="dash-card-av" style="background:${s.color}">${s.name[0]}</div>
+        <div>
+          <div class="dash-card-name">${s.name}</div>
+          <div class="dash-card-sub">${s.sub||''}</div>
+        </div>
+      </div>
+      ${topB?`<div style="font-size:12px;color:var(--sub);margin-bottom:10px">주요 행동 <b style="color:${topB.color}">${topB.name}</b> (${topBid[1]}건)</div>`:''}
+      <div class="dash-stats">
+        <div class="dash-stat"><b>${todayRecs.length}</b><span>오늘</span></div>
+        <div class="dash-stat"><b>${week.length}</b><span>이번 주</span></div>
+        <div class="dash-stat"><b style="color:${incomplete>0?'#E2603F':'var(--primary)'}">${incomplete}</b><span>ABC 미완성</span></div>
+      </div>
+    </div>`;
+  }).join('');
+  body.innerHTML=`
+    <div class="st-section-title">학생 현황 <span>최근 7일</span></div>
+    <div class="dash-grid">${cards||'<p style="color:var(--sub)">등록된 학생이 없어요. 설정에서 추가해 주세요.</p>'}</div>`;
+}
+
+// ── 분석 ──
+function renderStAnalysis(){
+  const body=$('#stBody'); if(!body) return;
+  const s=db.students.find(s=>s.id===stSid)||db.students[0];
+  if(!s){body.innerHTML='<p style="color:var(--sub)">학생을 선택해 주세요</p>';return;}
+  const sub=$('#stSub'); if(sub) sub.textContent=s.name;
+  const since=Date.now()-7*864e5;
+  const mine=activeRecords().filter(r=>r.sid===s.id&&new Date(r.ts).getTime()>since);
+
+  // 빈도
+  const byB={};mine.forEach(r=>byB[r.bid]=(byB[r.bid]||0)+1);
+  const sortedBids=Object.keys(byB).sort((a,b)=>byB[b]-byB[a]);
+  const maxV=sortedBids.length?Math.max(...sortedBids.map(id=>byB[id])):1;
+  const freqRows=sortedBids.map(id=>{
+    const b=bMap[id]||{name:'?',color:'#9aa'};
+    const pct=Math.round(byB[id]/maxV*100);
+    return `<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+      <div style="width:6px;height:6px;border-radius:50%;background:${b.color};flex:none"></div>
+      <div style="width:90px;font-size:13px;font-weight:600;color:var(--ink)">${b.name}</div>
+      <div style="flex:1;background:var(--line2);border-radius:4px;height:14px;overflow:hidden">
+        <div style="width:${pct}%;height:100%;background:${b.color};border-radius:4px"></div>
+      </div>
+      <div style="width:28px;text-align:right;font-size:13px;font-weight:800">${byB[id]}</div>
+    </div>`;
+  }).join('');
+
+  // 가설
+  let hypHtml='<p style="color:var(--sub);font-size:13px">기록이 더 쌓이면 가설이 나타나요</p>';
+  if(mine.length>=3){
+    const topBid=sortedBids[0]; const tb=bMap[topBid];
+    if(tb){
+      const tRecs=mine.filter(r=>r.bid===topBid);
+      const aCount={},cCount={};
+      tRecs.forEach(r=>{r.a.forEach(x=>aCount[x]=(aCount[x]||0)+1);r.c.forEach(x=>cCount[x]=(cCount[x]||0)+1);});
+      const topA=Object.keys(aCount).sort((a,b)=>aCount[b]-aCount[a])[0];
+      const topC=Object.keys(cCount).sort((a,b)=>cCount[b]-cCount[a])[0];
+      const FMAP={'과제 제거':'회피·도피','타임아웃':'회피·도피','교사 관심':'관심 획득','또래 반응':'관심 획득','원하는 것 제공':'원하는 것 획득'};
+      if(topA&&topC){
+        const fn=FMAP[topC]||'추가 관찰 필요';
+        hypHtml=`<div class="hyp-card">
+          <div class="hyp-flow">
+            <span class="hyp-box a">${topA}</span>
+            <span style="color:#aaa;font-size:18px">→</span>
+            <span class="hyp-box b">${tb.name}</span>
+            <span style="color:#aaa;font-size:18px">→</span>
+            <span class="hyp-box c">${topC}</span>
+          </div>
+          <div class="hyp-verdict">추정 기능: <strong style="color:var(--primary)">${fn}</strong> — 처벌보다 적절한 대체행동 지도를 검토해 보세요.</div>
+        </div>`;
+      }
+    }
+  }
+
+  // 산점도
+  const days7=[];const now=new Date();
+  for(let i=6;i>=0;i--){const d=new Date(now);d.setDate(now.getDate()-i);days7.push(d);}
+  const timeSlots=[6,8,10,12,14,16,18];
+  const scatterRows=timeSlots.map(hr=>{
+    const cells=days7.map(d=>{
+      const recs=mine.filter(r=>{const rh=new Date(r.ts).getHours();return rh>=hr&&rh<hr+2&&dkey(new Date(r.ts))===dkey(d);});
+      if(!recs.length)return `<td style="padding:8px;text-align:center;border:1px solid var(--line2);background:var(--paper)"></td>`;
+      const b=bMap[recs[0].bid]||{color:'#9aa'};
+      return `<td style="padding:8px;text-align:center;border:1px solid var(--line2);background:var(--paper)">
+        <div style="width:12px;height:12px;border-radius:50%;background:${b.color};margin:0 auto"></div>
+        ${recs.length>1?`<div style="font-size:9px;color:var(--sub)">${recs.length}</div>`:''}
+      </td>`;
+    }).join('');
+    return `<tr><td style="padding:6px 10px 6px 0;font-size:11.5px;color:var(--sub);font-weight:600;white-space:nowrap">${String(hr).padStart(2,'0')}:00</td>${cells}</tr>`;
+  }).join('');
+  const dayHeaders=days7.map(d=>`<th style="padding:6px 8px;font-size:11.5px;font-weight:700;color:${dkey(d)===dkey(now)?'var(--primary)':'var(--sub)'};background:#fff;border:1px solid var(--line2)">${d.getMonth()+1}/${d.getDate()}</th>`).join('');
+
+  body.innerHTML=`
+    <div class="st-section-title">${s.name} 분석 <span>최근 7일</span></div>
+    <div class="analysis-panels">
+      <div class="analysis-panel">
+        <div class="ap-title">기능 가설</div>
+        ${hypHtml}
+      </div>
+      <div class="analysis-panel">
+        <div class="ap-title">행동별 빈도</div>
+        ${freqRows||'<p style="color:var(--sub);font-size:13px">기록이 없어요</p>'}
+      </div>
+      <div class="analysis-panel wide">
+        <div class="ap-title">주간 발생 현황 (시간대별)</div>
+        <div style="overflow-x:auto">
+          <table style="border-collapse:collapse;width:100%">
+            <tr><th style="border:1px solid var(--line2);background:#fff;padding:6px 8px"></th>${dayHeaders}</tr>
+            ${scatterRows}
+          </table>
+        </div>
+      </div>
+    </div>`;
+}
+
+// ── 관찰 노트 ──
+function renderStNotes(){
+  const body=$('#stBody'); if(!body) return;
+  const s=db.students.find(s=>s.id===stSid)||db.students[0];
+  if(!s){body.innerHTML='<p style="color:var(--sub)">학생을 선택해 주세요</p>';return;}
+  const sub=$('#stSub'); if(sub) sub.textContent=s.name;
+
+  const memos=(db.notes||[]).filter(n=>n.sid===s.id).sort((a,b)=>new Date(b.ts)-new Date(a.ts));
+  const masData=getLatestMas(s.id);
+  const ivData=getLatestIv(s.id);
+
+  const funcColors={escape:'#3E86C0',attention:'#E0972F',tangible:'#5E9A57',sensory:'#7A5BB0'};
+  const funcNames={escape:'회피·도피',attention:'관심 획득',tangible:'원하는 것 획득',sensory:'감각 자극'};
+  const items=db.masItems||MAS_DEFAULTS;
+
+  // MAS 점수
+  let masHtml='<div class="note-empty">MAS 기록이 없어요</div>';
+  if(masData){
+    const funcOrder=['escape','attention','tangible','sensory'];
+    masHtml=funcOrder.map(func=>{
+      const grp=items.filter(m=>m.func===func);
+      const total=grp.reduce((s,m)=>s+(masData.scores[m.id]??0),0);
+      const max=grp.length*6;
+      const pct=max>0?Math.round(total/max*100):0;
+      return `<div style="margin-bottom:12px">
+        <div style="display:flex;justify-content:space-between;margin-bottom:5px">
+          <span style="font-size:12.5px;font-weight:700;color:${funcColors[func]}">${funcNames[func]}</span>
+          <span style="font-size:12.5px;font-weight:800;color:var(--ink)">${total}/${max}</span>
+        </div>
+        <div style="background:var(--line2);border-radius:4px;height:8px;overflow:hidden">
+          <div style="width:${pct}%;height:100%;background:${funcColors[func]};border-radius:4px"></div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  // 면담
+  let ivHtml='<div class="note-empty">면담 기록이 없어요</div>';
+  if(ivData&&Object.keys(ivData.answers||{}).length){
+    const questions=db.ivQuestions||[];
+    ivHtml=Object.entries(ivData.answers).map(([qid,ans])=>{
+      if(!ans.trim()) return '';
+      const q=questions.find(x=>x.id===qid);
+      return q?`<div style="margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--line2)">
+        <div style="font-size:11.5px;font-weight:700;color:var(--sub);margin-bottom:4px">Q. ${q.q}</div>
+        <div style="font-size:13px;color:var(--ink);line-height:1.5">${ans}</div>
+      </div>`:'';
+    }).join('');
+  }
+
+  body.innerHTML=`
+    <div class="st-section-title">${s.name} 관찰 노트</div>
+    <div class="note-panels">
+      <div class="note-panel">
+        <div class="note-panel-title">📝 메모 (${memos.length}건)</div>
+        ${memos.length?memos.map(m=>{
+          const tc=m.tag==='before'?'#0F6E6C':'#C77A1E';
+          const tb=m.tag==='before'?'#eef6f5':'#fdf3e7';
+          return `<div class="note-memo-item">
+            <span class="note-memo-tag" style="color:${tc};background:${tb}">${m.tag==='before'?'관찰 전':'관찰 중'}</span>
+            ${m.text}
+            <div class="note-memo-time">${to12(new Date(m.ts))}</div>
+          </div>`;
+        }).join(''):'<div class="note-empty">메모가 없어요</div>'}
+      </div>
+      <div class="note-panel">
+        <div class="note-panel-title">📊 MAS 척도</div>
+        ${masHtml}
+      </div>
+      <div class="note-panel">
+        <div class="note-panel-title">🗣 면담 기록</div>
+        ${ivHtml}
+      </div>
+    </div>`;
+}
+
+// ── PDF 리포트 ──
+function renderStPdf(){
+  const body=$('#stBody'); if(!body) return;
+  const s=db.students.find(s=>s.id===stSid)||db.students[0];
+  if(!s){body.innerHTML='<p style="color:var(--sub)">학생을 선택해 주세요</p>';return;}
+  const sub=$('#stSub'); if(sub) sub.textContent=s.name;
+  // exportPdf()는 현재 state.sid 기준으로 동작 — stSid로 맞추기
+  state.sid=stSid;
+  body.innerHTML=`
+    <div class="st-section-title">PDF 리포트</div>
+    <div style="background:#fff;border-radius:16px;border:1px solid var(--line);padding:28px;max-width:500px">
+      <div style="font-size:15px;font-weight:700;color:var(--ink);margin-bottom:8px">${s.name} 리포트</div>
+      <div style="font-size:13px;color:var(--sub);line-height:1.6;margin-bottom:20px">
+        최근 7일 행동 데이터, 기능 가설, 산점도, MAS 척도, 면담 기록, 관찰 메모를 포함한 PDF를 생성해요.<br>
+        생성 후 브라우저 인쇄 기능으로 PDF 저장하세요.
+      </div>
+      <button class="st-pdf-btn" onclick="exportPdf()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V10z"/><polyline points="14 3 14 10 21 10"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="12" y2="17"/></svg>
+        PDF 리포트 생성
+      </button>
+    </div>`;
+}
+
+// ── 설정 ──
+function renderStSettings(){
+  const body=$('#stBody'); if(!body) return;
+  body.innerHTML=`
+    <div class="st-section-title">설정</div>
+    <div class="settings-panels">
+      <div class="settings-panel">
+        <div style="font-size:13px;font-weight:800;color:var(--ink);margin-bottom:14px">학생 명단</div>
+        ${(db.students||[]).map(s=>`
+          <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line2)">
+            <div style="width:32px;height:32px;border-radius:9px;background:${s.color};display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800">${s.name[0]}</div>
+            <div style="flex:1"><div style="font-size:13.5px;font-weight:700">${s.name}</div><div style="font-size:11.5px;color:var(--sub)">${s.sub||''}</div></div>
+          </div>`).join('')}
+        <div style="margin-top:14px;font-size:12px;color:var(--sub)">학생 추가/수정은 모바일 앱 설정 탭을 이용해 주세요.</div>
+      </div>
+      <div class="settings-panel">
+        <div style="font-size:13px;font-weight:800;color:var(--ink);margin-bottom:14px">행동 정의</div>
+        ${(db.behaviors||[]).map(b=>`
+          <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line2)">
+            <div style="width:10px;height:10px;border-radius:50%;background:${b.color};flex:none"></div>
+            <div style="flex:1;font-size:13px;font-weight:600">${b.name}</div>
+            <div style="font-size:11.5px;color:var(--sub)">${b.type==='freq'?'빈도':'시간'}</div>
+          </div>`).join('')}
+        <div style="margin-top:14px;font-size:12px;color:var(--sub)">행동 추가/수정은 모바일 앱 설정 탭을 이용해 주세요.</div>
+      </div>
+    </div>`;
+}
+
+// ── 동기화 UI (데스크톱) ──
+function updateStudioSync(){
+  const dot=$('#stDot'), txt=$('#stSync');
+  if(!dot||!txt) return;
+  const dirty=(db?.records||[]).filter(r=>r.dirty&&!r.deleted).length;
+  if(dirty>0){ dot.style.background='#E0972F'; txt.textContent=`올릴 기록 ${dirty}건`; }
+  else{ dot.style.background='#7fd9c4'; txt.textContent='동기화됨'; }
+}
+
+// ── 이벤트: 사이드바 학생 클릭 / 탭 클릭 ──
+document.addEventListener('click', e=>{
+  const ss=e.target.closest('[data-stsid]');
+  if(ss&&isDesktop()){
+    stSid=ss.dataset.stsid;
+    state.sid=stSid;
+    renderStudioSidebar();
+    switchStTab(stTab);
+    return;
+  }
+  const stab=e.target.closest('[data-stab]');
+  if(stab&&isDesktop()){
+    switchStTab(stab.dataset.stab);
+    return;
+  }
+});
+
+// 반응형: 화면 크기 바뀔 때 작업실 표시 전환
+window.addEventListener('resize', ()=>{
+  if(isDesktop()&&db) initStudio();
+});
 // ============ tabs ============
 function switchTab(t){
   state.tab=t;
