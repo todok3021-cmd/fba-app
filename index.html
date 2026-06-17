@@ -1592,6 +1592,87 @@ function persist(){
   }, 600);
 }
 
+async function deleteDocsInBatches(docs){
+  const list = docs.docs || [];
+  for(let i=0;i<list.length;i+=400){
+    const batch = fbStore.batch();
+    list.slice(i,i+400).forEach(doc => batch.delete(doc.ref));
+    await batch.commit();
+  }
+}
+
+async function deleteCollectionDocs(colRef){
+  const snap = await colRef.get();
+  await deleteDocsInBatches(snap);
+}
+
+async function resetCloudDataForCurrentUser(){
+  if(!fbUser) return;
+  clearTimeout(persistTimer);
+
+  if(unsubSync){ unsubSync(); unsubSync = null; }
+  Object.values(studentListeners).forEach(u => u());
+  Object.values(recordListeners).forEach(u => u());
+  if(settingsListener){ settingsListener(); settingsListener = null; }
+  studentListeners = {};
+  recordListeners = {};
+
+  // prototype7 cases 구조 정리
+  const caseSnap = await fbStore.collection('cases')
+    .where('memberUids', 'array-contains', fbUser.uid)
+    .get();
+  for(const doc of caseSnap.docs){
+    const data = doc.data();
+    if(data.ownerUid === fbUser.uid){
+      await deleteCollectionDocs(doc.ref.collection('records'));
+      await deleteCollectionDocs(doc.ref.collection('members'));
+      await doc.ref.delete();
+    }else{
+      await doc.ref.collection('members').doc(fbUser.uid).delete().catch(()=>{});
+      await doc.ref.update({
+        memberUids: firebase.firestore.FieldValue.arrayRemove(fbUser.uid)
+      }).catch(e => console.warn('공유 케이스 나가기 실패:', e.code || e));
+    }
+  }
+
+  // prototype6 students 구조가 남아 있으면 내가 소유한 학생만 함께 정리
+  const oldSnap = await fbStore.collection('students')
+    .where('members', 'array-contains', fbUser.uid)
+    .get()
+    .catch(()=>null);
+  if(oldSnap){
+    for(const doc of oldSnap.docs){
+      const data = doc.data();
+      if(data.ownerUid !== fbUser.uid) continue;
+      await deleteCollectionDocs(doc.ref.collection('records'));
+      await doc.ref.delete();
+    }
+  }
+}
+
+async function resetAllData(){
+  if(!fbUser){ toast('로그인 후 사용하세요'); return; }
+  if(!confirm('현재 계정의 관찰 데이터를 초기화할까요? 내가 만든 학생/기록은 서버에서도 삭제됩니다.')) return;
+  try{
+    updateSyncUI('초기화 중…');
+    await resetCloudDataForCurrentUser();
+    db=defaults();
+    const base=caseDefaults(), sid=ulid();
+    db.students=[{id:sid,name:'학생 1',color:'#0F6E6C',sub:'',ownerUid:fbUser.uid,memberUids:[fbUser.uid],members:[fbUser.uid],shareCode:null,shareCodeExpiresAt:null,...base}];
+    db.records=[];db.notes=[];db.interviews=[];db.masScores=[];
+    state.sid=sid;state.date=null;applyCaseToDb(db.students[0]);reindex();refreshAll();switchTab('record');
+    await saveStudent(db.students[0]);
+    startSync();
+    updateSyncUI();
+    toast('서버 데이터까지 초기화했어요');
+  }catch(e){
+    console.error('초기화 실패:', e);
+    updateSyncUI('err');
+    toast('초기화 실패: ' + (e.message || e.code || e));
+    startSync();
+  }
+}
+
 // ── 전체 데이터 로드 ──
 async function loadData(){
   if(!fbUser) return null;
@@ -4161,12 +4242,7 @@ document.addEventListener('click',e=>{
     else if(a==='close-time-edit')closeTimeEdit();
     else if(a==='save-time-edit')saveTimeEdit();
     else if(a==='reset-all'){
-  db=defaults();
-  const base=caseDefaults(), sid=ulid();
-  db.students=[{id:sid,name:'학생 1',color:'#0F6E6C',sub:'',ownerUid:fbUser?.uid||null,memberUids:fbUser?[fbUser.uid]:[],members:fbUser?[fbUser.uid]:[],shareCode:null,shareCodeExpiresAt:null,...base}];
-  db.records=[];db.notes=[];db.interviews=[];db.masScores=[];
-  state.sid=sid;state.date=null;applyCaseToDb(db.students[0]);reindex();persist();refreshAll();switchTab('record');
-  toast('초기 상태로 되돌렸어요');
+  resetAllData();
 }
     return;
   }
