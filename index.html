@@ -582,6 +582,77 @@
   .order-btn:hover{border-color:var(--primary);color:var(--primary);}
   .order-btn:disabled{opacity:.3;cursor:not-allowed;}
 
+  /* ── 간격형·지연형 버튼 (히어로 하단 행) ── */
+  .measure-row{display:flex;gap:8px;margin:8px 20px 4px;}
+  .meas-btn{flex:1;display:flex;align-items:center;gap:7px;
+    background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.25);
+    border-radius:13px;padding:10px 13px;cursor:pointer;color:#fff;
+    font-size:12.5px;font-weight:700;font-family:inherit;transition:.15s;}
+  .meas-btn:hover{background:rgba(255,255,255,.25);}
+  .meas-btn.active{background:rgba(255,255,255,.9);color:var(--ink);}
+  .meas-btn svg{width:15px;height:15px;stroke:currentColor;fill:none;
+    stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;flex:none;}
+  .meas-btn .mb-sub{font-size:10.5px;opacity:.75;margin-top:1px;font-weight:500;}
+
+  /* ── 간격 기록 진행 오버레이 ── */
+  #intervalOverlay{
+    position:absolute;inset:0;z-index:50;
+    background:linear-gradient(160deg,#0d4a48 0%,#082e2c 100%);
+    display:none;flex-direction:column;align-items:center;justify-content:center;
+    color:#fff;padding:28px;
+  }
+  #intervalOverlay.show{display:flex;}
+  .iv-progress-ring{position:relative;width:160px;height:160px;margin-bottom:24px;}
+  .iv-progress-ring svg{width:160px;height:160px;transform:rotate(-90deg);}
+  .iv-progress-ring .track{fill:none;stroke:rgba(255,255,255,.15);stroke-width:10;}
+  .iv-progress-ring .fill{fill:none;stroke:#7fd9c4;stroke-width:10;
+    stroke-linecap:round;stroke-dasharray:440;stroke-dashoffset:440;transition:stroke-dashoffset .5s linear;}
+  .iv-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+  .iv-timer{font-size:36px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums;}
+  .iv-interval-num{font-size:13px;opacity:.7;margin-top:2px;}
+  .iv-status{font-size:14px;font-weight:700;margin-bottom:20px;opacity:.85;}
+  .iv-ox-row{display:flex;gap:16px;margin-bottom:20px;}
+  .iv-ox-btn{width:80px;height:80px;border-radius:22px;border:none;cursor:pointer;
+    font-size:32px;font-weight:800;transition:.12s;font-family:inherit;}
+  .iv-ox-btn.o{background:#7fd9c4;color:#0d4a48;}
+  .iv-ox-btn.x{background:rgba(255,255,255,.15);color:rgba(255,255,255,.6);}
+  .iv-ox-btn:hover{transform:scale(1.06);}
+  .iv-result-row{display:flex;gap:12px;margin-bottom:8px;}
+  .iv-stat{text-align:center;}
+  .iv-stat b{font-size:22px;font-weight:800;display:block;}
+  .iv-stat span{font-size:11px;opacity:.65;}
+  .iv-stop-btn{padding:10px 24px;border-radius:12px;border:none;
+    background:rgba(255,255,255,.15);color:#fff;font-size:13px;font-weight:700;
+    cursor:pointer;font-family:inherit;margin-top:8px;}
+
+  /* ── 지연형 진행 표시 (히어로 위에 띠) ── */
+  #latencyBar{
+    display:none;background:#5B4A8A;color:#fff;
+    padding:10px 20px;font-size:13px;font-weight:700;
+    align-items:center;justify-content:space-between;gap:10px;flex:none;
+  }
+  #latencyBar.show{display:flex;}
+  .lb-timer{font-size:18px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.01em;}
+  .lb-cancel{border:none;background:rgba(255,255,255,.2);color:#fff;
+    padding:6px 13px;border-radius:9px;font-size:12px;font-weight:700;
+    cursor:pointer;font-family:inherit;}
+
+  /* ── 간격 기록 설정 시트 ── */
+  .interval-setup-field{margin-bottom:16px;}
+  .interval-setup-field label{display:block;font-size:12px;font-weight:700;
+    color:var(--sub);margin-bottom:6px;}
+  .interval-setup-field .num-row{display:flex;align-items:center;gap:10px;}
+  .interval-setup-field input[type=number]{
+    width:90px;border:1.5px solid var(--line);border-radius:11px;
+    padding:11px 13px;font-size:16px;font-family:inherit;
+    color:var(--ink);text-align:center;outline:none;}
+  .interval-setup-field input[type=number]:focus{border-color:var(--primary);}
+  .interval-setup-field .num-unit{font-size:13px;color:var(--sub);font-weight:600;}
+  .behavior-select{width:100%;border:1.5px solid var(--line);border-radius:11px;
+    padding:11px 13px;font-size:14px;font-family:inherit;color:var(--ink);
+    background:#fff;outline:none;}
+  .behavior-select:focus{border-color:var(--primary);}
+
 </style>
 <!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -727,7 +798,52 @@
             <div><div>관찰 노트</div><div class="nf-sub">면담 · 척도 · 메모</div></div>
             <span class="nf-badge" id="noteBadge">열기</span>
           </div>
+          <div class="measure-row">
+            <button class="meas-btn" id="btnInterval" data-action="open-interval-setup">
+              <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18"/></svg>
+              <div><div>간격 기록</div><div class="mb-sub">Interval</div></div>
+            </button>
+            <button class="meas-btn" id="btnLatency" data-action="start-latency">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 8 14"/></svg>
+              <div><div>선행 시작</div><div class="mb-sub">Latency</div></div>
+            </button>
+          </div>
         </div>
+
+        <!-- 지연형 진행 띠 -->
+        <div id="latencyBar">
+          <div>
+            <div style="font-size:11px;opacity:.75;margin-bottom:2px">지연시간 측정 중 — 행동 버튼을 눌러 종료</div>
+            <div class="lb-timer" id="latencyTimer">00:00</div>
+          </div>
+          <button class="lb-cancel" data-action="cancel-latency">취소</button>
+        </div>
+
+        <!-- 간격 기록 진행 오버레이 -->
+        <div id="intervalOverlay">
+          <div class="iv-progress-ring">
+            <svg viewBox="0 0 160 160">
+              <circle class="track" cx="80" cy="80" r="70"/>
+              <circle class="fill" id="ivRingFill" cx="80" cy="80" r="70"/>
+            </svg>
+            <div class="iv-center">
+              <div class="iv-timer" id="ivTimer">00</div>
+              <div class="iv-interval-num" id="ivIntervalNum">간격 1</div>
+            </div>
+          </div>
+          <div class="iv-status" id="ivStatus">관찰 중 — 간격 종료 시 O/X 입력</div>
+          <div class="iv-ox-row" id="ivOXRow" style="display:none">
+            <button class="iv-ox-btn o" data-action="iv-mark-o">O</button>
+            <button class="iv-ox-btn x" data-action="iv-mark-x">X</button>
+          </div>
+          <div class="iv-result-row" id="ivResultRow">
+            <div class="iv-stat"><b id="ivOCount">0</b><span>발생 간격</span></div>
+            <div class="iv-stat"><b id="ivXCount">0</b><span>미발생 간격</span></div>
+            <div class="iv-stat"><b id="ivPct">0%</b><span>발생률</span></div>
+          </div>
+          <button class="iv-stop-btn" data-action="stop-interval">관찰 종료</button>
+        </div>
+
         <div class="sect-label">행동 기록 <em>누르면 바로 저장됩니다</em></div>
         <div class="grid" id="behaviorGrid"></div>
       </div>
@@ -902,6 +1018,37 @@
         </div>
         <button class="btn-prim" style="width:100%;margin-top:20px;padding:14px;font-size:15px;border-radius:14px" data-action="save-time-edit">저장</button>
         <div style="height:16px"></div>
+      </div>
+    </div>
+
+    <!-- 간격 기록 설정 시트 -->
+    <div class="scrim" id="intervalSetupScrim" data-action="close-interval-setup"></div>
+    <div class="sheet" id="intervalSetupSheet">
+      <div class="grab"></div>
+      <div class="sheet-head">
+        <div class="stit"><b>간격 기록 설정</b><span>Interval Recording</span></div>
+        <button class="ghostbtn" data-action="close-interval-setup">취소</button>
+      </div>
+      <div style="padding:18px 20px 8px">
+        <div class="interval-setup-field">
+          <label>관찰 대상 행동</label>
+          <select class="behavior-select" id="ivBehavior"></select>
+        </div>
+        <div class="interval-setup-field">
+          <label>간격 시간</label>
+          <div class="num-row">
+            <input type="number" id="ivIntervalSec" value="10" min="5" max="120">
+            <span class="num-unit">초마다 O/X 입력</span>
+          </div>
+        </div>
+        <div class="interval-setup-field">
+          <label>총 관찰 시간</label>
+          <div class="num-row">
+            <input type="number" id="ivTotalMin" value="30" min="1" max="180">
+            <span class="num-unit">분</span>
+          </div>
+        </div>
+        <button class="btn-prim" style="width:100%;margin-top:8px;padding:13px;font-size:15px;border-radius:14px;margin-bottom:20px" data-action="start-interval">관찰 시작</button>
       </div>
     </div>
 
@@ -1425,9 +1572,10 @@ function tapBehavior(bid,btn,e){
       const sec=Math.round((Date.now()-state.timer.start)/1000);
       clearInterval(state.timer.iv);state.timer=null;
       const now=new Date().toISOString();
-      const rec={id:ulid(),sid:state.sid,bid,ts:new Date().toISOString(),dur:sec,a:[],c:[],note:'',
+      let rec={id:ulid(),sid:state.sid,bid,ts:new Date().toISOString(),dur:sec,a:[],c:[],note:'',
         observerId:OBSERVER_ID,deviceId:DEVICE_ID,env:state.currentEnv,
         updatedAt:now,deleted:false,dirty:true};
+      rec=captureLatency(rec); // 지연시간 자동 첨부
       Repository.putRecord(rec);renderGrid();paintStudent();openSheet(rec.id);
     }else{
       if(state.timer){clearInterval(state.timer.iv);}
@@ -1438,9 +1586,10 @@ function tapBehavior(bid,btn,e){
     return;
   }
   const now2=new Date().toISOString();
-  const rec={id:ulid(),sid:state.sid,bid,ts:now2,dur:null,a:[],c:[],note:'',
+  let rec={id:ulid(),sid:state.sid,bid,ts:now2,dur:null,a:[],c:[],note:'',
     observerId:OBSERVER_ID,deviceId:DEVICE_ID,env:state.currentEnv,
     updatedAt:now2,deleted:false,dirty:true};
+  rec=captureLatency(rec); // 지연시간 자동 첨부
   Repository.putRecord(rec);renderGrid();paintStudent();openSheet(rec.id);
 }
 
@@ -1531,7 +1680,9 @@ function renderTimeline(){
       <div class="tl-body">
         <div class="bh">${b.name}<span class="tag ${b.type}">${b.type==='freq'?'빈도':(r.dur?fmtDur(r.dur):'시간')}</span>${r.env==='home'?'<span class="env-badge home">🏠 가정</span>':''}</div>
         ${pills?`<div class="abc-line">${pills}</div>`:''}
-        ${r.note?`<div class="abc-line"><span class="abc-pill"><span class="k">메모</span>${r.note}</span></div>`:''}
+        ${r.intervalData?`<div class="abc-line"><span class="abc-pill" style="background:#eef6f5;color:#0F6E6C"><span class="k">간격</span>${r.intervalData.pct}% 발생 (${r.intervalData.marks.filter(m=>m==='O').length}/${r.intervalData.marks.length})</span></div>`:''}
+        ${r.latency?`<div class="abc-line"><span class="abc-pill" style="background:#f3eef9;color:#5B4A8A"><span class="k">지연</span>${r.latency}초</span></div>`:''}
+        ${r.note&&!r.intervalData?`<div class="abc-line"><span class="abc-pill"><span class="k">메모</span>${r.note}</span></div>`:''}
         ${incmp?`<button class="fillbtn" data-rec="${r.id}">＋ ABC 채우기</button>`:''}
       </div>
       ${incmp?'<div class="pulse-dot"></div>':''}
@@ -2792,6 +2943,161 @@ function setEnv(env){
 }
 
 
+
+// ═══════════════════════════════════════
+// 간격형 기록 (Interval Recording)
+// ═══════════════════════════════════════
+const iv = {
+  bid: null, intervalSec: 10, totalSec: 1800,
+  elapsed: 0, intervalElapsed: 0, currentInterval: 0,
+  marks: [], // 'O' or 'X' 배열
+  timerId: null, waitingMark: false
+};
+
+function openIntervalSetup(){
+  // 행동 선택 드롭다운 채우기
+  const sel=$('#ivBehavior'); if(!sel) return;
+  sel.innerHTML=db.behaviors.map(b=>`<option value="${b.id}">${b.name} (${b.type==='freq'?'빈도':'시간'})</option>`).join('');
+  $('#intervalSetupScrim').classList.add('show');
+  $('#intervalSetupSheet').classList.add('open');
+}
+function closeIntervalSetup(){
+  $('#intervalSetupScrim').classList.remove('show');
+  $('#intervalSetupSheet').classList.remove('open');
+}
+function startInterval(){
+  const bid=($('#ivBehavior')||{}).value;
+  const intervalSec=parseInt($('#ivIntervalSec').value)||10;
+  const totalMin=parseInt($('#ivTotalMin').value)||30;
+  if(!bid){toast('관찰 행동을 선택해 주세요');return;}
+  closeIntervalSetup();
+  iv.bid=bid; iv.intervalSec=intervalSec; iv.totalSec=totalMin*60;
+  iv.elapsed=0; iv.intervalElapsed=0; iv.currentInterval=0;
+  iv.marks=[]; iv.waitingMark=false;
+  // 오버레이 표시
+  const overlay=$('#intervalOverlay');
+  if(overlay) overlay.classList.add('show');
+  const btn=$('#btnInterval'); if(btn) btn.classList.add('active');
+  updateIvUI();
+  iv.timerId=setInterval(tickInterval, 1000);
+  toast(`간격 기록 시작 — ${intervalSec}초마다 O/X 입력`);
+}
+function tickInterval(){
+  if(iv.waitingMark) return; // O/X 대기 중엔 멈춤
+  iv.elapsed++;
+  iv.intervalElapsed++;
+  updateIvUI();
+  // 간격 종료
+  if(iv.intervalElapsed>=iv.intervalSec){
+    iv.intervalElapsed=0;
+    iv.currentInterval++;
+    iv.waitingMark=true;
+    showIvMark();
+    if(navigator.vibrate) navigator.vibrate([100,50,100]);
+  }
+  // 총 관찰 시간 종료
+  if(iv.elapsed>=iv.totalSec) stopInterval();
+}
+function showIvMark(){
+  const status=$('#ivStatus'), oxRow=$('#ivOXRow');
+  if(status) status.textContent=`간격 ${iv.currentInterval} — 이 간격에 행동이 있었나요?`;
+  if(oxRow) oxRow.style.display='flex';
+  // 링 색상 변경
+  const fill=$('#ivRingFill');
+  if(fill) fill.style.stroke='#E0972F';
+}
+function markInterval(mark){
+  iv.marks.push(mark);
+  iv.waitingMark=false;
+  const status=$('#ivStatus'), oxRow=$('#ivOXRow');
+  if(oxRow) oxRow.style.display='none';
+  if(status) status.textContent='관찰 중 — 간격 종료 시 O/X 입력';
+  const fill=$('#ivRingFill');
+  if(fill) fill.style.stroke='#7fd9c4';
+  updateIvUI();
+  // 총 시간 종료 체크
+  if(iv.elapsed>=iv.totalSec) stopInterval();
+}
+function updateIvUI(){
+  const remaining=iv.intervalSec-iv.intervalElapsed;
+  const timer=$('#ivTimer');
+  if(timer) timer.textContent=String(remaining).padStart(2,'0');
+  const intervalNum=$('#ivIntervalNum');
+  if(intervalNum) intervalNum.textContent=`간격 ${iv.currentInterval+1} / ${Math.ceil(iv.totalSec/iv.intervalSec)}`;
+  // 링 진행
+  const fill=$('#ivRingFill');
+  if(fill){
+    const pct=iv.intervalElapsed/iv.intervalSec;
+    const circumference=2*Math.PI*70;
+    fill.style.strokeDashoffset=circumference*(1-pct);
+  }
+  // 결과 카운트
+  const oCount=iv.marks.filter(m=>m==='O').length;
+  const xCount=iv.marks.filter(m=>m==='X').length;
+  const pct=iv.marks.length>0?Math.round(oCount/iv.marks.length*100):0;
+  const oc=$('#ivOCount'), xc=$('#ivXCount'), pc=$('#ivPct');
+  if(oc) oc.textContent=oCount;
+  if(xc) xc.textContent=xCount;
+  if(pc) pc.textContent=pct+'%';
+}
+function stopInterval(){
+  clearInterval(iv.timerId); iv.timerId=null;
+  // 결과를 기록으로 저장
+  const oCount=iv.marks.filter(m=>m==='O').length;
+  const pct=iv.marks.length>0?Math.round(oCount/iv.marks.length*100):0;
+  const now=new Date().toISOString();
+  const rec={
+    id:ulid(), sid:state.sid, bid:iv.bid,
+    ts:now, dur:iv.elapsed,
+    a:[], c:[], note:`간격기록: ${oCount}/${iv.marks.length}간격 발생 (${pct}%) — ${iv.intervalSec}초 간격`,
+    observerId:OBSERVER_ID, deviceId:DEVICE_ID, env:state.currentEnv,
+    updatedAt:now, deleted:false, dirty:true,
+    intervalData:{ intervalSec:iv.intervalSec, totalSec:iv.totalSec, marks:[...iv.marks], pct }
+  };
+  Repository.putRecord(rec);
+  // 오버레이 닫기
+  const overlay=$('#intervalOverlay');
+  if(overlay) overlay.classList.remove('show');
+  const btn=$('#btnInterval'); if(btn) btn.classList.remove('active');
+  paintStudent(); renderGrid();
+  const b=bMap[iv.bid]||{name:'?'};
+  toast(`간격 기록 완료 — ${b.name} ${pct}% 발생`);
+}
+
+// ═══════════════════════════════════════
+// 지연형 기록 (Latency Recording)
+// ═══════════════════════════════════════
+const lat = { start: null, timerId: null };
+
+function startLatency(){
+  if(lat.start){toast('이미 지연 측정 중이에요. 행동 버튼을 눌러 종료하세요.');return;}
+  lat.start=Date.now();
+  lat.timerId=setInterval(()=>{
+    const el=$('#latencyTimer'); if(!el) return;
+    const s=Math.round((Date.now()-lat.start)/1000);
+    el.textContent=`${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;
+  },500);
+  const bar=$('#latencyBar'); if(bar) bar.classList.add('show');
+  const btn=$('#btnLatency'); if(btn){btn.classList.add('active');btn.querySelector('div>div').textContent='측정 중…';}
+  toast('선행사건 발생 — 행동 버튼을 눌러 지연시간 기록');
+}
+function cancelLatency(){
+  clearInterval(lat.timerId); lat.timerId=null; lat.start=null;
+  const bar=$('#latencyBar'); if(bar) bar.classList.remove('show');
+  const btn=$('#btnLatency');
+  if(btn){btn.classList.remove('active');btn.querySelector('div>div').textContent='선행 시작';}
+}
+// 행동 기록 시 지연시간 자동 첨부
+function captureLatency(rec){
+  if(!lat.start) return rec;
+  const latSec=Math.round((Date.now()-lat.start)/1000);
+  rec.latency=latSec;
+  rec.note=rec.note?rec.note+` [지연 ${latSec}초]`:`지연시간 ${latSec}초`;
+  cancelLatency();
+  toast(`지연시간 <b>${latSec}초</b> 기록됐어요`);
+  return rec;
+}
+
 // ============ 행동 순서 편집 ============
 let orderTemp = []; // 편집 중 임시 순서
 
@@ -2905,6 +3211,14 @@ document.addEventListener('click',e=>{
     else if(a==='iv-editor-cancel')closeIvEditor();
     else if(a==='export-pdf')exportPdf();
     else if(a==='open-order')openOrderSheet();
+    else if(a==='open-interval-setup')openIntervalSetup();
+    else if(a==='close-interval-setup')closeIntervalSetup();
+    else if(a==='start-interval')startInterval();
+    else if(a==='stop-interval')stopInterval();
+    else if(a==='iv-mark-o')markInterval('O');
+    else if(a==='iv-mark-x')markInterval('X');
+    else if(a==='start-latency')startLatency();
+    else if(a==='cancel-latency')cancelLatency();
     else if(a==='st-add-chip-a'){const i=$('#stAddA');if(i&&i.value.trim()){db.aChips.push({id:uid('ch'),text:i.value.trim(),fav:false});i.value='';persist();renderSettings();if(isDesktop())renderStSettings();}}
     else if(a==='st-add-chip-c'){const i=$('#stAddC');if(i&&i.value.trim()){db.cChips.push({id:uid('ch'),text:i.value.trim(),fav:false});i.value='';persist();renderSettings();if(isDesktop())renderStSettings();}}
     else if(a==='close-order')closeOrderSheet();
