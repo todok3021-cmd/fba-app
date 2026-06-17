@@ -1408,24 +1408,45 @@ const FS = {
 // ── 설정 저장/로드 (행동·칩·MAS 등 개인 설정) ──
 async function saveSettings(){
   if(!fbUser) return;
+  const settingsData = {
+    behaviors:   db.behaviors   || [],
+    aChips:      db.aChips      || [],
+    cChips:      db.cChips      || [],
+    masItems:    db.masItems    || [],
+    ivQuestions: db.ivQuestions || [],
+    _updatedAt:  firebase.firestore.FieldValue.serverTimestamp(),
+  };
+  // 방법1: globalSettings 시도
   try{
-    await FS.settings(fbUser.uid).set({
-      behaviors:   db.behaviors   || [],
-      aChips:      db.aChips      || [],
-      cChips:      db.cChips      || [],
-      masItems:    db.masItems    || [],
-      ivQuestions: db.ivQuestions || [],
-      _updatedAt:  firebase.firestore.FieldValue.serverTimestamp(),
-    });
-  }catch(e){ console.warn('설정 저장 실패:', e); }
+    await FS.settings(fbUser.uid).set(settingsData);
+    return;
+  }catch(e){ console.warn('globalSettings 저장 실패, 대안 사용:', e.code); }
+  // 방법2: 첫 번째 내 학생 문서에 설정 병합
+  try{
+    const myStudent = (db.students||[]).find(s=>s.ownerUid===fbUser.uid);
+    if(myStudent){
+      await FS.student(myStudent.id).update({_settings: settingsData});
+    }
+  }catch(e){ console.warn('설정 대안 저장도 실패:', e.code); }
 }
 
 async function loadSettings(){
   if(!fbUser) return null;
+  // 방법1: globalSettings
   try{
     const snap = await FS.settings(fbUser.uid).get();
-    return snap.exists ? snap.data() : null;
-  }catch(e){ return null; }
+    if(snap.exists) return snap.data();
+  }catch(e){ console.warn('globalSettings 읽기 실패:', e.code); }
+  // 방법2: 학생 문서의 _settings 필드
+  try{
+    const myStudents = await fbStore.collection('students')
+      .where('ownerUid','==',fbUser.uid).limit(1).get();
+    if(!myStudents.empty){
+      const data = myStudents.docs[0].data();
+      if(data._settings) return data._settings;
+    }
+  }catch(e){ console.warn('설정 대안 읽기 실패:', e.code); }
+  return null;
 }
 
 // ── 학생 문서 저장 ──
@@ -1578,16 +1599,29 @@ async function migrateFromUserData(){
       }
     }
 
-    // 설정 저장
+    // 설정 저장 (실패해도 마이그레이션 계속)
     console.log('[마이그레이션] 설정 저장...');
-    await FS.settings(fbUser.uid).set({
-      behaviors:   data.behaviors   || [],
-      aChips:      data.aChips      || [],
-      cChips:      data.cChips      || [],
-      masItems:    data.masItems    || [],
-      ivQuestions: data.ivQuestions || [],
-      _updatedAt:  firebase.firestore.FieldValue.serverTimestamp(),
-    });
+    try{
+      await FS.settings(fbUser.uid).set({
+        behaviors:   data.behaviors   || [],
+        aChips:      data.aChips      || [],
+        cChips:      data.cChips      || [],
+        masItems:    data.masItems    || [],
+        ivQuestions: data.ivQuestions || [],
+        _updatedAt:  firebase.firestore.FieldValue.serverTimestamp(),
+      });
+    }catch(e){
+      console.warn('[마이그레이션] 설정 저장 실패(무시):', e.code);
+      // 학생 문서에 설정 병합 시도
+      if(students.length>0){
+        try{
+          await FS.student(students[0].id).update({_settings:{
+            behaviors:data.behaviors||[], aChips:data.aChips||[], cChips:data.cChips||[],
+            masItems:data.masItems||[], ivQuestions:data.ivQuestions||[]
+          }});
+        }catch(e2){}
+      }
+    }
 
     // 완료 플래그
     await fbStore.collection('userData').doc(fbUser.uid).update({_migratedV2: true});
