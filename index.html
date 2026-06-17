@@ -1535,14 +1535,8 @@ async function saveStudent(s){
   try{
     const payload = buildCasePayload(s);
     if(s.ownerUid && s.ownerUid !== fbUser.uid){
-      // 참가자는 케이스 설정을 덮어쓰지 않고, 내 membership 문서만 보강한다.
-      await FS.member(s.id, fbUser.uid).set({
-        uid: fbUser.uid,
-        displayName: fbUser.displayName || fbUser.email || '관찰자',
-        email: fbUser.email || '',
-        role: 'observer',
-        joinedAt: firebase.firestore.FieldValue.serverTimestamp(),
-      }, {merge:true});
+      // 참가자는 케이스 설정/멤버 정보를 반복 저장하지 않는다.
+      // 멤버 문서는 joinByCode()에서 한 번 생성되며, 초대 만료 후 반복 저장하면 규칙에 막힌다.
       return;
     }
     await FS.student(s.id).set(payload, {merge: true});
