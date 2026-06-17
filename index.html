@@ -312,9 +312,65 @@
   .time-edit-dur input:focus{border-color:var(--primary);}
   .time-edit-dur span{font-size:13px;color:var(--sub);font-weight:600;}
 
+  /* ── 로그인 화면 ── */
+  #authWall{position:fixed;inset:0;z-index:9999;background:linear-gradient(160deg,#1a3035 0%,#0d1e22 100%);display:flex;align-items:center;justify-content:center;padding:24px;}
+  #authWall.hidden{display:none;}
+  .auth-card{background:#fff;border-radius:24px;padding:32px 26px 28px;width:100%;max-width:360px;box-shadow:0 40px 80px rgba(0,0,0,.5);}
+  .auth-logo{width:48px;height:48px;background:var(--primary);border-radius:14px;display:flex;align-items:center;justify-content:center;margin-bottom:18px;}
+  .auth-logo svg{width:26px;height:26px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+  .auth-title{font-size:21px;font-weight:800;color:var(--ink);margin-bottom:4px;letter-spacing:-.02em;}
+  .auth-sub{font-size:13px;color:var(--sub);margin-bottom:22px;}
+  .auth-tabs{display:flex;gap:4px;background:#f2efe7;border-radius:11px;padding:4px;margin-bottom:20px;}
+  .auth-tab{flex:1;padding:8px;font-size:13px;font-weight:700;border:none;border-radius:8px;background:none;color:var(--sub);cursor:pointer;font-family:inherit;transition:.15s;}
+  .auth-tab.on{background:#fff;color:var(--primary);box-shadow:0 1px 4px rgba(0,0,0,.1);}
+  .auth-field{margin-bottom:13px;}
+  .auth-field label{display:block;font-size:12px;font-weight:700;color:var(--sub);margin-bottom:5px;}
+  .auth-field input{width:100%;border:1.5px solid var(--line);border-radius:11px;padding:11px 14px;font-size:14px;font-family:inherit;color:var(--ink);background:#fff;outline:none;transition:border-color .15s;}
+  .auth-field input:focus{border-color:var(--primary);}
+  .auth-err{font-size:12px;color:#E2603F;min-height:18px;margin:-6px 0 10px;}
+  .auth-submit{width:100%;padding:13px;background:var(--primary);color:#fff;border:none;border-radius:13px;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;transition:background .15s;}
+  .auth-submit:hover{background:var(--primary-press);}
+  .auth-submit:disabled{opacity:.6;cursor:not-allowed;}
+  .auth-loading{text-align:center;padding:20px;color:var(--sub);font-size:14px;}
+
 </style>
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 </head>
 <body>
+
+  <!-- 로그인 화면 -->
+  <div id="authWall">
+    <div class="auth-card">
+      <div class="auth-logo">
+        <svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      </div>
+      <div class="auth-title">FBA 기록·분석</div>
+      <div class="auth-sub">특수교육 현장용 기능평가 앱</div>
+      <div class="auth-tabs">
+        <button class="auth-tab on" id="tabLogin" onclick="showAuthTab('login')">로그인</button>
+        <button class="auth-tab" id="tabSignup" onclick="showAuthTab('signup')">회원가입</button>
+      </div>
+      <!-- 로그인 -->
+      <div id="formLogin">
+        <div class="auth-field"><label>이메일</label><input id="liEmail" type="email" placeholder="teacher@school.kr" autocomplete="email"></div>
+        <div class="auth-field"><label>비밀번호</label><input id="liPw" type="password" placeholder="비밀번호 입력" autocomplete="current-password"></div>
+        <div class="auth-err" id="liErr"></div>
+        <button class="auth-submit" id="liBtn" onclick="doLogin()">로그인</button>
+      </div>
+      <!-- 회원가입 -->
+      <div id="formSignup" style="display:none">
+        <div class="auth-field"><label>이름</label><input id="suName" type="text" placeholder="홍길동" maxlength="10"></div>
+        <div class="auth-field"><label>이메일</label><input id="suEmail" type="email" placeholder="teacher@school.kr" autocomplete="email"></div>
+        <div class="auth-field"><label>비밀번호 (6자 이상)</label><input id="suPw" type="password" placeholder="비밀번호 입력" autocomplete="new-password"></div>
+        <div class="auth-err" id="suErr"></div>
+        <button class="auth-submit" id="suBtn" onclick="doSignup()">가입하기</button>
+      </div>
+    </div>
+  </div>
+
 <div class="wrap">
   <div class="phone">
     <div class="statusbar" id="statusbar">
@@ -408,6 +464,14 @@
             </div>
             <div class="rmeta"><b>면담 질문 편집 / 추가</b><span id="ivManagerSub">질문 8개</span></div>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9aa6aa" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          </div>
+
+          <div class="gh" style="padding-top:22px"><span>계정</span></div>
+          <div class="row" style="cursor:pointer" data-action="do-signout">
+            <div class="rdisc" style="background:#E2603F">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            </div>
+            <div class="rmeta"><b id="settingUserName">로그인 중…</b><span id="settingUserEmail"></span></div>
           </div>
 
           <div class="gh" style="padding-top:22px"><span>데이터</span></div>
@@ -680,58 +744,190 @@ function seed(db){
   db.records=recs;
 }
 
-// ============ persistence — IndexedDB (P1) ============
-// Repository 인터페이스는 그대로 — 구현만 localStorage→IndexedDB로 교체
-// [TODO: v1.1 Firebase 동기화 시 이 계층만 교체]
-const DB_NAME='fba_app', DB_VER=2, STORE='data', LS_FALLBACK='fba_app_v1';
-let db=null, idb=null, saveT=null;
+// ============ Firebase 설정 ============
+const FB_CONFIG={
+  apiKey:"AIzaSyBwAk7XmIS9VTAeUSyFBjlQmGbmrihQfm0",
+  authDomain:"fba-app-c0280.firebaseapp.com",
+  projectId:"fba-app-c0280",
+  storageBucket:"fba-app-c0280.firebasestorage.app",
+  messagingSenderId:"897510255051",
+  appId:"1:897510255051:web:14858a779e0db90be9ae4e"
+};
+firebase.initializeApp(FB_CONFIG);
+const fbAuth = firebase.auth();
+const fbStore = firebase.firestore();
+// 오프라인 캐시 (IndexedDB 기반 — Firebase가 자동 관리)
+fbStore.enablePersistence({synchronizeTabs:true}).catch(()=>{});
 
-function openIDB(){
-  return new Promise((resolve,reject)=>{
-    const req=indexedDB.open(DB_NAME,DB_VER);
-    req.onupgradeneeded=e=>{const d=e.target.result;if(!d.objectStoreNames.contains(STORE))d.createObjectStore(STORE);};
-    req.onsuccess=e=>resolve(e.target.result);
-    req.onerror=()=>reject(req.error);
-  });
+let db=null, fbUser=null, saveT=null, unsubSync=null;
+
+// ── 인증 UI 헬퍼 ──
+function showAuthTab(tab){
+  document.getElementById('tabLogin').classList.toggle('on', tab==='login');
+  document.getElementById('tabSignup').classList.toggle('on', tab==='signup');
+  document.getElementById('formLogin').style.display  = tab==='login'  ? '' : 'none';
+  document.getElementById('formSignup').style.display = tab==='signup' ? '' : 'none';
 }
-function idbGet(key){
-  return new Promise(resolve=>{
-    const tx=idb.transaction(STORE,'readonly');
-    const req=tx.objectStore(STORE).get(key);
-    req.onsuccess=()=>resolve(req.result||null);
-    req.onerror=()=>resolve(null);
-  });
+function authErr(id,msg){document.getElementById(id).textContent=msg;}
+function authBtnState(id,loading,text){
+  const b=document.getElementById(id); b.disabled=loading; b.textContent=loading?'잠시만요…':text;
 }
-function idbPut(key,val){
-  return new Promise(resolve=>{
-    const tx=idb.transaction(STORE,'readwrite');
-    tx.objectStore(STORE).put(val,key);
-    tx.oncomplete=resolve; tx.onerror=()=>resolve();
-  });
+function errMsg(code){
+  return {
+    'auth/user-not-found':'등록되지 않은 이메일이에요',
+    'auth/wrong-password':'비밀번호가 틀렸어요',
+    'auth/invalid-credential':'이메일 또는 비밀번호가 올바르지 않아요',
+    'auth/email-already-in-use':'이미 사용 중인 이메일이에요',
+    'auth/weak-password':'비밀번호는 6자 이상이어야 해요',
+    'auth/invalid-email':'이메일 형식이 올바르지 않아요',
+    'auth/too-many-requests':'잠시 후 다시 시도해 주세요',
+  }[code]||'오류가 발생했어요 ('+code+')';
 }
-async function loadData(){
+
+// ── 로그인 ──
+async function doLogin(){
+  const email=document.getElementById('liEmail').value.trim();
+  const pw=document.getElementById('liPw').value;
+  authErr('liErr',''); authBtnState('liBtn',true,'로그인');
+  try{ await fbAuth.signInWithEmailAndPassword(email,pw); }
+  catch(e){ authErr('liErr',errMsg(e.code)); authBtnState('liBtn',false,'로그인'); }
+}
+
+// ── 회원가입 ──
+async function doSignup(){
+  const name=document.getElementById('suName').value.trim();
+  const email=document.getElementById('suEmail').value.trim();
+  const pw=document.getElementById('suPw').value;
+  if(!name){authErr('suErr','이름을 입력해 주세요');return;}
+  authErr('suErr',''); authBtnState('suBtn',true,'가입하기');
   try{
-    idb=await openIDB();
-    const saved=await idbGet('db');
-    if(saved) return saved;
-    // localStorage 마이그레이션
-    const ls=localStorage.getItem(LS_FALLBACK);
-    if(ls){ const p=JSON.parse(ls); await idbPut('db',p); localStorage.removeItem(LS_FALLBACK); return p; }
+    const cred=await fbAuth.createUserWithEmailAndPassword(email,pw);
+    await cred.user.updateProfile({displayName:name});
+    await fbStore.collection('users').doc(cred.user.uid).set({name,email,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+  }catch(e){ authErr('suErr',errMsg(e.code)); authBtnState('suBtn',false,'가입하기'); }
+}
+
+// ── 로그아웃 ──
+async function doSignout(){
+  if(!confirm('로그아웃 하시겠어요?')) return;
+  if(unsubSync){unsubSync();unsubSync=null;}
+  await fbAuth.signOut();
+}
+
+// ── Firestore 문서 경로 ──
+function userDocRef(){ return fbStore.collection('userData').doc(fbUser.uid); }
+
+// ── Firestore에서 데이터 로드 ──
+async function loadData(){
+  // Firebase Auth 상태 확인은 onAuthStateChanged에서 처리
+  // 여기서는 Firestore 데이터만 로드
+  try{
+    const snap=await userDocRef().get();
+    if(snap.exists) return snap.data();
     return null;
   }catch(e){
-    console.warn('IndexedDB 불가, localStorage 폴백:', e);
-    try{ const r=localStorage.getItem(LS_FALLBACK); return r?JSON.parse(r):null; }catch(e2){ return null; }
+    // 오프라인 — Firebase 캐시에서 자동 반환
+    console.warn('Firestore 로드 오류:', e);
+    return null;
   }
 }
+
+// ── Firestore 저장 (디바운스) ──
 function persist(){
   clearTimeout(saveT);
   saveT=setTimeout(async()=>{
+    if(!fbUser) return;
     try{
-      if(idb) await idbPut('db',db);
-      else localStorage.setItem(LS_FALLBACK,JSON.stringify(db));
+      await userDocRef().set({
+        ...db,
+        _uid: fbUser.uid,
+        _updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
       updateSyncUI();
-    }catch(e){ console.warn('저장 실패',e); }
-  },350);
+    }catch(e){
+      console.warn('저장 실패:', e);
+      updateSyncUI('err');
+    }
+  },600);
+}
+
+// ── 실시간 동기화 리스너 (다교사 공유) ──
+function startSync(){
+  if(unsubSync){unsubSync();unsubSync=null;}
+  unsubSync=userDocRef().onSnapshot(snap=>{
+    if(!snap.exists||!snap.data()) return;
+    const remote=snap.data();
+    // 내가 저장한 게 아닌 경우만 병합 (다른 기기/교사)
+    if(remote._uid===fbUser.uid && remote._updatedAt?.toMillis?.()>(Date.now()-2000)) return;
+    mergeRemote(remote);
+  }, ()=>updateSyncUI('err'));
+}
+
+// ── 원격 데이터 병합 ──
+function mergeRemote(remote){
+  if(!remote.records) return;
+  const localIds=new Set((db.records||[]).map(r=>r.id));
+  let changed=false;
+  remote.records.forEach(r=>{if(!localIds.has(r.id)){db.records.push(r);changed=true;}});
+  ['students','behaviors','aChips','cChips','masItems','ivQuestions','notes','interviews','masScores']
+    .forEach(k=>{if(remote[k]) db[k]=remote[k];});
+  if(changed){reindex();refreshAll();toast('다른 기기의 기록이 동기화됐어요');}
+}
+
+// ── Auth 상태 감지 — 앱 진입점 ──
+fbAuth.onAuthStateChanged(async user=>{
+  const wall=document.getElementById('authWall');
+  if(!user){
+    fbUser=null;
+    if(wall) wall.classList.remove('hidden');
+    // 버튼 상태 복원
+    authBtnState('liBtn',false,'로그인');
+    authBtnState('suBtn',false,'가입하기');
+    return;
+  }
+  fbUser=user;
+  if(wall) wall.classList.add('hidden');
+  // 데이터 로드 후 앱 시작
+  await initApp();
+  startSync();
+});
+
+async function initApp(){
+  const saved = await loadData();
+  if(saved){
+    db = saved;
+    if(!db.notes)       db.notes=[];
+    if(!db.interviews)  db.interviews=[];
+    if(!db.masScores)   db.masScores=[];
+    if(!db.masItems)    db.masItems=MAS_DEFAULTS.map(m=>({...m}));
+    if(!db.ivQuestions) db.ivQuestions=defaultIvQuestions();
+    if(!db.records)     db.records=[];
+    db.records=db.records.map(r=>({
+      observerId:r.observerId||OBSERVER_ID,
+      deviceId:r.deviceId||DEVICE_ID,
+      env:r.env||'school',
+      updatedAt:r.updatedAt||r.ts,
+      deleted:r.deleted||false,
+      dirty:r.dirty||false,
+      ...r,
+    }));
+  } else {
+    db=defaults();
+    seed(db);
+    persist();
+  }
+  if(!db.students.some(s=>s.id===state.sid))
+    state.sid=db.students[0]?.id||'';
+  reindex();
+  paintStudent();
+  renderSwitcher();
+  renderGrid();
+  updateNoteBadge();
+  updateSyncUI();
+  // 설정 탭 사용자 정보
+  const un=$('#settingUserName'), ue=$('#settingUserEmail');
+  if(un) un.textContent=(fbUser?.displayName||fbUser?.email||'사용자')+' · 로그아웃';
+  if(ue) ue.textContent=fbUser?.email||'';
 }
 
 // ============ state ============
@@ -1728,22 +1924,23 @@ ${memoHtml}
 
 // 역할 구분 제거됨 (v1.1에서 Firebase 권한으로 대체 예정)
 
-// ============ P1: 동기화 상태 UI ============
+// ============ 동기화 상태 UI ============
 let lastSavedAt=null;
-function updateSyncUI(){
-  lastSavedAt=Date.now();
+function updateSyncUI(status){
   const dot=$('#sbDot'), txt=$('#sbText');
   if(!dot||!txt) return;
-  // dirty 기록 수 계산
+  if(status==='err'){
+    dot.className='sb-dot err'; txt.textContent='저장 실패'; return;
+  }
+  if(!fbUser){ dot.className='sb-dot off'; txt.textContent='오프라인'; return; }
+  lastSavedAt=Date.now();
   const dirty=(db?.records||[]).filter(r=>r.dirty&&!r.deleted).length;
   if(dirty>0){
     dot.className='sb-dot pending';
     txt.textContent=`올릴 기록 ${dirty}건`;
   } else {
-    dot.className='sb-dot';
-    txt.textContent='저장됨';
-    // 3초 후 시간 표시로 전환
-    setTimeout(()=>{ if(txt) txt.textContent=relTime(lastSavedAt); },3000);
+    dot.className='sb-dot'; txt.textContent='동기화됨';
+    setTimeout(()=>{ if(txt&&txt.textContent==='동기화됨') txt.textContent=relTime(lastSavedAt); },3000);
   }
 }
 function relTime(ts){
@@ -1753,8 +1950,7 @@ function relTime(ts){
   if(s<60) return `${s}초 전 저장`;
   return `${Math.round(s/60)}분 전 저장`;
 }
-// 주기적으로 "N분 전" 업데이트
-setInterval(()=>{ if(lastSavedAt){ const t=$('#sbText'); if(t&&t.textContent.includes('저장됨')||t?.textContent.includes('전 저장')) t.textContent=relTime(lastSavedAt); } },30000);
+setInterval(()=>{ if(lastSavedAt&&$('#sbText')?.textContent?.includes('전 저장')) $('#sbText').textContent=relTime(lastSavedAt); },30000);
 
 
 // ============ 시간 수정 (검토 탭) ============
@@ -1891,6 +2087,7 @@ document.addEventListener('click',e=>{
     else if(a==='iv-editor-del')delIvEditor();
     else if(a==='iv-editor-cancel')closeIvEditor();
     else if(a==='export-pdf')exportPdf();
+    else if(a==='do-signout')doSignout();
     else if(a==='close-time-edit')closeTimeEdit();
     else if(a==='save-time-edit')saveTimeEdit();
     else if(a==='reset-all'){
@@ -1914,41 +2111,10 @@ document.addEventListener('keydown',e=>{
 });
 
 // ============ init ============
-// init은 IndexedDB가 비동기라 async로
-(async function init(){
-  const saved = await loadData();
-  if(saved){
-    db = saved;
-    if(!db.notes)       db.notes=[];
-    if(!db.interviews)  db.interviews=[];
-    if(!db.masScores)   db.masScores=[];
-    if(!db.masItems)    db.masItems=MAS_DEFAULTS.map(m=>({...m}));
-    if(!db.ivQuestions) db.ivQuestions=defaultIvQuestions();
-    if(!db.records)     db.records=[];
-    // P0 마이그레이션 — 기존 기록에 새 필드 채우기
-    db.records=db.records.map(r=>({
-      observerId: r.observerId||OBSERVER_ID,
-      deviceId:   r.deviceId||DEVICE_ID,
-      env:        r.env||'school',
-      updatedAt:  r.updatedAt||r.ts,
-      deleted:    r.deleted||false,
-      dirty:      r.dirty||false,
-      ...r,
-    }));
-  } else {
-    db = defaults();
-    seed(db);
-    persist();
-  }
-  if(!db.students.some(s=>s.id===state.sid))
-    state.sid = db.students[0]?.id || '';
-  reindex();
-  paintStudent();
-  renderSwitcher();
-  renderGrid();
-  updateNoteBadge();
-  updateSyncUI();
-})();
+// initApp은 Firebase onAuthStateChanged에서 호출됨
+// (전역 init 제거 — 로그인 후 initApp이 실행됨)
+// 앱 시작 시 시계만 초기화
+(function(){ })(); // 플레이스홀더
 
 // 모바일 브라우저 주소창 높이 대응 — 실제 가용 높이를 CSS 변수로 주입
 function setVh(){
