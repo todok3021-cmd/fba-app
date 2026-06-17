@@ -1082,7 +1082,7 @@
       </div>
       <div style="padding:0 0 8px">
         <div class="join-input-row">
-          <input id="joinCodeInput" placeholder="예: FBA-AB2C" maxlength="8"
+          <input id="joinCodeInput" placeholder="예: FBA-AB2C9K" maxlength="10"
             oninput="this.value=this.value.toUpperCase();previewJoinCode(this.value)">
           <button class="btn-prim" style="flex:none;padding:11px 16px;border-radius:12px;font-size:13px" data-action="do-join">참가</button>
         </div>
@@ -1405,6 +1405,23 @@ const FS = {
   code:     code => fbStore.collection('shareCodes').doc(code),
 };
 
+function normalizeShareCode(input){
+  return String(input || '').trim().toUpperCase().replace(/[^A-Z0-9-]/g, '');
+}
+
+function shareCodeExpiry(data){
+  if(!data) return null;
+  if(data.expiresAt?.toDate) return data.expiresAt.toDate();
+  if(data._expiresAt) return new Date(data._expiresAt);
+  return null;
+}
+
+function validShareCodeData(data, sid){
+  if(!data || data.studentId !== sid) return false;
+  const exp = shareCodeExpiry(data);
+  return !!exp && exp > new Date();
+}
+
 // ── 설정 저장/로드 (행동·칩·MAS 등 개인 설정) ──
 async function saveSettings(){
   if(!fbUser) return;
@@ -1452,6 +1469,8 @@ async function loadSettings(){
 // ── 학생 문서 저장 ──
 async function saveStudent(s){
   if(!fbUser) return;
+  // 공유로 참가한 학생은 기록만 추가하고, 학생 기본 정보는 소유자만 저장한다.
+  if(s.ownerUid && s.ownerUid !== fbUser.uid) return;
   try{
     await FS.student(s.id).set({
       name:          s.name,
@@ -1707,22 +1726,33 @@ function startRecordListener(sid){
 // ── 공유 코드 생성 (제한시간 24시간 + 랜덤) ──
 function genShareCode(){
   const CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  // 타임스탬프 기반 앞 2자 + 랜덤 2자 (총 4자)
-  const ts = Date.now().toString(36).toUpperCase().slice(-2);
   let rand = '';
-  for(let i=0;i<2;i++) rand += CHARS[Math.floor(Math.random()*CHARS.length)];
-  return 'FBA-' + ts + rand;
+  for(let i=0;i<6;i++) rand += CHARS[Math.floor(Math.random()*CHARS.length)];
+  return 'FBA-' + rand;
 }
 
 async function createShareCode(sid){
   if(!fbUser) return null;
   const s = db.students.find(s => s.id === sid);
   if(!s) return null;
+  if(s.ownerUid && s.ownerUid !== fbUser.uid){
+    toast('공유 코드는 학생을 만든 계정만 생성할 수 있어요');
+    return null;
+  }
 
   // 기존 코드가 아직 유효하면 반환
   if(s.shareCode && s.shareCodeExpiresAt){
     const exp = s.shareCodeExpiresAt.toDate ? s.shareCodeExpiresAt.toDate() : new Date(s.shareCodeExpiresAt);
-    if(exp > new Date()) return {code: s.shareCode, expiresAt: exp};
+    if(exp > new Date()){
+      try{
+        const codeSnap = await FS.code(s.shareCode).get();
+        if(codeSnap.exists && validShareCodeData(codeSnap.data(), sid)){
+          return {code: s.shareCode, expiresAt: shareCodeExpiry(codeSnap.data())};
+        }
+      }catch(e){
+        console.warn('기존 공유 코드 확인 실패:', e.code || e);
+      }
+    }
   }
 
   // 새 코드 생성 (중복 확인)
@@ -1740,7 +1770,7 @@ async function createShareCode(sid){
     studentId:  sid,
     ownerUid:   fbUser.uid,
     studentName: s.name,
-    expiresAt:  firebase.firestore.FieldValue.serverTimestamp(),
+    expiresAt:  firebase.firestore.Timestamp.fromDate(expiresAt),
     _expiresAt: expiresAt.toISOString(),
     createdAt:  firebase.firestore.FieldValue.serverTimestamp(),
   });
@@ -1756,28 +1786,33 @@ async function createShareCode(sid){
 // ── 공유 코드로 참가 ──
 async function joinByCode(inputCode){
   if(!fbUser){ toast('로그인이 필요해요'); return false; }
-  const code = inputCode.trim().toUpperCase();
+  const code = normalizeShareCode(inputCode);
+  if(code.length < 7){ toast('공유 코드를 입력해 주세요'); return false; }
   try{
     const codeSnap = await FS.code(code).get();
     if(!codeSnap.exists){ toast('유효하지 않은 코드예요'); return false; }
 
     const codeData = codeSnap.data();
     // 만료 확인
-    if(codeData._expiresAt && new Date(codeData._expiresAt) < new Date()){
+    const exp = shareCodeExpiry(codeData);
+    if(!exp || exp < new Date()){
       toast('만료된 코드예요. 새 코드를 받아주세요');
       return false;
     }
 
     const sid = codeData.studentId;
-    // 이미 member인지 확인
-    const studentSnap = await FS.student(sid).get();
-    if(!studentSnap.exists){ toast('학생 정보를 찾을 수 없어요'); return false; }
-    const studentData = studentSnap.data();
-    if(studentData.members?.includes(fbUser.uid)){
-      toast('이미 참가 중인 학생이에요'); return false;
+
+    // 이미 참가한 사용자는 학생 문서를 읽을 수 있다. 아직 참가 전이면 읽기 권한이 없을 수 있어 무시한다.
+    try{
+      const studentSnap = await FS.student(sid).get();
+      if(studentSnap.exists && studentSnap.data().members?.includes(fbUser.uid)){
+        toast('이미 참가 중인 학생이에요'); return true;
+      }
+    }catch(e){
+      if(e.code !== 'permission-denied') throw e;
     }
 
-    // members에 추가
+    // 참가 전 사용자가 보안 규칙을 통과하도록 members만 최소 변경한다.
     await FS.student(sid).update({
       members: firebase.firestore.FieldValue.arrayUnion(fbUser.uid)
     });
@@ -1795,7 +1830,7 @@ async function joinByCode(inputCode){
 // ── 공유 코드 미리보기 ──
 let joinPreviewTimer = null;
 async function previewJoinCode(val){
-  const clean = val.replace(/[^A-Z0-9-]/g,'');
+  const clean = normalizeShareCode(val);
   const preview = document.getElementById('joinPreview');
   if(clean.length < 7){ if(preview) preview.classList.remove('show'); return; }
   clearTimeout(joinPreviewTimer);
@@ -1805,9 +1840,10 @@ async function previewJoinCode(val){
       if(!preview) return;
       if(snap.exists){
         const data = snap.data();
-        const expired = data._expiresAt && new Date(data._expiresAt) < new Date();
+        const exp = shareCodeExpiry(data);
+        const expired = !exp || exp < new Date();
         document.getElementById('joinPreviewName').textContent = expired ? '만료된 코드예요' : data.studentName;
-        const expStr = data._expiresAt ? new Date(data._expiresAt).toLocaleString('ko-KR') : '';
+        const expStr = exp ? exp.toLocaleString('ko-KR') : '';
         document.getElementById('joinPreviewSub').textContent = expired
           ? '새 코드를 요청하세요'
           : `참가 가능 ✓  만료: ${expStr}`;
@@ -2356,7 +2392,7 @@ function saveEditor(){
   if(ed.kind==='student'){
     if(!ed.name.trim()){toast('이름을 입력하세요');return;}
     if(ed.id){const s=sMap[ed.id];s.name=ed.name.trim();s.color=ed.color;s.sub=ed.sub;}
-    else{const s={id:uid('s'),name:ed.name.trim(),color:ed.color,sub:ed.sub};db.students.push(s);state.sid=s.id;}
+    else{const s={id:uid('s'),name:ed.name.trim(),color:ed.color,sub:ed.sub,ownerUid:fbUser?.uid||null,members:fbUser?[fbUser.uid]:[],shareCode:null,shareCodeExpiresAt:null};db.students.push(s);state.sid=s.id;}
   }else if(ed.kind==='behavior'){
     if(!ed.name.trim()){toast('행동 이름을 입력하세요');return;}
     if(ed.id){const b=bMap[ed.id];b.name=ed.name.trim();b.color=ed.color;b.icon=ed.icon;b.type=ed.type;}
@@ -3493,6 +3529,10 @@ function renderShareSection(){
 function openShareModal(sid){
   const s=db.students.find(s=>s.id===sid);
   if(!s) return;
+  if(s.ownerUid && s.ownerUid !== fbUser?.uid){
+    toast('공유 코드는 학생을 만든 계정만 생성할 수 있어요');
+    return;
+  }
 
   // 만료 확인
   const now=new Date();
@@ -3544,7 +3584,7 @@ function copyShareCode(code){
 
 // 코드 입력 시 미리보기
 async function previewJoinCode(val){
-  const clean=val.replace(/[^A-Z0-9-]/g,'');
+  const clean=normalizeShareCode(val);
   if(clean.length<7){ $('#joinPreview').classList.remove('show'); return; }
   clearTimeout(joinPreviewTimer);
   joinPreviewTimer=setTimeout(async()=>{
@@ -3553,10 +3593,14 @@ async function previewJoinCode(val){
       const preview=$('#joinPreview');
       if(snap.exists){
         const data=snap.data();
-        $('#joinPreviewName').textContent=data.studentName;
-        $('#joinPreviewSub').textContent='참가 가능한 공유 코드예요 ✓';
+        const exp=shareCodeExpiry(data);
+        const expired=!exp || exp<new Date();
+        $('#joinPreviewName').textContent=expired?'만료된 코드예요':data.studentName;
+        $('#joinPreviewSub').textContent=expired
+          ? '새 코드를 요청하세요'
+          : `참가 가능 ✓  만료: ${exp.toLocaleString('ko-KR')}`;
         preview.classList.add('show');
-        preview.style.background='#eef6f5';
+        preview.style.background=expired?'#fdf0ec':'#eef6f5';
       } else {
         $('#joinPreviewName').textContent='코드를 찾을 수 없어요';
         $('#joinPreviewSub').textContent='코드를 다시 확인해 주세요';
@@ -3952,8 +3996,8 @@ document.addEventListener('click',e=>{
     else if(a==='do-join')doJoin();
     else if(a==='gen-share-code'){
       const sid=act.dataset.sid;
-      createShareCode(sid).then(code=>{
-        if(code){ toast(`공유 코드 <b>${code}</b> 생성됐어요`); renderSettings(); }
+      createShareCode(sid).then(result=>{
+        if(result){ toast(`공유 코드 <b>${result.code}</b> 생성됐어요`); renderSettings(); }
       });
     }
     else if(a==='open-interval-setup')openIntervalSetup();
