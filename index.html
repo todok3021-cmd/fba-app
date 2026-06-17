@@ -1367,8 +1367,6 @@ const FB_CONFIG={
 firebase.initializeApp(FB_CONFIG);
 const fbAuth = firebase.auth();
 const fbStore = firebase.firestore();
-// 오프라인 캐시 (IndexedDB 기반 — Firebase가 자동 관리)
-fbStore.enablePersistence({synchronizeTabs:true}).catch(()=>{});
 
 let db=null, fbUser=null, saveT=null, unsubSync=null;
 
@@ -1573,6 +1571,12 @@ function buildCasePayload(s){
   };
 }
 
+function isCurrentUserCase(data){
+  if(!fbUser || !data) return false;
+  const members = data.memberUids || data.members || [];
+  return data.ownerUid === fbUser.uid || members.includes(fbUser.uid);
+}
+
 async function saveSettings(){
   if(!fbUser || !db) return;
   syncActiveCaseFromDb();
@@ -1679,6 +1683,22 @@ function removeStudentLocal(sid){
     if(next) applyCaseToDb(next);
   }
   reindex();
+}
+
+function clearClientSession(){
+  clearTimeout(persistTimer);
+  if(unsubSync){ unsubSync(); unsubSync = null; }
+  Object.values(studentListeners).forEach(u => u());
+  Object.values(recordListeners).forEach(u => u());
+  Object.values(recordRetryTimers).forEach(t => clearTimeout(t));
+  if(settingsListener){ settingsListener(); settingsListener = null; }
+  studentListeners = {};
+  recordListeners = {};
+  recordRetryTimers = {};
+  sharedStudentIds = [];
+  db = null;
+  state.sid = '';
+  state.date = null;
 }
 
 async function deleteStudentCase(sid){
@@ -1795,7 +1815,12 @@ async function loadData(){
     const masScores = [];
 
     for(const doc of snap.docs){
-      const s = normalizeCase(doc.data(), doc.id);
+      const raw = doc.data();
+      if(!isCurrentUserCase(raw)){
+        console.warn('현재 계정 권한이 없는 캐시 문서를 무시했어요:', doc.id);
+        continue;
+      }
+      const s = normalizeCase(raw, doc.id);
       students.push(s);
       notes.push(...(s.notes || []));
       interviews.push(...(s.interviews || []));
@@ -2008,11 +2033,17 @@ function startSync(){
     .onSnapshot(snap => {
       snap.docChanges().forEach(change => {
         const sid = change.doc.id;
-        const data = normalizeCase(change.doc.data(), sid);
         if(change.type === 'removed'){
           removeStudentLocal(sid);
           return;
         }
+        const raw = change.doc.data();
+        if(!isCurrentUserCase(raw)){
+          console.warn('현재 계정 권한이 없는 실시간 문서를 무시했어요:', sid);
+          removeStudentLocal(sid);
+          return;
+        }
+        const data = normalizeCase(raw, sid);
         // 케이스 정보 업데이트
         const idx = db.students.findIndex(s => s.id === sid);
         if(idx >= 0) db.students[idx] = {...db.students[idx], ...data};
@@ -2223,14 +2254,7 @@ async function leaveShared(sid){
 async function doSignout(){
   if(!confirm('로그아웃 하시겠어요?')) return;
   try{ await persistNow(); }catch(e){ console.warn('로그아웃 전 저장 실패:', e); }
-  if(unsubSync){ unsubSync(); unsubSync = null; }
-  Object.values(studentListeners).forEach(u => u());
-  Object.values(recordListeners).forEach(u => u());
-  Object.values(recordRetryTimers).forEach(t => clearTimeout(t));
-  if(settingsListener){ settingsListener(); settingsListener = null; }
-  studentListeners = {}; recordListeners = {}; recordRetryTimers = {};
-  sharedStudentIds = [];
-  db = null;
+  clearClientSession();
   await fbAuth.signOut();
 }
 
@@ -2238,15 +2262,17 @@ async function doSignout(){
 fbAuth.onAuthStateChanged(async user => {
   const wall = document.getElementById('authWall');
   if(!user){
+    clearClientSession();
     fbUser = null;
     if(wall) wall.classList.remove('hidden');
     authBtnState('liBtn', false, '로그인');
     authBtnState('suBtn', false, '가입하기');
     return;
   }
+  clearClientSession();
   fbUser = user;
-  if(wall) wall.classList.add('hidden');
   await initApp();
+  if(wall) wall.classList.add('hidden');
   startSync();
 });
 
@@ -2290,7 +2316,7 @@ async function initApp(){
       shareCode: null, shareCodeExpiresAt: null,
       ...base
     }];
-    await persist();
+    await persistNow();
   }
 
   if(!db.students.some(s => s.id === state.sid))
