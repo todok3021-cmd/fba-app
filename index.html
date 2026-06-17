@@ -1384,10 +1384,11 @@ async function doSignout(){
 
 // ── Firestore 문서 경로 ──
 // ═══════════════════════════════════════════════════════
-// 새 Firestore 구조 (선택 B — 학생 중심 설계)
-// students/{studentId}/records/{recordId}
-// globalSettings/{uid}
-// shareCodes/{code}
+// prototype7 구조 — 공유 관찰 케이스 중심 설계
+// cases/{caseId}
+// cases/{caseId}/records/{recordId}
+// invites/{code}
+// users/{uid}
 // ═══════════════════════════════════════════════════════
 
 // ── 공유 상태 ──
@@ -1398,11 +1399,11 @@ let settingsListener  = null;
 
 // ── Firestore 경로 헬퍼 ──
 const FS = {
-  student:  sid  => fbStore.collection('students').doc(sid),
-  records:  sid  => fbStore.collection('students').doc(sid).collection('records'),
-  record:   (sid,rid) => fbStore.collection('students').doc(sid).collection('records').doc(rid),
-  settings: uid  => fbStore.collection('globalSettings').doc(uid),
-  code:     code => fbStore.collection('shareCodes').doc(code),
+  student:  sid  => fbStore.collection('cases').doc(sid),
+  records:  sid  => fbStore.collection('cases').doc(sid).collection('records'),
+  record:   (sid,rid) => fbStore.collection('cases').doc(sid).collection('records').doc(rid),
+  member:   (sid,uid) => fbStore.collection('cases').doc(sid).collection('members').doc(uid),
+  code:     code => fbStore.collection('invites').doc(code),
 };
 
 function normalizeShareCode(input){
@@ -1417,84 +1418,155 @@ function shareCodeExpiry(data){
 }
 
 function validShareCodeData(data, sid){
-  if(!data || data.studentId !== sid) return false;
+  if(!data || data.caseId !== sid) return false;
   const exp = shareCodeExpiry(data);
   return !!exp && exp > new Date();
 }
 
-// ── 설정 저장/로드 (행동·칩·MAS 등 개인 설정) ──
-async function saveSettings(){
-  if(!fbUser) return;
-  const settingsData = {
-    behaviors:   db.behaviors   || [],
-    aChips:      db.aChips      || [],
-    cChips:      db.cChips      || [],
-    masItems:    db.masItems    || [],
-    ivQuestions: db.ivQuestions || [],
+function caseDefaults(){
+  const d = defaults();
+  return {
+    behaviors: d.behaviors.map(x=>({...x})),
+    aChips: d.aChips.map(x=>({...x})),
+    cChips: d.cChips.map(x=>({...x})),
+    masItems: MAS_DEFAULTS.map(x=>({...x})),
+    ivQuestions: d.ivQuestions.map(x=>({...x})),
+    notes: [],
+    interviews: [],
+    masScores: [],
+  };
+}
+
+function normalizeCase(raw, id){
+  const base = caseDefaults();
+  return {
+    ...raw,
+    id,
+    name: raw.name || raw.studentName || '학생',
+    color: raw.color || '#0F6E6C',
+    sub: raw.sub || '',
+    ownerUid: raw.ownerUid || '',
+    memberUids: raw.memberUids || raw.members || [],
+    members: raw.memberUids || raw.members || [],
+    behaviorOrder: raw.behaviorOrder || [],
+    shareCode: raw.shareCode || null,
+    shareCodeExpiresAt: raw.shareCodeExpiresAt || null,
+    behaviors: raw.behaviors || base.behaviors,
+    aChips: raw.aChips || base.aChips,
+    cChips: raw.cChips || base.cChips,
+    masItems: raw.masItems || base.masItems,
+    ivQuestions: raw.ivQuestions || base.ivQuestions,
+    notes: raw.notes || [],
+    interviews: raw.interviews || [],
+    masScores: raw.masScores || [],
+  };
+}
+
+function activeCase(){
+  if(!db) return null;
+  return db.students.find(s=>s.id===state.sid) || db.students[0] || null;
+}
+
+function activeCaseId(){
+  return activeCase()?.id || state.sid;
+}
+
+function syncActiveCaseFromDb(){
+  const s = activeCase();
+  if(!s || !db) return;
+  s.behaviors = db.behaviors || [];
+  s.aChips = db.aChips || [];
+  s.cChips = db.cChips || [];
+  s.masItems = db.masItems || [];
+  s.ivQuestions = db.ivQuestions || [];
+  s.notes = (db.notes || []).filter(n=>n.sid===s.id);
+  s.interviews = (db.interviews || []).filter(n=>n.sid===s.id);
+  s.masScores = (db.masScores || []).filter(n=>n.sid===s.id);
+}
+
+function applyCaseToDb(s){
+  if(!s || !db) return;
+  db.behaviors = (s.behaviors || caseDefaults().behaviors).map(x=>({...x}));
+  db.aChips = (s.aChips || caseDefaults().aChips).map(x=>({...x}));
+  db.cChips = (s.cChips || caseDefaults().cChips).map(x=>({...x}));
+  db.masItems = (s.masItems || caseDefaults().masItems).map(x=>({...x}));
+  db.ivQuestions = (s.ivQuestions || caseDefaults().ivQuestions).map(x=>({...x}));
+
+  const othersNotes = (db.notes || []).filter(n=>n.sid!==s.id);
+  const othersInterviews = (db.interviews || []).filter(n=>n.sid!==s.id);
+  const othersMasScores = (db.masScores || []).filter(n=>n.sid!==s.id);
+  db.notes = othersNotes.concat(s.notes || []);
+  db.interviews = othersInterviews.concat(s.interviews || []);
+  db.masScores = othersMasScores.concat(s.masScores || []);
+}
+
+function buildCasePayload(s){
+  return {
+    name:          s.name,
+    color:         s.color,
+    sub:           s.sub || '',
+    behaviorOrder: s.behaviorOrder || [],
+    shareCode:     s.shareCode     || null,
+    shareCodeExpiresAt: s.shareCodeExpiresAt || null,
+    ownerUid:      s.ownerUid || fbUser.uid,
+    memberUids:    s.memberUids || s.members || [fbUser.uid],
+    behaviors:   s.behaviors   || [],
+    aChips:      s.aChips      || [],
+    cChips:      s.cChips      || [],
+    masItems:    s.masItems    || [],
+    ivQuestions: s.ivQuestions || [],
+    notes:        s.notes      || [],
+    interviews:   s.interviews || [],
+    masScores:    s.masScores  || [],
     _updatedAt:  firebase.firestore.FieldValue.serverTimestamp(),
   };
-  // 방법1: globalSettings 시도
-  try{
-    await FS.settings(fbUser.uid).set(settingsData);
-    return;
-  }catch(e){ console.warn('globalSettings 저장 실패, 대안 사용:', e.code); }
-  // 방법2: 첫 번째 내 학생 문서에 설정 병합
-  try{
-    const myStudent = (db.students||[]).find(s=>s.ownerUid===fbUser.uid);
-    if(myStudent){
-      await FS.student(myStudent.id).update({_settings: settingsData});
-    }
-  }catch(e){ console.warn('설정 대안 저장도 실패:', e.code); }
 }
 
-async function loadSettings(){
-  if(!fbUser) return null;
-  // 방법1: globalSettings
-  try{
-    const snap = await FS.settings(fbUser.uid).get();
-    if(snap.exists) return snap.data();
-  }catch(e){ console.warn('globalSettings 읽기 실패:', e.code); }
-  // 방법2: 학생 문서의 _settings 필드
-  try{
-    const myStudents = await fbStore.collection('students')
-      .where('ownerUid','==',fbUser.uid).limit(1).get();
-    if(!myStudents.empty){
-      const data = myStudents.docs[0].data();
-      if(data._settings) return data._settings;
-    }
-  }catch(e){ console.warn('설정 대안 읽기 실패:', e.code); }
-  return null;
+async function saveSettings(){
+  if(!fbUser || !db) return;
+  syncActiveCaseFromDb();
+  const s = activeCase();
+  if(s) await saveStudent(s);
 }
 
-// ── 학생 문서 저장 ──
+// ── 관찰 케이스 문서 저장 ──
 async function saveStudent(s){
   if(!fbUser) return;
-  // 공유로 참가한 학생은 기록만 추가하고, 학생 기본 정보는 소유자만 저장한다.
-  if(s.ownerUid && s.ownerUid !== fbUser.uid) return;
   try{
-    await FS.student(s.id).set({
-      name:          s.name,
-      color:         s.color,
-      sub:           s.sub || '',
-      behaviorOrder: s.behaviorOrder || [],
-      shareCode:     s.shareCode     || null,
-      shareCodeExpiresAt: s.shareCodeExpiresAt || null,
-      ownerUid:      s.ownerUid || fbUser.uid,
-      members:       s.members  || [fbUser.uid],
-      _updatedAt:    firebase.firestore.FieldValue.serverTimestamp(),
-    }, {merge: true});
-  }catch(e){ console.warn('학생 저장 실패:', e); }
+    const payload = buildCasePayload(s);
+    if(s.ownerUid && s.ownerUid !== fbUser.uid){
+      // 참가자는 케이스 설정을 덮어쓰지 않고, 내 membership 문서만 보강한다.
+      await FS.member(s.id, fbUser.uid).set({
+        uid: fbUser.uid,
+        displayName: fbUser.displayName || fbUser.email || '관찰자',
+        email: fbUser.email || '',
+        role: 'observer',
+        joinedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      }, {merge:true});
+      return;
+    }
+    await FS.student(s.id).set(payload, {merge: true});
+    await FS.member(s.id, fbUser.uid).set({
+      uid: fbUser.uid,
+      displayName: fbUser.displayName || fbUser.email || '소유자',
+      email: fbUser.email || '',
+      role: 'owner',
+      joinedAt: firebase.firestore.FieldValue.serverTimestamp(),
+    }, {merge:true});
+  }catch(e){ console.warn('케이스 저장 실패:', e); }
 }
 
 // ── 기록 저장 (서브컬렉션) ──
 async function saveRecord(rec){
   if(!fbUser) return;
-  // 내 학생이거나 공유 참가한 학생인 경우만
-  const isMyStudent     = db.students.some(s => s.id === rec.sid);
-  const isSharedStudent = sharedStudentIds.includes(rec.sid);
-  if(!isMyStudent && !isSharedStudent) return;
+  const isCaseMember = db.students.some(s => s.id === rec.sid);
+  if(!isCaseMember) return;
+  rec.createdByUid = rec.createdByUid || fbUser.uid;
+  rec.createdByName = rec.createdByName || fbUser.displayName || fbUser.email || '관찰자';
+  rec.observerId = fbUser.uid;
+  rec.deviceId = DEVICE_ID;
   try{
-    await FS.record(rec.sid, rec.id).set(rec);
+    await FS.record(rec.sid, rec.id).set(rec, {merge:true});
   }catch(e){ console.warn('기록 저장 실패:', e); }
 }
 
@@ -1507,13 +1579,12 @@ function persist(){
   persistTimer = setTimeout(async ()=>{
     if(!fbUser || !db) return;
     try{
-      // 1. 설정 저장
-      await saveSettings();
-      // 2. 학생 문서 저장
+      syncActiveCaseFromDb();
+      // 1. 케이스 문서 저장
       for(const s of (db.students || [])){
         await saveStudent(s);
       }
-      // 3. dirty 기록만 저장
+      // 2. dirty 기록만 저장
       const dirty = (db.records || []).filter(r => r.dirty && !r.deleted);
       for(const rec of dirty){
         await saveRecord(rec);
@@ -1531,45 +1602,44 @@ function persist(){
 async function loadData(){
   if(!fbUser) return null;
   try{
-    // 1. 내가 member인 학생 목록
-    const snap = await fbStore.collection('students')
-      .where('members', 'array-contains', fbUser.uid)
+    // 내가 참가자인 관찰 케이스 목록
+    const snap = await fbStore.collection('cases')
+      .where('memberUids', 'array-contains', fbUser.uid)
       .get();
 
     if(snap.empty){
-      // 기존 userData에서 마이그레이션 시도
-      return await migrateFromUserData();
+      // prototype6 students 구조 → prototype7 cases 구조 → 아주 오래된 userData 순서로 마이그레이션 시도
+      return await migrateFromPrototype6Students() || await migrateFromUserData();
     }
 
-    // 2. 설정 로드
-    const settingsData = await loadSettings();
-
-    // 3. 학생별 기록 로드
     const students = [];
     const allRecords = [];
+    const notes = [];
+    const interviews = [];
+    const masScores = [];
 
     for(const doc of snap.docs){
-      const s = {id: doc.id, ...doc.data()};
+      const s = normalizeCase(doc.data(), doc.id);
       students.push(s);
-      if(s.shareCode && !db?.students?.some(x=>x.id===s.id)){
-        sharedStudentIds.push(s.id);
-      }
-      // 기록 로드
+      notes.push(...(s.notes || []));
+      interviews.push(...(s.interviews || []));
+      masScores.push(...(s.masScores || []));
       const recSnap = await FS.records(s.id).get();
-      recSnap.docs.forEach(r => allRecords.push({...r.data(), id: r.id}));
+      recSnap.docs.forEach(r => allRecords.push({...r.data(), id: r.id, sid: r.data().sid || s.id}));
     }
 
+    const firstCase = students[0] || normalizeCase({}, ulid());
     return {
       students,
       records:     allRecords,
-      behaviors:   settingsData?.behaviors   || [],
-      aChips:      settingsData?.aChips      || [],
-      cChips:      settingsData?.cChips      || [],
-      masItems:    settingsData?.masItems    || [],
-      ivQuestions: settingsData?.ivQuestions || [],
-      notes:       [],
-      interviews:  [],
-      masScores:   [],
+      behaviors:   firstCase.behaviors,
+      aChips:      firstCase.aChips,
+      cChips:      firstCase.cChips,
+      masItems:    firstCase.masItems,
+      ivQuestions: firstCase.ivQuestions,
+      notes,
+      interviews,
+      masScores,
     };
   }catch(e){
     console.warn('loadData 오류:', e);
@@ -1577,19 +1647,105 @@ async function loadData(){
   }
 }
 
+// ── prototype6 students 구조 → prototype7 cases 구조 마이그레이션 ──
+async function migrateFromPrototype6Students(){
+  try{
+    if(localStorage.getItem('fba_migrated_v7_from_students_' + fbUser.uid)){
+      console.log('[마이그레이션] prototype6 students 로컬 완료 플래그 — 건너뜀');
+      return null;
+    }
+
+    console.log('[마이그레이션] prototype6 students 구조 읽기 시도...');
+    const legacySnap = await fbStore.collection('students')
+      .where('members', 'array-contains', fbUser.uid)
+      .get();
+    if(legacySnap.empty){
+      console.log('[마이그레이션] prototype6 students 데이터 없음');
+      return null;
+    }
+
+    let settingsData = null;
+    try{
+      const settingsSnap = await fbStore.collection('globalSettings').doc(fbUser.uid).get();
+      if(settingsSnap.exists) settingsData = settingsSnap.data();
+    }catch(e){
+      console.warn('[마이그레이션] prototype6 globalSettings 읽기 실패(기본값 사용):', e.code);
+    }
+    const base = caseDefaults();
+    settingsData = settingsData || {};
+
+    updateSyncUI('기존 공유 구조를 새 구조로 옮기는 중…');
+    for(const doc of legacySnap.docs){
+      const old = doc.data();
+      if(old.ownerUid && old.ownerUid !== fbUser.uid){
+        console.log('[마이그레이션] 내가 소유하지 않은 공유 학생은 건너뜀:', old.name);
+        continue;
+      }
+      const migrated = normalizeCase({
+        ...old,
+        ownerUid: old.ownerUid || fbUser.uid,
+        memberUids: old.members || [fbUser.uid],
+        members: old.members || [fbUser.uid],
+        behaviors: old.behaviors || settingsData.behaviors || base.behaviors,
+        aChips: old.aChips || settingsData.aChips || base.aChips,
+        cChips: old.cChips || settingsData.cChips || base.cChips,
+        masItems: old.masItems || settingsData.masItems || base.masItems,
+        ivQuestions: old.ivQuestions || settingsData.ivQuestions || base.ivQuestions,
+        notes: old.notes || [],
+        interviews: old.interviews || [],
+        masScores: old.masScores || [],
+        shareCode: null,
+        shareCodeExpiresAt: null,
+      }, doc.id);
+
+      console.log('[마이그레이션] prototype6 학생 → case:', migrated.name);
+      await FS.student(migrated.id).set(buildCasePayload(migrated), {merge:true});
+
+      const memberUids = migrated.memberUids || [fbUser.uid];
+      for(const uid of memberUids){
+        await FS.member(migrated.id, uid).set({
+          uid,
+          displayName: uid === fbUser.uid ? (fbUser.displayName || fbUser.email || '소유자') : '공유 관찰자',
+          email: uid === fbUser.uid ? (fbUser.email || '') : '',
+          role: uid === migrated.ownerUid ? 'owner' : 'observer',
+          joinedAt: firebase.firestore.FieldValue.serverTimestamp(),
+        }, {merge:true});
+      }
+
+      const recSnap = await fbStore.collection('students').doc(doc.id).collection('records').get();
+      for(const recDoc of recSnap.docs){
+        const r = recDoc.data();
+        await FS.record(migrated.id, recDoc.id).set({
+          ...r,
+          sid: migrated.id,
+          createdByUid: r.createdByUid || r.observerId || fbUser.uid,
+          createdByName: r.createdByName || fbUser.displayName || fbUser.email || '관찰자',
+          observerId: r.observerId || r.createdByUid || fbUser.uid,
+          deviceId: r.deviceId || DEVICE_ID,
+        }, {merge:true});
+      }
+    }
+
+    try{ localStorage.setItem('fba_migrated_v7_from_students_' + fbUser.uid, '1'); }catch(_){}
+    toast('기존 공유 데이터를 새 구조로 옮겼어요');
+    return await loadData();
+  }catch(e){
+    console.error('[마이그레이션] prototype6 students 오류:', e.code, e.message);
+    return null;
+  }
+}
+
 // ── 기존 userData → 새 구조 마이그레이션 ──
 async function migrateFromUserData(){
   try{
-    // [안전장치 1] 새 구조에 이미 데이터가 있으면 재마이그레이션 금지 — 현재 데이터를 옛 데이터로 덮어쓰는 사고 방지
-    const existingSnap = await fbStore.collection('students')
-      .where('members', 'array-contains', fbUser.uid).limit(1).get();
+    const existingSnap = await fbStore.collection('cases')
+      .where('memberUids', 'array-contains', fbUser.uid).limit(1).get();
     if(!existingSnap.empty){
-      console.log('[마이그레이션] 새 구조에 데이터 존재 — 건너뜀(덮어쓰기 방지)');
+      console.log('[마이그레이션] cases 구조에 데이터 존재 — 건너뜀');
       return null;
     }
-    // [안전장치 2] 로컬 완료 플래그 (오프라인·다른 기기 대비)
-    if(localStorage.getItem('fba_migrated_v2_' + fbUser.uid)){
-      console.log('[마이그레이션] 로컬 완료 플래그 — 건너뜀');
+    if(localStorage.getItem('fba_migrated_v7_' + fbUser.uid)){
+      console.log('[마이그레이션] prototype7 로컬 완료 플래그 — 건너뜀');
       return null;
     }
 
@@ -1605,64 +1761,49 @@ async function migrateFromUserData(){
       return null;
     }
 
-    console.log('[마이그레이션] 시작 — 학생:', data.students?.length, '기록:', data.records?.length);
+    console.log('[마이그레이션] prototype7 시작 — 학생:', data.students?.length, '기록:', data.records?.length);
     updateSyncUI( '데이터 업그레이드 중…');
-    const students = data.students || [];
+    const students = (data.students || []).map(s=>normalizeCase({
+      ...s,
+      ownerUid: fbUser.uid,
+      memberUids: [fbUser.uid],
+      members: [fbUser.uid],
+      behaviors: data.behaviors || caseDefaults().behaviors,
+      aChips: data.aChips || caseDefaults().aChips,
+      cChips: data.cChips || caseDefaults().cChips,
+      masItems: data.masItems || caseDefaults().masItems,
+      ivQuestions: data.ivQuestions || caseDefaults().ivQuestions,
+      notes: (data.notes || []).filter(n=>n.sid===s.id),
+      interviews: (data.interviews || []).filter(n=>n.sid===s.id),
+      masScores: (data.masScores || []).filter(n=>n.sid===s.id),
+    }, s.id));
 
     for(const s of students){
-      console.log('[마이그레이션] 학생 저장:', s.name);
-      await FS.student(s.id).set({
-        name:           s.name,
-        color:          s.color,
-        sub:            s.sub || '',
-        behaviorOrder:  s.behaviorOrder || [],
-        shareCode:      null,
-        shareCodeExpiresAt: null,
-        ownerUid:       fbUser.uid,
-        members:        [fbUser.uid],
-        _updatedAt:     firebase.firestore.FieldValue.serverTimestamp(),
-      });
+      console.log('[마이그레이션] 케이스 저장:', s.name);
+      await FS.student(s.id).set(buildCasePayload(s));
+      await FS.member(s.id, fbUser.uid).set({
+        uid: fbUser.uid,
+        displayName: fbUser.displayName || fbUser.email || '소유자',
+        email: fbUser.email || '',
+        role: 'owner',
+        joinedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      }, {merge:true});
 
-      // 기록 개별 저장 (배치 대신 — 안정성 우선)
       const sRecords = (data.records || []).filter(r => r.sid === s.id);
       console.log('[마이그레이션]', s.name, '기록:', sRecords.length, '건');
       for(const r of sRecords){
-        await FS.record(s.id, r.id).set(r);
+        await FS.record(s.id, r.id).set({
+          ...r,
+          sid: s.id,
+          createdByUid: r.createdByUid || fbUser.uid,
+          createdByName: r.createdByName || fbUser.displayName || fbUser.email || '관찰자',
+          observerId: r.observerId || fbUser.uid,
+          deviceId: r.deviceId || DEVICE_ID,
+        }, {merge:true});
       }
     }
 
-    // 설정 저장 (실패해도 마이그레이션 계속)
-    console.log('[마이그레이션] 설정 저장...');
-    try{
-      await FS.settings(fbUser.uid).set({
-        behaviors:   data.behaviors   || [],
-        aChips:      data.aChips      || [],
-        cChips:      data.cChips      || [],
-        masItems:    data.masItems    || [],
-        ivQuestions: data.ivQuestions || [],
-        _updatedAt:  firebase.firestore.FieldValue.serverTimestamp(),
-      });
-    }catch(e){
-      console.warn('[마이그레이션] 설정 저장 실패(무시):', e.code);
-      // 학생 문서에 설정 병합 시도
-      if(students.length>0){
-        try{
-          await FS.student(students[0].id).update({_settings:{
-            behaviors:data.behaviors||[], aChips:data.aChips||[], cChips:data.cChips||[],
-            masItems:data.masItems||[], ivQuestions:data.ivQuestions||[]
-          }});
-        }catch(e2){}
-      }
-    }
-
-    // 완료 플래그 — 읽기 전용 레거시(userData) 대신 쓰기 가능한 위치에 저장.
-    // (이 쓰기가 실패해도 마이그레이션은 이미 끝났으므로 throw하지 않는다.)
-    try{ localStorage.setItem('fba_migrated_v2_' + fbUser.uid, '1'); }catch(_){}
-    try{
-      await FS.settings(fbUser.uid).set({ _migratedV2: true }, { merge: true });
-    }catch(e){
-      console.warn('[마이그레이션] 완료 플래그 저장 실패(무시):', e.code);
-    }
+    try{ localStorage.setItem('fba_migrated_v7_' + fbUser.uid, '1'); }catch(_){}
     console.log('[마이그레이션] 완료!');
     toast(`데이터 업그레이드 완료 (${students.length}명)`);
     return await loadData();
@@ -1683,18 +1824,19 @@ function startSync(){
   if(settingsListener){ settingsListener(); settingsListener = null; }
   if(unsubSync){ unsubSync(); unsubSync = null; }
 
-  // 내가 member인 학생 목록 감시
-  unsubSync = fbStore.collection('students')
-    .where('members', 'array-contains', fbUser.uid)
+  // 내가 참가 중인 관찰 케이스 목록 감시
+  unsubSync = fbStore.collection('cases')
+    .where('memberUids', 'array-contains', fbUser.uid)
     .onSnapshot(snap => {
       snap.docChanges().forEach(change => {
         const sid = change.doc.id;
-        const data = {id: sid, ...change.doc.data()};
+        const data = normalizeCase(change.doc.data(), sid);
         if(change.type === 'removed') return;
-        // 학생 정보 업데이트
+        // 케이스 정보 업데이트
         const idx = db.students.findIndex(s => s.id === sid);
         if(idx >= 0) db.students[idx] = {...db.students[idx], ...data};
         else{ db.students.push(data); reindex(); }
+        if(state.sid === sid) applyCaseToDb(db.students.find(s=>s.id===sid));
         // 기록 리스너 시작 (없으면)
         if(!recordListeners[sid]) startRecordListener(sid);
       });
@@ -1733,6 +1875,7 @@ function genShareCode(){
 
 async function createShareCode(sid){
   if(!fbUser) return null;
+  if(state.sid === sid) syncActiveCaseFromDb();
   const s = db.students.find(s => s.id === sid);
   if(!s) return null;
   if(s.ownerUid && s.ownerUid !== fbUser.uid){
@@ -1765,10 +1908,11 @@ async function createShareCode(sid){
 
   const expiresAt = new Date(Date.now() + 24*60*60*1000); // 24시간 후
 
-  // shareCodes에 저장
+  // 초대 코드 저장
   await FS.code(code).set({
-    studentId:  sid,
+    caseId:     sid,
     ownerUid:   fbUser.uid,
+    caseName:   s.name,
     studentName: s.name,
     expiresAt:  firebase.firestore.Timestamp.fromDate(expiresAt),
     _expiresAt: expiresAt.toISOString(),
@@ -1800,24 +1944,23 @@ async function joinByCode(inputCode){
       return false;
     }
 
-    const sid = codeData.studentId;
+    const sid = codeData.caseId;
+    if(!sid){ toast('초대 코드 정보가 올바르지 않아요'); return false; }
 
-    // 이미 참가한 사용자는 학생 문서를 읽을 수 있다. 아직 참가 전이면 읽기 권한이 없을 수 있어 무시한다.
-    try{
-      const studentSnap = await FS.student(sid).get();
-      if(studentSnap.exists && studentSnap.data().members?.includes(fbUser.uid)){
-        toast('이미 참가 중인 학생이에요'); return true;
-      }
-    }catch(e){
-      if(e.code !== 'permission-denied') throw e;
-    }
+    // 멤버 문서를 먼저 만들고, 케이스 목록 조회용 memberUids만 최소 변경한다.
+    await FS.member(sid, fbUser.uid).set({
+      uid: fbUser.uid,
+      displayName: fbUser.displayName || fbUser.email || '관찰자',
+      email: fbUser.email || '',
+      role: 'observer',
+      joinedAt: firebase.firestore.FieldValue.serverTimestamp(),
+    }, {merge:true});
 
-    // 참가 전 사용자가 보안 규칙을 통과하도록 members만 최소 변경한다.
     await FS.student(sid).update({
-      members: firebase.firestore.FieldValue.arrayUnion(fbUser.uid)
+      memberUids: firebase.firestore.FieldValue.arrayUnion(fbUser.uid)
     });
 
-    toast(`<b>${codeData.studentName}</b> 관찰에 참가했어요`);
+    toast(`<b>${codeData.caseName || codeData.studentName || '공유 관찰'}</b> 관찰에 참가했어요`);
     // startSync가 자동으로 새 학생 감지해서 리스너 시작
     return true;
   }catch(e){
@@ -1842,7 +1985,7 @@ async function previewJoinCode(val){
         const data = snap.data();
         const exp = shareCodeExpiry(data);
         const expired = !exp || exp < new Date();
-        document.getElementById('joinPreviewName').textContent = expired ? '만료된 코드예요' : data.studentName;
+        document.getElementById('joinPreviewName').textContent = expired ? '만료된 코드예요' : (data.caseName || data.studentName || '공유 관찰');
         const expStr = exp ? exp.toLocaleString('ko-KR') : '';
         document.getElementById('joinPreviewSub').textContent = expired
           ? '새 코드를 요청하세요'
@@ -1864,8 +2007,9 @@ async function leaveShared(sid){
   if(!fbUser) return;
   try{
     await FS.student(sid).update({
-      members: firebase.firestore.FieldValue.arrayRemove(fbUser.uid)
+      memberUids: firebase.firestore.FieldValue.arrayRemove(fbUser.uid)
     });
+    await FS.member(sid, fbUser.uid).delete();
     if(recordListeners[sid]){ recordListeners[sid](); delete recordListeners[sid]; }
     db.students = db.students.filter(s => s.id !== sid);
     db.records  = db.records.filter(r => r.sid !== sid);
@@ -1917,7 +2061,7 @@ async function initApp(){
     if(!db.records)     db.records     = [];
     // P0 마이그레이션 필드
     db.records = db.records.map(r=>({
-      observerId: r.observerId || OBSERVER_ID,
+      observerId: r.observerId || r.createdByUid || fbUser.uid,
       deviceId:   r.deviceId   || DEVICE_ID,
       env:        r.env        || 'school',
       updatedAt:  r.updatedAt  || r.ts,
@@ -1936,16 +2080,19 @@ async function initApp(){
     db.notes      = [];
     db.interviews = [];
     db.masScores  = [];
+    const base = caseDefaults();
     db.students   = [{
       id: ulid(), name: '학생 1', color: '#0F6E6C', sub: '',
-      ownerUid: fbUser.uid, members: [fbUser.uid],
-      shareCode: null, shareCodeExpiresAt: null
+      ownerUid: fbUser.uid, memberUids: [fbUser.uid], members: [fbUser.uid],
+      shareCode: null, shareCodeExpiresAt: null,
+      ...base
     }];
     await persist();
   }
 
   if(!db.students.some(s => s.id === state.sid))
     state.sid = db.students[0]?.id || '';
+  applyCaseToDb(activeCase());
   reindex();
   paintStudent();
   renderSwitcher();
@@ -2125,7 +2272,7 @@ function tapBehavior(bid,btn,e){
       clearInterval(state.timer.iv);state.timer=null;
       const now=new Date().toISOString();
       let rec={id:ulid(),sid:state.sid,bid,ts:new Date().toISOString(),dur:sec,a:[],c:[],note:'',
-        observerId:OBSERVER_ID,deviceId:DEVICE_ID,env:state.currentEnv,
+        observerId:fbUser?.uid||OBSERVER_ID,createdByUid:fbUser?.uid||OBSERVER_ID,createdByName:fbUser?.displayName||fbUser?.email||'관찰자',deviceId:DEVICE_ID,env:state.currentEnv,
         updatedAt:now,deleted:false,dirty:true};
       rec=captureLatency(rec); // 지연시간 자동 첨부
       Repository.putRecord(rec);renderGrid();paintStudent();openSheet(rec.id);
@@ -2139,7 +2286,7 @@ function tapBehavior(bid,btn,e){
   }
   const now2=new Date().toISOString();
   let rec={id:ulid(),sid:state.sid,bid,ts:now2,dur:null,a:[],c:[],note:'',
-    observerId:OBSERVER_ID,deviceId:DEVICE_ID,env:state.currentEnv,
+    observerId:fbUser?.uid||OBSERVER_ID,createdByUid:fbUser?.uid||OBSERVER_ID,createdByName:fbUser?.displayName||fbUser?.email||'관찰자',deviceId:DEVICE_ID,env:state.currentEnv,
     updatedAt:now2,deleted:false,dirty:true};
   rec=captureLatency(rec); // 지연시간 자동 첨부
   Repository.putRecord(rec);renderGrid();paintStudent();openSheet(rec.id);
@@ -2165,7 +2312,7 @@ function renderChips(){
 function closeSheet(){$('#scrim').classList.remove('show');$('#sheet').classList.remove('open');state.sheetId=null;}
 function saveSheet(){
   const rec=db.records.find(r=>r.id===state.sheetId);if(!rec)return;
-  rec.a=[...state.sel.a];rec.c=[...state.sel.c];rec.note=$('#note').value;persist();
+  rec.a=[...state.sel.a];rec.c=[...state.sel.c];rec.note=$('#note').value;rec.updatedAt=new Date().toISOString();rec.dirty=true;saveRecord(rec).catch(e=>console.warn('saveSheet 기록 저장 오류:',e));persist();
   closeSheet();paintStudent();if(state.tab==='review')renderTimeline();
   toast(rec.a.length&&rec.c.length?'<b>ABC 완성</b> · 저장됐어요':'기록 저장됨 · A·C는 검토에서 채울 수 있어요');
 }
@@ -2392,7 +2539,7 @@ function saveEditor(){
   if(ed.kind==='student'){
     if(!ed.name.trim()){toast('이름을 입력하세요');return;}
     if(ed.id){const s=sMap[ed.id];s.name=ed.name.trim();s.color=ed.color;s.sub=ed.sub;}
-    else{const s={id:uid('s'),name:ed.name.trim(),color:ed.color,sub:ed.sub,ownerUid:fbUser?.uid||null,members:fbUser?[fbUser.uid]:[],shareCode:null,shareCodeExpiresAt:null};db.students.push(s);state.sid=s.id;}
+    else{syncActiveCaseFromDb();const s={id:ulid(),name:ed.name.trim(),color:ed.color,sub:ed.sub,ownerUid:fbUser?.uid||null,memberUids:fbUser?[fbUser.uid]:[],members:fbUser?[fbUser.uid]:[],shareCode:null,shareCodeExpiresAt:null,...caseDefaults()};db.students.push(s);state.sid=s.id;applyCaseToDb(s);}
   }else if(ed.kind==='behavior'){
     if(!ed.name.trim()){toast('행동 이름을 입력하세요');return;}
     if(ed.id){const b=bMap[ed.id];b.name=ed.name.trim();b.color=ed.color;b.icon=ed.icon;b.type=ed.type;}
@@ -3492,8 +3639,11 @@ function updateStudioSync(){
 document.addEventListener('click', e=>{
   const ss=e.target.closest('[data-stsid]');
   if(ss&&isDesktop()){
+    syncActiveCaseFromDb();
     stSid=ss.dataset.stsid;
     state.sid=stSid;
+    applyCaseToDb(activeCase());
+    reindex();
     renderStudioSidebar();
     switchStTab(stTab);
     return;
@@ -3561,10 +3711,10 @@ function openShareModal(sid){
 
 async function loadSharedMembers(sid){
   try{
-    const snap=await fbStore.collection('sharedRecords').doc(sid).get();
+    const snap=await FS.student(sid).get();
     const el=$('#members-'+sid); if(!el) return;
     if(snap.exists){
-      const members=snap.data().members||[];
+      const members=snap.data().memberUids||[];
       el.textContent=`참가 중: ${members.length}명`;
     }
   }catch(e){}
@@ -3589,13 +3739,13 @@ async function previewJoinCode(val){
   clearTimeout(joinPreviewTimer);
   joinPreviewTimer=setTimeout(async()=>{
     try{
-      const snap=await fbStore.collection('shareCodes').doc(clean).get();
+      const snap=await FS.code(clean).get();
       const preview=$('#joinPreview');
       if(snap.exists){
         const data=snap.data();
         const exp=shareCodeExpiry(data);
         const expired=!exp || exp<new Date();
-        $('#joinPreviewName').textContent=expired?'만료된 코드예요':data.studentName;
+        $('#joinPreviewName').textContent=expired?'만료된 코드예요':(data.caseName||data.studentName||'공유 관찰');
         $('#joinPreviewSub').textContent=expired
           ? '새 코드를 요청하세요'
           : `참가 가능 ✓  만료: ${exp.toLocaleString('ko-KR')}`;
@@ -3820,7 +3970,7 @@ function stopInterval(){
     id:ulid(), sid:state.sid, bid:iv.bid,
     ts:now, dur:iv.elapsed,
     a:[], c:[], note:`간격기록: ${oCount}/${iv.marks.length}간격 발생 (${pct}%) — ${iv.intervalSec}초 간격`,
-    observerId:OBSERVER_ID, deviceId:DEVICE_ID, env:state.currentEnv,
+    observerId:fbUser?.uid||OBSERVER_ID, createdByUid:fbUser?.uid||OBSERVER_ID, createdByName:fbUser?.displayName||fbUser?.email||'관찰자', deviceId:DEVICE_ID, env:state.currentEnv,
     updatedAt:now, deleted:false, dirty:true,
     intervalData:{ intervalSec:iv.intervalSec, totalSec:iv.totalSec, marks:[...iv.marks], pct }
   };
@@ -3926,7 +4076,7 @@ document.addEventListener('click',e=>{
   const t=e.target;
   const tab=t.closest('[data-tab]'); if(tab){switchTab(tab.dataset.tab);return;}
   const bh=t.closest('[data-bh]'); if(bh){tapBehavior(bh.dataset.bh,bh,e);return;}
-  const pick=t.closest('[data-pick]'); if(pick){state.sid=pick.dataset.pick;state.date=null;$('#switcher').classList.remove('open');renderSwitcher();paintStudent();renderGrid();toast(`<b>${cur().name}</b> 로 전환`);return;}
+  const pick=t.closest('[data-pick]'); if(pick){syncActiveCaseFromDb();state.sid=pick.dataset.pick;applyCaseToDb(activeCase());reindex();state.date=null;$('#switcher').classList.remove('open');renderSwitcher();paintStudent();renderGrid();toast(`<b>${cur().name}</b> 로 전환`);return;}
   const editTime=t.closest('[data-edit-time]');
   if(editTime){ openTimeEdit(editTime.dataset.editTime); return; }
   const orderUp=t.closest('[data-order-up]');
@@ -4017,9 +4167,11 @@ document.addEventListener('click',e=>{
     else if(a==='close-time-edit')closeTimeEdit();
     else if(a==='save-time-edit')saveTimeEdit();
     else if(a==='reset-all'){
-  db=defaults();seed(db);
-  state.sid=db.students[0]?.id||'s1';
-  state.date=null;reindex();persist();refreshAll();switchTab('record');
+  db=defaults();
+  const base=caseDefaults(), sid=ulid();
+  db.students=[{id:sid,name:'학생 1',color:'#0F6E6C',sub:'',ownerUid:fbUser?.uid||null,memberUids:fbUser?[fbUser.uid]:[],members:fbUser?[fbUser.uid]:[],shareCode:null,shareCodeExpiresAt:null,...base}];
+  db.records=[];db.notes=[];db.interviews=[];db.masScores=[];
+  state.sid=sid;state.date=null;applyCaseToDb(db.students[0]);reindex();persist();refreshAll();switchTab('record');
   toast('초기 상태로 되돌렸어요');
 }
     return;
