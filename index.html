@@ -1501,6 +1501,7 @@ function applyCaseToDb(s){
 }
 
 function buildCasePayload(s){
+  const memberUids = Array.from(new Set([...(s.memberUids || s.members || []), s.ownerUid || fbUser.uid].filter(Boolean)));
   return {
     name:          s.name,
     color:         s.color,
@@ -1509,7 +1510,7 @@ function buildCasePayload(s){
     shareCode:     s.shareCode     || null,
     shareCodeExpiresAt: s.shareCodeExpiresAt || null,
     ownerUid:      s.ownerUid || fbUser.uid,
-    memberUids:    s.memberUids || s.members || [fbUser.uid],
+    memberUids,
     behaviors:   s.behaviors   || [],
     aChips:      s.aChips      || [],
     cChips:      s.cChips      || [],
@@ -1547,7 +1548,7 @@ async function saveStudent(s){
       role: 'owner',
       joinedAt: firebase.firestore.FieldValue.serverTimestamp(),
     }, {merge:true});
-  }catch(e){ console.warn('케이스 저장 실패:', e); }
+  }catch(e){ console.warn('케이스 저장 실패:', e.code || e.message || e, {caseId:s.id, ownerUid:s.ownerUid, currentUid:fbUser?.uid, memberUids:s.memberUids||s.members}); }
 }
 
 // ── 기록 저장 (서브컬렉션) ──
@@ -1561,7 +1562,7 @@ async function saveRecord(rec){
   rec.deviceId = DEVICE_ID;
   try{
     await FS.record(rec.sid, rec.id).set(rec, {merge:true});
-  }catch(e){ console.warn('기록 저장 실패:', e); }
+  }catch(e){ console.warn('기록 저장 실패:', e.code || e.message || e, {caseId:rec.sid, recordId:rec.id, currentUid:fbUser?.uid}); }
 }
 
 // ── persist — 변경된 것만 저장 ──
