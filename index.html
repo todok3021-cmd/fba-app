@@ -702,6 +702,79 @@
   .ioa-leg-item{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--sub);}
   .ioa-leg-dot{width:10px;height:10px;border-radius:3px;flex:none;}
 
+  /* 데스크톱 작업실에서도 모바일 시트를 전역 모달로 사용 */
+  @media(min-width:1024px){
+    .wrap{
+      display:block!important;
+      position:fixed;
+      inset:0;
+      width:100%;
+      max-width:none;
+      height:100vh;
+      height:100dvh;
+      border-radius:0;
+      box-shadow:none;
+      background:transparent;
+      pointer-events:none;
+      z-index:80;
+    }
+    .wrap .phone,
+    .wrap .app{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      overflow:visible;
+      background:transparent;
+      pointer-events:none;
+    }
+    .wrap .screen,
+    .wrap .tabbar,
+    .wrap .statusbar,
+    .wrap .toast{
+      display:none!important;
+    }
+    .wrap .scrim{
+      position:fixed;
+      inset:0;
+      z-index:200;
+      pointer-events:none;
+    }
+    .wrap .scrim.show{
+      pointer-events:auto;
+    }
+    .wrap .sheet{
+      position:fixed;
+      left:50%;
+      right:auto;
+      top:50%;
+      bottom:auto;
+      width:min(520px, calc(100vw - 48px));
+      max-height:min(760px, calc(100vh - 48px));
+      border-radius:22px;
+      transform:translate(-50%, calc(-50% + 24px)) scale(.98);
+      opacity:0;
+      z-index:210;
+      pointer-events:none;
+      box-shadow:0 24px 80px -24px rgba(14,40,45,.55);
+      overflow:hidden;
+    }
+    .wrap .sheet.open{
+      transform:translate(-50%, -50%) scale(1);
+      opacity:1;
+      pointer-events:auto;
+    }
+    .wrap .sheet .grab{
+      display:none;
+    }
+    .wrap .sheet-head{
+      padding:18px 22px 14px;
+    }
+    .wrap .sheet-body{
+      max-height:calc(100vh - 210px);
+    }
+  }
+
 </style>
 <!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
