@@ -1443,6 +1443,10 @@ let sharedStudentIds = [];
 let studentListeners  = {}; // sid → unsubscribe (학생 문서 리스너)
 let recordListeners   = {}; // sid → unsubscribe (기록 서브컬렉션 리스너)
 let recordRetryTimers = {}; // sid → retry timer
+let noteListeners     = {}; // sid → unsubscribe (관찰 메모 리스너)
+let interviewListeners= {}; // sid → unsubscribe (면담 리스너)
+let masScoreListeners = {}; // sid → unsubscribe (MAS 점수 리스너)
+let extraRetryTimers  = {}; // sid → retry timer for notes/interviews/MAS
 let settingsListener  = null;
 
 // ── Firestore 경로 헬퍼 ──
@@ -1450,6 +1454,12 @@ const FS = {
   student:  sid  => fbStore.collection('cases').doc(sid),
   records:  sid  => fbStore.collection('cases').doc(sid).collection('records'),
   record:   (sid,rid) => fbStore.collection('cases').doc(sid).collection('records').doc(rid),
+  notes:    sid  => fbStore.collection('cases').doc(sid).collection('notes'),
+  note:     (sid,nid) => fbStore.collection('cases').doc(sid).collection('notes').doc(nid),
+  interviews: sid => fbStore.collection('cases').doc(sid).collection('interviews'),
+  interview:  (sid,iid) => fbStore.collection('cases').doc(sid).collection('interviews').doc(iid),
+  masScores: sid => fbStore.collection('cases').doc(sid).collection('masScores'),
+  masScore:  (sid,mid) => fbStore.collection('cases').doc(sid).collection('masScores').doc(mid),
   member:   (sid,uid) => fbStore.collection('cases').doc(sid).collection('members').doc(uid),
   code:     code => fbStore.collection('invites').doc(code),
 };
@@ -1543,9 +1553,12 @@ function applyCaseToDb(s){
   const othersNotes = (db.notes || []).filter(n=>n.sid!==s.id);
   const othersInterviews = (db.interviews || []).filter(n=>n.sid!==s.id);
   const othersMasScores = (db.masScores || []).filter(n=>n.sid!==s.id);
-  db.notes = othersNotes.concat(s.notes || []);
-  db.interviews = othersInterviews.concat(s.interviews || []);
-  db.masScores = othersMasScores.concat(s.masScores || []);
+  const currentNotes = (db.notes || []).filter(n=>n.sid===s.id);
+  const currentInterviews = (db.interviews || []).filter(n=>n.sid===s.id);
+  const currentMasScores = (db.masScores || []).filter(n=>n.sid===s.id);
+  db.notes = othersNotes.concat(mergeByStableId(s.notes || [], currentNotes));
+  db.interviews = othersInterviews.concat(mergeByStableId(s.interviews || [], currentInterviews));
+  db.masScores = othersMasScores.concat(mergeByStableId(s.masScores || [], currentMasScores));
 }
 
 function buildCasePayload(s){
@@ -1575,6 +1588,33 @@ function isCurrentUserCase(data){
   if(!fbUser || !data) return false;
   const members = data.memberUids || data.members || [];
   return data.ownerUid === fbUser.uid || members.includes(fbUser.uid);
+}
+
+function mergeByStableId(...groups){
+  const map = new Map();
+  groups.flat().filter(Boolean).forEach(item=>{
+    const key = item.id || JSON.stringify([item.sid, item.ts, item.text, item.respondent, item.scores, item.answers]);
+    map.set(key, item.id ? item : {...item, id:key});
+  });
+  return Array.from(map.values());
+}
+
+async function loadCaseExtras(sid){
+  try{
+    const [noteSnap, ivSnap, masSnap] = await Promise.all([
+      FS.notes(sid).get(),
+      FS.interviews(sid).get(),
+      FS.masScores(sid).get(),
+    ]);
+    return {
+      notes: noteSnap.docs.map(d=>({...d.data(), id:d.id, sid:d.data().sid || sid})),
+      interviews: ivSnap.docs.map(d=>({...d.data(), id:d.id, sid:d.data().sid || sid})),
+      masScores: masSnap.docs.map(d=>({...d.data(), id:d.id, sid:d.data().sid || sid})),
+    };
+  }catch(e){
+    console.warn('관찰노트 공유 데이터 읽기 실패:', e.code || e.message || e, {caseId:sid});
+    return {notes:[], interviews:[], masScores:[]};
+  }
 }
 
 async function saveSettings(){
@@ -1617,6 +1657,42 @@ async function saveRecord(rec){
   try{
     await FS.record(rec.sid, rec.id).set(rec, {merge:true});
   }catch(e){ console.warn('기록 저장 실패:', e.code || e.message || e, {caseId:rec.sid, recordId:rec.id, currentUid:fbUser?.uid}); }
+}
+
+function sharedExtraRef(kind, sid, id){
+  if(kind === 'notes') return FS.note(sid, id);
+  if(kind === 'interviews') return FS.interview(sid, id);
+  if(kind === 'masScores') return FS.masScore(sid, id);
+  throw new Error('Unknown shared extra kind: ' + kind);
+}
+
+async function saveSharedExtra(kind, item){
+  if(!fbUser || !item?.sid || !item?.id) return;
+  const isCaseMember = db.students.some(s => s.id === item.sid);
+  if(!isCaseMember) return;
+  const payload = {
+    ...item,
+    sid: item.sid,
+    createdByUid: item.createdByUid || fbUser.uid,
+    createdByName: item.createdByName || fbUser.displayName || fbUser.email || '관찰자',
+    observerId: item.observerId || fbUser.uid,
+    deviceId: item.deviceId || DEVICE_ID,
+    _updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+  };
+  try{
+    await sharedExtraRef(kind, item.sid, item.id).set(payload, {merge:true});
+  }catch(e){
+    console.warn('관찰노트 저장 실패:', e.code || e.message || e, {kind, caseId:item.sid, docId:item.id, currentUid:fbUser?.uid});
+  }
+}
+
+async function deleteSharedExtra(kind, sid, id){
+  if(!fbUser || !sid || !id) return;
+  try{
+    await sharedExtraRef(kind, sid, id).delete();
+  }catch(e){
+    console.warn('관찰노트 삭제 실패:', e.code || e.message || e, {kind, caseId:sid, docId:id, currentUid:fbUser?.uid});
+  }
 }
 
 // ── persist — 변경된 것만 저장 ──
@@ -1667,7 +1743,11 @@ async function deleteCollectionDocs(colRef){
 function stopCaseRealtime(sid){
   if(recordListeners[sid]){ recordListeners[sid](); delete recordListeners[sid]; }
   if(studentListeners[sid]){ studentListeners[sid](); delete studentListeners[sid]; }
+  if(noteListeners[sid]){ noteListeners[sid](); delete noteListeners[sid]; }
+  if(interviewListeners[sid]){ interviewListeners[sid](); delete interviewListeners[sid]; }
+  if(masScoreListeners[sid]){ masScoreListeners[sid](); delete masScoreListeners[sid]; }
   if(recordRetryTimers[sid]){ clearTimeout(recordRetryTimers[sid]); delete recordRetryTimers[sid]; }
+  if(extraRetryTimers[sid]){ clearTimeout(extraRetryTimers[sid]); delete extraRetryTimers[sid]; }
 }
 
 function removeStudentLocal(sid){
@@ -1691,10 +1771,18 @@ function clearClientSession(){
   Object.values(studentListeners).forEach(u => u());
   Object.values(recordListeners).forEach(u => u());
   Object.values(recordRetryTimers).forEach(t => clearTimeout(t));
+  Object.values(noteListeners).forEach(u => u());
+  Object.values(interviewListeners).forEach(u => u());
+  Object.values(masScoreListeners).forEach(u => u());
+  Object.values(extraRetryTimers).forEach(t => clearTimeout(t));
   if(settingsListener){ settingsListener(); settingsListener = null; }
   studentListeners = {};
   recordListeners = {};
   recordRetryTimers = {};
+  noteListeners = {};
+  interviewListeners = {};
+  masScoreListeners = {};
+  extraRetryTimers = {};
   sharedStudentIds = [];
   db = null;
   state.sid = '';
@@ -1718,6 +1806,9 @@ async function deleteStudentCase(sid){
   }
 
   await deleteCollectionDocs(FS.records(sid));
+  await deleteCollectionDocs(FS.notes(sid));
+  await deleteCollectionDocs(FS.interviews(sid));
+  await deleteCollectionDocs(FS.masScores(sid));
   await deleteCollectionDocs(FS.student(sid).collection('members'));
   if(s.shareCode) await FS.code(s.shareCode).delete().catch(()=>{});
   await FS.student(sid).delete();
@@ -1733,10 +1824,18 @@ async function resetCloudDataForCurrentUser(){
   Object.values(studentListeners).forEach(u => u());
   Object.values(recordListeners).forEach(u => u());
   Object.values(recordRetryTimers).forEach(t => clearTimeout(t));
+  Object.values(noteListeners).forEach(u => u());
+  Object.values(interviewListeners).forEach(u => u());
+  Object.values(masScoreListeners).forEach(u => u());
+  Object.values(extraRetryTimers).forEach(t => clearTimeout(t));
   if(settingsListener){ settingsListener(); settingsListener = null; }
   studentListeners = {};
   recordListeners = {};
   recordRetryTimers = {};
+  noteListeners = {};
+  interviewListeners = {};
+  masScoreListeners = {};
+  extraRetryTimers = {};
 
   // prototype7 cases 구조 정리
   const caseSnap = await fbStore.collection('cases')
@@ -1746,6 +1845,9 @@ async function resetCloudDataForCurrentUser(){
     const data = doc.data();
     if(data.ownerUid === fbUser.uid){
       await deleteCollectionDocs(doc.ref.collection('records'));
+      await deleteCollectionDocs(doc.ref.collection('notes'));
+      await deleteCollectionDocs(doc.ref.collection('interviews'));
+      await deleteCollectionDocs(doc.ref.collection('masScores'));
       await deleteCollectionDocs(doc.ref.collection('members'));
       await doc.ref.delete();
     }else{
@@ -1822,9 +1924,10 @@ async function loadData(){
       }
       const s = normalizeCase(raw, doc.id);
       students.push(s);
-      notes.push(...(s.notes || []));
-      interviews.push(...(s.interviews || []));
-      masScores.push(...(s.masScores || []));
+      const extras = await loadCaseExtras(s.id);
+      notes.push(...mergeByStableId(s.notes || [], extras.notes));
+      interviews.push(...mergeByStableId(s.interviews || [], extras.interviews));
+      masScores.push(...mergeByStableId(s.masScores || [], extras.masScores));
       const recSnap = await FS.records(s.id).get();
       recSnap.docs.forEach(r => allRecords.push({...r.data(), id: r.id, sid: r.data().sid || s.id}));
     }
@@ -2021,9 +2124,17 @@ function startSync(){
   Object.values(studentListeners).forEach(u => u());
   Object.values(recordListeners).forEach(u => u());
   Object.values(recordRetryTimers).forEach(t => clearTimeout(t));
+  Object.values(noteListeners).forEach(u => u());
+  Object.values(interviewListeners).forEach(u => u());
+  Object.values(masScoreListeners).forEach(u => u());
+  Object.values(extraRetryTimers).forEach(t => clearTimeout(t));
   studentListeners = {};
   recordListeners  = {};
   recordRetryTimers = {};
+  noteListeners = {};
+  interviewListeners = {};
+  masScoreListeners = {};
+  extraRetryTimers = {};
   if(settingsListener){ settingsListener(); settingsListener = null; }
   if(unsubSync){ unsubSync(); unsubSync = null; }
 
@@ -2054,6 +2165,12 @@ function startSync(){
           recordRetryTimers[sid] = setTimeout(()=>{
             delete recordRetryTimers[sid];
             startRecordListener(sid);
+          }, 350);
+        }
+        if(!noteListeners[sid] && !extraRetryTimers[sid]){
+          extraRetryTimers[sid] = setTimeout(()=>{
+            delete extraRetryTimers[sid];
+            startExtraListeners(sid);
           }, 350);
         }
       });
@@ -2097,6 +2214,54 @@ function startRecordListener(sid, attempt=0){
         memberUids: s?.memberUids || s?.members
       });
     });
+}
+
+function stopExtraRealtime(sid){
+  if(noteListeners[sid]){ noteListeners[sid](); delete noteListeners[sid]; }
+  if(interviewListeners[sid]){ interviewListeners[sid](); delete interviewListeners[sid]; }
+  if(masScoreListeners[sid]){ masScoreListeners[sid](); delete masScoreListeners[sid]; }
+  if(extraRetryTimers[sid]){ clearTimeout(extraRetryTimers[sid]); delete extraRetryTimers[sid]; }
+}
+
+function applySharedDocSnapshot(key, sid, snap){
+  if(!db) return;
+  if(!Array.isArray(db[key])) db[key] = [];
+  snap.docChanges().forEach(change=>{
+    const item = {id: change.doc.id, ...change.doc.data(), sid: change.doc.data().sid || sid};
+    if(change.type === 'removed'){
+      db[key] = db[key].filter(x => x.id !== item.id);
+      return;
+    }
+    const idx = db[key].findIndex(x => x.id === item.id);
+    if(idx >= 0) db[key][idx] = {...db[key][idx], ...item};
+    else db[key].push(item);
+  });
+  if(state.sid === sid) syncActiveCaseFromDb();
+  refreshAll();
+}
+
+function startExtraListeners(sid, attempt=0){
+  stopExtraRealtime(sid);
+  const onErr = e => {
+    stopExtraRealtime(sid);
+    if(e.code === 'permission-denied' && attempt < 5){
+      extraRetryTimers[sid] = setTimeout(()=>{
+        delete extraRetryTimers[sid];
+        startExtraListeners(sid, attempt + 1);
+      }, 600 + attempt * 500);
+      return;
+    }
+    const s = db?.students?.find(x=>x.id===sid);
+    console.warn('관찰노트 리스너 오류:', e.code || e.message || e, {
+      caseId: sid,
+      currentUid: fbUser?.uid,
+      ownerUid: s?.ownerUid,
+      memberUids: s?.memberUids || s?.members
+    });
+  };
+  noteListeners[sid] = FS.notes(sid).onSnapshot(snap=>applySharedDocSnapshot('notes', sid, snap), onErr);
+  interviewListeners[sid] = FS.interviews(sid).onSnapshot(snap=>applySharedDocSnapshot('interviews', sid, snap), onErr);
+  masScoreListeners[sid] = FS.masScores(sid).onSnapshot(snap=>applySharedDocSnapshot('masScores', sid, snap), onErr);
 }
 
 // ── 공유 코드 생성 (제한시간 24시간 + 랜덤) ──
@@ -2908,12 +3073,15 @@ function renderMemoList(){
     <button class="mi-del" data-del-memo="${m.id}">×</button>
   </div>`).join('');
 }
-function addMemo(){
+async function addMemo(){
   const inp=$('#memoInput'); if(!inp)return;
   const text=inp.value.trim(); if(!text){toast('메모 내용을 입력하세요');return;}
   if(!db.notes)db.notes=[];
-  db.notes.push({id:uid('n'),sid:state.sid,ts:new Date().toISOString(),tag:state.memoTag,text});
-  inp.value=''; persist(); renderMemoList(); updateNoteBadge(); toast('메모 저장됐어요');
+  const memo={id:uid('n'),sid:state.sid,ts:new Date().toISOString(),tag:state.memoTag,text};
+  db.notes.push(memo);
+  inp.value=''; renderMemoList(); updateNoteBadge();
+  await saveSharedExtra('notes', memo);
+  persist(); toast('메모 저장됐어요');
 }
 
 // 면담 탭
@@ -2927,14 +3095,17 @@ function renderIvQuestions(){
       </div>`).join('')
     : '<div style="color:#9aa6aa;font-size:13px;padding:16px 0;text-align:center">설정에서 면담 질문을 추가하세요</div>';
 }
-function saveInterview(){
+async function saveInterview(){
   const respondent=($('#ivRespondent')||{}).value||'';
   const answers={};
   document.querySelectorAll('[data-ivq]').forEach(el=>{if(el.value.trim())answers[el.dataset.ivq]=el.value.trim();});
   if(!respondent&&!Object.keys(answers).length){toast('면담 대상이나 답변을 입력하세요');return;}
   if(!db.interviews)db.interviews=[];
-  db.interviews.push({id:uid('iv'),sid:state.sid,ts:new Date().toISOString(),respondent,answers});
-  persist(); updateNoteBadge(); toast('<b>면담 기록</b> 저장됐어요');
+  const interview={id:uid('iv'),sid:state.sid,ts:new Date().toISOString(),respondent,answers};
+  db.interviews.push(interview);
+  updateNoteBadge();
+  await saveSharedExtra('interviews', interview);
+  persist(); toast('<b>면담 기록</b> 저장됐어요');
 }
 
 // MAS 척도 탭
@@ -2977,12 +3148,15 @@ function renderMasSummary(){
     </div>`;
   }).join('');
 }
-function saveMas(){
+async function saveMas(){
   const filled=Object.keys(state.masTemp).length;
   if(!filled){toast('최소 한 항목에 점수를 입력하세요');return;}
   if(!db.masScores)db.masScores=[];
-  db.masScores.push({id:uid('ms'),sid:state.sid,ts:new Date().toISOString(),scores:{...state.masTemp}});
-  persist(); updateNoteBadge(); toast('<b>행동척도</b> 저장됐어요');
+  const score={id:uid('ms'),sid:state.sid,ts:new Date().toISOString(),scores:{...state.masTemp}};
+  db.masScores.push(score);
+  updateNoteBadge();
+  await saveSharedExtra('masScores', score);
+  persist(); toast('<b>행동척도</b> 저장됐어요');
 }
 
 // 설정 — MAS 항목 렌더링
@@ -4377,7 +4551,7 @@ document.addEventListener('click',e=>{
   const ntab=t.closest('[data-ntab]'); if(ntab){switchNoteTab(ntab.dataset.ntab);return;}
   const mtag=t.closest('[data-mtag]'); if(mtag){state.memoTag=mtag.dataset.mtag;document.querySelectorAll('[data-mtag]').forEach(b=>b.classList.toggle('on',b.dataset.mtag===state.memoTag));return;}
   const masBtn=t.closest('[data-mas-item]'); if(masBtn){const mid=masBtn.dataset.masItem,val=parseInt(masBtn.dataset.masVal);state.masTemp[mid]=val;renderMasItems();return;}
-  const delMemo=t.closest('[data-del-memo]'); if(delMemo){db.notes=(db.notes||[]).filter(n=>n.id!==delMemo.dataset.delMemo);persist();renderMemoList();updateNoteBadge();toast('메모 삭제됨');return;}
+  const delMemo=t.closest('[data-del-memo]'); if(delMemo){const id=delMemo.dataset.delMemo;db.notes=(db.notes||[]).filter(n=>n.id!==id);deleteSharedExtra('notes', state.sid, id);persist();renderMemoList();updateNoteBadge();toast('메모 삭제됨');return;}
   const editMas=t.closest('[data-edit-mas]'); if(editMas){openMasEditor(editMas.dataset.editMas);return;}
   const editIvq=t.closest('[data-edit-ivq]'); if(editIvq){openIvEditor(editIvq.dataset.editIvq);return;}
   const act=t.closest('[data-action]'); if(act){const a=act.dataset.action;
