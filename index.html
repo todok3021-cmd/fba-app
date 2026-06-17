@@ -920,38 +920,45 @@
       <div class="screen" id="s-settings">
         <div class="pagehead"><div><h1>설정</h1><p>미리 정의해 두면 현장에선 누르기만 하면 됩니다.</p></div></div>
         <div class="setgrp">
+
           <div class="gh"><span>학생 명단</span></div>
           <div id="setStudents"></div>
           <button class="addbtn" data-action="add-student">＋ 학생 추가</button>
 
-          <div class="gh"><span>행동 정의</span></div>
-          <div id="setBehaviors"></div>
-          <button class="addbtn" data-action="add-behavior">＋ 행동 추가</button>
-          <button class="addbtn" style="margin-top:6px;border-color:#c8e0dc;color:#0F6E6C" data-action="open-order">↕ 현재 학생 행동 순서 편집</button>
-
-          <div class="gh"><span>선행사건 (A)</span><em style="font-weight:500;color:#9aa6aa;font-style:normal">★ = 시트 상단 고정</em></div>
-          <div class="chiprow" id="setAchips"></div>
-          <div class="addchip"><input id="addA" placeholder="새 선행사건 입력" maxlength="20"><button data-action="add-chip-a">추가</button></div>
-
-          <div class="gh" style="padding-top:18px"><span>후속결과 (C)</span></div>
-          <div class="chiprow" id="setCchips"></div>
-          <div class="addchip"><input id="addC" placeholder="새 후속결과 입력" maxlength="20"><button data-action="add-chip-c">추가</button></div>
-
-          <div class="gh" style="padding-top:22px"><span>행동평정척도 (MAS)</span></div>
+          <div class="gh" style="padding-top:22px"><span>관찰 설정</span></div>
+          <div class="row" style="cursor:pointer" data-action="open-behavior-manager">
+            <div class="rdisc" style="background:#2A9D8F">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13" cy="5" r="2"/><path d="M11 9l-3 3 3 2 1 5M11 9l4 2 3-1M8 21l1-4" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="rmeta"><b>행동 정의</b><span id="behaviorManagerSub">행동 6개</span></div>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9aa6aa" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          </div>
+          <div class="row" style="cursor:pointer" data-action="open-achip-manager">
+            <div class="rdisc" style="background:#7a8a3a">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+            </div>
+            <div class="rmeta"><b>선행사건 (A)</b><span id="achipManagerSub">6개 · ★ = 시트 상단 고정</span></div>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9aa6aa" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          </div>
+          <div class="row" style="cursor:pointer" data-action="open-cchip-manager">
+            <div class="rdisc" style="background:#b4502f">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+            </div>
+            <div class="rmeta"><b>후속결과 (C)</b><span id="cchipManagerSub">6개</span></div>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9aa6aa" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          </div>
           <div class="row" style="cursor:pointer" data-action="open-mas-manager">
             <div class="rdisc" style="background:#3E86C0">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="20" x2="4" y2="11"/><line x1="10" y1="20" x2="10" y2="4"/><line x1="16" y1="20" x2="16" y2="14"/><line x1="22" y1="20" x2="22" y2="8"/></svg>
             </div>
-            <div class="rmeta"><b>MAS 항목 편집 / 추가</b><span id="masManagerSub">항목 16개</span></div>
+            <div class="rmeta"><b>행동평정척도 (MAS)</b><span id="masManagerSub">항목 16개</span></div>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9aa6aa" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
           </div>
-
-          <div class="gh" style="padding-top:22px"><span>면담 질문</span></div>
           <div class="row" style="cursor:pointer" data-action="open-iv-manager">
             <div class="rdisc" style="background:#E0972F">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 4H4v12h4v4l5-4h7z" stroke-linejoin="round"/></svg>
             </div>
-            <div class="rmeta"><b>면담 질문 편집 / 추가</b><span id="ivManagerSub">질문 8개</span></div>
+            <div class="rmeta"><b>면담 질문</b><span id="ivManagerSub">질문 8개</span></div>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9aa6aa" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
           </div>
 
@@ -965,10 +972,60 @@
 
           <div class="gh" style="padding-top:22px"><span>데이터</span></div>
           <button class="addbtn" style="border-color:#c8dce0;color:#0F6E6C;margin-bottom:6px" data-action="open-join">🔗 공유 코드로 참가 (다른 교사 학생)</button>
-          <button class="addbtn" style="border-color:#c8dce0;color:#0F6E6C;margin-bottom:6px" data-action="manual-migrate-v2">🔄 데이터 업그레이드 (문제 시 실행)</button>
           <button class="addbtn" style="border-color:#f0d0c8;color:#c0392b" data-action="reset-all">기록 전체 초기화</button>
           <div style="height:24px"></div>
         </div>
+      </div>
+    </div>
+
+    <!-- 행동 정의 관리 시트 -->
+    <div class="scrim" id="behaviorManagerScrim" data-action="close-behavior-manager"></div>
+    <div class="sheet" id="behaviorManagerSheet" style="max-height:92%">
+      <div class="grab"></div>
+      <div class="sheet-head">
+        <div class="stit"><b>행동 정의</b><span id="behaviorManagerCount"></span></div>
+        <button class="ghostbtn" data-action="close-behavior-manager">닫기</button>
+      </div>
+      <div style="overflow-y:auto;flex:1;padding:14px 18px 8px">
+        <div id="behaviorManagerList"></div>
+        <button class="addbtn" style="margin-top:4px" data-action="add-behavior">＋ 행동 추가</button>
+        <button class="addbtn" style="margin-top:6px;border-color:#c8e0dc;color:#0F6E6C;margin-bottom:20px" data-action="open-order">↕ 학생별 순서 편집</button>
+      </div>
+    </div>
+
+    <!-- 선행사건 관리 시트 -->
+    <div class="scrim" id="achipManagerScrim" data-action="close-achip-manager"></div>
+    <div class="sheet" id="achipManagerSheet" style="max-height:92%">
+      <div class="grab"></div>
+      <div class="sheet-head">
+        <div class="stit"><b>선행사건 (A)</b><span>★ = 시트 상단 고정</span></div>
+        <button class="ghostbtn" data-action="close-achip-manager">닫기</button>
+      </div>
+      <div style="overflow-y:auto;flex:1;padding:14px 18px 8px">
+        <div class="chiprow" id="achipManagerList"></div>
+        <div class="addchip" style="margin-top:10px">
+          <input id="addASheet" placeholder="새 선행사건 입력" maxlength="20">
+          <button data-action="add-chip-a-sheet">추가</button>
+        </div>
+        <div style="height:20px"></div>
+      </div>
+    </div>
+
+    <!-- 후속결과 관리 시트 -->
+    <div class="scrim" id="cchipManagerScrim" data-action="close-cchip-manager"></div>
+    <div class="sheet" id="cchipManagerSheet" style="max-height:92%">
+      <div class="grab"></div>
+      <div class="sheet-head">
+        <div class="stit"><b>후속결과 (C)</b><span></span></div>
+        <button class="ghostbtn" data-action="close-cchip-manager">닫기</button>
+      </div>
+      <div style="overflow-y:auto;flex:1;padding:14px 18px 8px">
+        <div class="chiprow" id="cchipManagerList"></div>
+        <div class="addchip" style="margin-top:10px">
+          <input id="addCSheet" placeholder="새 후속결과 입력" maxlength="20">
+          <button data-action="add-chip-c-sheet">추가</button>
+        </div>
+        <div style="height:20px"></div>
       </div>
     </div>
 
@@ -1082,7 +1139,7 @@
       </div>
       <div style="padding:0 0 8px">
         <div class="join-input-row">
-          <input id="joinCodeInput" placeholder="예: FBA-AB2C9K" maxlength="10"
+          <input id="joinCodeInput" placeholder="예: FBA-AB2C" maxlength="8"
             oninput="this.value=this.value.toUpperCase();previewJoinCode(this.value)">
           <button class="btn-prim" style="flex:none;padding:11px 16px;border-radius:12px;font-size:13px" data-action="do-join">참가</button>
         </div>
@@ -1384,186 +1441,105 @@ async function doSignout(){
 
 // ── Firestore 문서 경로 ──
 // ═══════════════════════════════════════════════════════
-// prototype7 구조 — 공유 관찰 케이스 중심 설계
-// cases/{caseId}
-// cases/{caseId}/records/{recordId}
-// invites/{code}
-// users/{uid}
+// 새 Firestore 구조 (선택 B — 학생 중심 설계)
+// students/{studentId}/records/{recordId}
+// globalSettings/{uid}
+// shareCodes/{code}
 // ═══════════════════════════════════════════════════════
 
 // ── 공유 상태 ──
 let sharedStudentIds = [];
 let studentListeners  = {}; // sid → unsubscribe (학생 문서 리스너)
 let recordListeners   = {}; // sid → unsubscribe (기록 서브컬렉션 리스너)
-let recordRetryTimers = {}; // sid → retry timer
 let settingsListener  = null;
 
 // ── Firestore 경로 헬퍼 ──
 const FS = {
-  student:  sid  => fbStore.collection('cases').doc(sid),
-  records:  sid  => fbStore.collection('cases').doc(sid).collection('records'),
-  record:   (sid,rid) => fbStore.collection('cases').doc(sid).collection('records').doc(rid),
-  member:   (sid,uid) => fbStore.collection('cases').doc(sid).collection('members').doc(uid),
-  code:     code => fbStore.collection('invites').doc(code),
+  student:  sid  => fbStore.collection('students').doc(sid),
+  records:  sid  => fbStore.collection('students').doc(sid).collection('records'),
+  record:   (sid,rid) => fbStore.collection('students').doc(sid).collection('records').doc(rid),
+  settings: uid  => fbStore.collection('globalSettings').doc(uid),
+  code:     code => fbStore.collection('shareCodes').doc(code),
 };
 
-function normalizeShareCode(input){
-  return String(input || '').trim().toUpperCase().replace(/[^A-Z0-9-]/g, '');
+// ── 설정 저장/로드 (행동·칩·MAS 등 개인 설정) ──
+async function saveSettings(){
+  if(!fbUser) return;
+  const settingsData = {
+    behaviors:   db.behaviors   || [],
+    aChips:      db.aChips      || [],
+    cChips:      db.cChips      || [],
+    masItems:    db.masItems    || [],
+    ivQuestions: db.ivQuestions || [],
+    _updatedAt:  firebase.firestore.FieldValue.serverTimestamp(),
+  };
+  // 방법1: globalSettings 시도
+  try{
+    await FS.settings(fbUser.uid).set(settingsData);
+    return;
+  }catch(e){ console.warn('globalSettings 저장 실패, 대안 사용:', e.code); }
+  // 방법2: 첫 번째 내 학생 문서에 설정 병합
+  try{
+    const myStudent = (db.students||[]).find(s=>s.ownerUid===fbUser.uid);
+    if(myStudent){
+      await FS.student(myStudent.id).update({_settings: settingsData});
+    }
+  }catch(e){ console.warn('설정 대안 저장도 실패:', e.code); }
 }
 
-function shareCodeExpiry(data){
-  if(!data) return null;
-  if(data.expiresAt?.toDate) return data.expiresAt.toDate();
-  if(data._expiresAt) return new Date(data._expiresAt);
+async function loadSettings(){
+  if(!fbUser) return null;
+  // 방법1: globalSettings
+  try{
+    const snap = await FS.settings(fbUser.uid).get();
+    if(snap.exists) return snap.data();
+  }catch(e){ console.warn('globalSettings 읽기 실패:', e.code); }
+  // 방법2: 학생 문서의 _settings 필드
+  try{
+    const myStudents = await fbStore.collection('students')
+      .where('ownerUid','==',fbUser.uid).limit(1).get();
+    if(!myStudents.empty){
+      const data = myStudents.docs[0].data();
+      if(data._settings) return data._settings;
+    }
+  }catch(e){ console.warn('설정 대안 읽기 실패:', e.code); }
   return null;
 }
 
-function validShareCodeData(data, sid){
-  if(!data || data.caseId !== sid) return false;
-  const exp = shareCodeExpiry(data);
-  return !!exp && exp > new Date();
-}
-
-function caseDefaults(){
-  const d = defaults();
-  return {
-    behaviors: d.behaviors.map(x=>({...x})),
-    aChips: d.aChips.map(x=>({...x})),
-    cChips: d.cChips.map(x=>({...x})),
-    masItems: MAS_DEFAULTS.map(x=>({...x})),
-    ivQuestions: d.ivQuestions.map(x=>({...x})),
-    notes: [],
-    interviews: [],
-    masScores: [],
-  };
-}
-
-function normalizeCase(raw, id){
-  const base = caseDefaults();
-  return {
-    ...raw,
-    id,
-    name: raw.name || raw.studentName || '학생',
-    color: raw.color || '#0F6E6C',
-    sub: raw.sub || '',
-    ownerUid: raw.ownerUid || '',
-    memberUids: raw.memberUids || raw.members || [],
-    members: raw.memberUids || raw.members || [],
-    behaviorOrder: raw.behaviorOrder || [],
-    shareCode: raw.shareCode || null,
-    shareCodeExpiresAt: raw.shareCodeExpiresAt || null,
-    behaviors: raw.behaviors || base.behaviors,
-    aChips: raw.aChips || base.aChips,
-    cChips: raw.cChips || base.cChips,
-    masItems: raw.masItems || base.masItems,
-    ivQuestions: raw.ivQuestions || base.ivQuestions,
-    notes: raw.notes || [],
-    interviews: raw.interviews || [],
-    masScores: raw.masScores || [],
-  };
-}
-
-function activeCase(){
-  if(!db) return null;
-  return db.students.find(s=>s.id===state.sid) || db.students[0] || null;
-}
-
-function activeCaseId(){
-  return activeCase()?.id || state.sid;
-}
-
-function syncActiveCaseFromDb(){
-  const s = activeCase();
-  if(!s || !db) return;
-  s.behaviors = db.behaviors || [];
-  s.aChips = db.aChips || [];
-  s.cChips = db.cChips || [];
-  s.masItems = db.masItems || [];
-  s.ivQuestions = db.ivQuestions || [];
-  s.notes = (db.notes || []).filter(n=>n.sid===s.id);
-  s.interviews = (db.interviews || []).filter(n=>n.sid===s.id);
-  s.masScores = (db.masScores || []).filter(n=>n.sid===s.id);
-}
-
-function applyCaseToDb(s){
-  if(!s || !db) return;
-  db.behaviors = (s.behaviors || caseDefaults().behaviors).map(x=>({...x}));
-  db.aChips = (s.aChips || caseDefaults().aChips).map(x=>({...x}));
-  db.cChips = (s.cChips || caseDefaults().cChips).map(x=>({...x}));
-  db.masItems = (s.masItems || caseDefaults().masItems).map(x=>({...x}));
-  db.ivQuestions = (s.ivQuestions || caseDefaults().ivQuestions).map(x=>({...x}));
-
-  const othersNotes = (db.notes || []).filter(n=>n.sid!==s.id);
-  const othersInterviews = (db.interviews || []).filter(n=>n.sid!==s.id);
-  const othersMasScores = (db.masScores || []).filter(n=>n.sid!==s.id);
-  db.notes = othersNotes.concat(s.notes || []);
-  db.interviews = othersInterviews.concat(s.interviews || []);
-  db.masScores = othersMasScores.concat(s.masScores || []);
-}
-
-function buildCasePayload(s){
-  const memberUids = Array.from(new Set([...(s.memberUids || s.members || []), s.ownerUid || fbUser.uid].filter(Boolean)));
-  return {
-    name:          s.name,
-    color:         s.color,
-    sub:           s.sub || '',
-    behaviorOrder: s.behaviorOrder || [],
-    shareCode:     s.shareCode     || null,
-    shareCodeExpiresAt: s.shareCodeExpiresAt || null,
-    ownerUid:      s.ownerUid || fbUser.uid,
-    memberUids,
-    behaviors:   s.behaviors   || [],
-    aChips:      s.aChips      || [],
-    cChips:      s.cChips      || [],
-    masItems:    s.masItems    || [],
-    ivQuestions: s.ivQuestions || [],
-    notes:        s.notes      || [],
-    interviews:   s.interviews || [],
-    masScores:    s.masScores  || [],
-    _updatedAt:  firebase.firestore.FieldValue.serverTimestamp(),
-  };
-}
-
-async function saveSettings(){
-  if(!fbUser || !db) return;
-  syncActiveCaseFromDb();
-  const s = activeCase();
-  if(s) await saveStudent(s);
-}
-
-// ── 관찰 케이스 문서 저장 ──
+// ── 학생 문서 저장 ──
 async function saveStudent(s){
   if(!fbUser) return;
   try{
-    const payload = buildCasePayload(s);
-    if(s.ownerUid && s.ownerUid !== fbUser.uid){
-      // 참가자는 케이스 설정/멤버 정보를 반복 저장하지 않는다.
-      // 멤버 문서는 joinByCode()에서 한 번 생성되며, 초대 만료 후 반복 저장하면 규칙에 막힌다.
-      return;
-    }
-    await FS.student(s.id).set(payload, {merge: true});
-    await FS.member(s.id, fbUser.uid).set({
-      uid: fbUser.uid,
-      displayName: fbUser.displayName || fbUser.email || '소유자',
-      email: fbUser.email || '',
-      role: 'owner',
-      joinedAt: firebase.firestore.FieldValue.serverTimestamp(),
-    }, {merge:true});
-  }catch(e){ console.warn('케이스 저장 실패:', e.code || e.message || e, {caseId:s.id, ownerUid:s.ownerUid, currentUid:fbUser?.uid, memberUids:s.memberUids||s.members}); }
+    await FS.student(s.id).set({
+      name:          s.name,
+      color:         s.color,
+      sub:           s.sub || '',
+      behaviorOrder: s.behaviorOrder || [],
+      shareCode:     s.shareCode     || null,
+      shareCodeExpiresAt: s.shareCodeExpiresAt || null,
+      ownerUid:      s.ownerUid || fbUser.uid,
+      members:       s.members  || [fbUser.uid],
+      // 설정도 학생 문서에 함께 저장 (globalSettings 권한 문제 우회)
+      behaviors:   db.behaviors   || [],
+      aChips:      db.aChips      || [],
+      cChips:      db.cChips      || [],
+      masItems:    db.masItems    || [],
+      ivQuestions: db.ivQuestions || [],
+      _updatedAt:  firebase.firestore.FieldValue.serverTimestamp(),
+    }, {merge: true});
+  }catch(e){ console.warn('학생 저장 실패:', e.code||e); }
 }
 
 // ── 기록 저장 (서브컬렉션) ──
 async function saveRecord(rec){
   if(!fbUser) return;
-  const isCaseMember = db.students.some(s => s.id === rec.sid);
-  if(!isCaseMember) return;
-  rec.createdByUid = rec.createdByUid || fbUser.uid;
-  rec.createdByName = rec.createdByName || fbUser.displayName || fbUser.email || '관찰자';
-  rec.observerId = fbUser.uid;
-  rec.deviceId = DEVICE_ID;
+  // 내 학생이거나 공유 참가한 학생인 경우만
+  const isMyStudent     = db.students.some(s => s.id === rec.sid);
+  const isSharedStudent = sharedStudentIds.includes(rec.sid);
+  if(!isMyStudent && !isSharedStudent) return;
   try{
-    await FS.record(rec.sid, rec.id).set(rec, {merge:true});
-  }catch(e){ console.warn('기록 저장 실패:', e.code || e.message || e, {caseId:rec.sid, recordId:rec.id, currentUid:fbUser?.uid}); }
+    await FS.record(rec.sid, rec.id).set(rec);
+  }catch(e){ console.warn('기록 저장 실패:', e); }
 }
 
 // ── persist — 변경된 것만 저장 ──
@@ -1575,12 +1551,13 @@ function persist(){
   persistTimer = setTimeout(async ()=>{
     if(!fbUser || !db) return;
     try{
-      syncActiveCaseFromDb();
-      // 1. 케이스 문서 저장
+      // 1. 설정 저장
+      await saveSettings();
+      // 2. 학생 문서 저장
       for(const s of (db.students || [])){
         await saveStudent(s);
       }
-      // 2. dirty 기록만 저장
+      // 3. dirty 기록만 저장
       const dirty = (db.records || []).filter(r => r.dirty && !r.deleted);
       for(const rec of dirty){
         await saveRecord(rec);
@@ -1594,131 +1571,57 @@ function persist(){
   }, 600);
 }
 
-async function deleteDocsInBatches(docs){
-  const list = docs.docs || [];
-  for(let i=0;i<list.length;i+=400){
-    const batch = fbStore.batch();
-    list.slice(i,i+400).forEach(doc => batch.delete(doc.ref));
-    await batch.commit();
-  }
-}
-
-async function deleteCollectionDocs(colRef){
-  const snap = await colRef.get();
-  await deleteDocsInBatches(snap);
-}
-
-async function resetCloudDataForCurrentUser(){
-  if(!fbUser) return;
-  clearTimeout(persistTimer);
-
-  if(unsubSync){ unsubSync(); unsubSync = null; }
-  Object.values(studentListeners).forEach(u => u());
-  Object.values(recordListeners).forEach(u => u());
-  Object.values(recordRetryTimers).forEach(t => clearTimeout(t));
-  if(settingsListener){ settingsListener(); settingsListener = null; }
-  studentListeners = {};
-  recordListeners = {};
-  recordRetryTimers = {};
-
-  // prototype7 cases 구조 정리
-  const caseSnap = await fbStore.collection('cases')
-    .where('memberUids', 'array-contains', fbUser.uid)
-    .get();
-  for(const doc of caseSnap.docs){
-    const data = doc.data();
-    if(data.ownerUid === fbUser.uid){
-      await deleteCollectionDocs(doc.ref.collection('records'));
-      await deleteCollectionDocs(doc.ref.collection('members'));
-      await doc.ref.delete();
-    }else{
-      await doc.ref.collection('members').doc(fbUser.uid).delete().catch(()=>{});
-      await doc.ref.update({
-        memberUids: firebase.firestore.FieldValue.arrayRemove(fbUser.uid)
-      }).catch(e => console.warn('공유 케이스 나가기 실패:', e.code || e));
-    }
-  }
-
-  // prototype6 students 구조가 남아 있으면 내가 소유한 학생만 함께 정리
-  const oldSnap = await fbStore.collection('students')
-    .where('members', 'array-contains', fbUser.uid)
-    .get()
-    .catch(()=>null);
-  if(oldSnap){
-    for(const doc of oldSnap.docs){
-      const data = doc.data();
-      if(data.ownerUid !== fbUser.uid) continue;
-      await deleteCollectionDocs(doc.ref.collection('records'));
-      await doc.ref.delete();
-    }
-  }
-}
-
-async function resetAllData(){
-  if(!fbUser){ toast('로그인 후 사용하세요'); return; }
-  if(!confirm('현재 계정의 관찰 데이터를 초기화할까요? 내가 만든 학생/기록은 서버에서도 삭제됩니다.')) return;
-  try{
-    updateSyncUI('초기화 중…');
-    await resetCloudDataForCurrentUser();
-    db=defaults();
-    const base=caseDefaults(), sid=ulid();
-    db.students=[{id:sid,name:'학생 1',color:'#0F6E6C',sub:'',ownerUid:fbUser.uid,memberUids:[fbUser.uid],members:[fbUser.uid],shareCode:null,shareCodeExpiresAt:null,...base}];
-    db.records=[];db.notes=[];db.interviews=[];db.masScores=[];
-    state.sid=sid;state.date=null;applyCaseToDb(db.students[0]);reindex();refreshAll();switchTab('record');
-    await saveStudent(db.students[0]);
-    startSync();
-    updateSyncUI();
-    toast('서버 데이터까지 초기화했어요');
-  }catch(e){
-    console.error('초기화 실패:', e);
-    updateSyncUI('err');
-    toast('초기화 실패: ' + (e.message || e.code || e));
-    startSync();
-  }
-}
-
 // ── 전체 데이터 로드 ──
 async function loadData(){
   if(!fbUser) return null;
   try{
-    // 내가 참가자인 관찰 케이스 목록
-    const snap = await fbStore.collection('cases')
-      .where('memberUids', 'array-contains', fbUser.uid)
+    // 1. 내가 member인 학생 목록
+    const snap = await fbStore.collection('students')
+      .where('members', 'array-contains', fbUser.uid)
       .get();
 
     if(snap.empty){
-      // prototype6 students 구조 → prototype7 cases 구조 → 아주 오래된 userData 순서로 마이그레이션 시도
-      return await migrateFromPrototype6Students() || await migrateFromUserData();
+      // 기존 userData에서 마이그레이션 시도
+      return await migrateFromUserData();
     }
 
+    // 2. 설정 로드
+    const settingsData = await loadSettings();
+
+    // 3. 학생별 기록 로드
     const students = [];
     const allRecords = [];
-    const notes = [];
-    const interviews = [];
-    const masScores = [];
 
     for(const doc of snap.docs){
-      const s = normalizeCase(doc.data(), doc.id);
+      const s = {id: doc.id, ...doc.data()};
       students.push(s);
-      notes.push(...(s.notes || []));
-      interviews.push(...(s.interviews || []));
-      masScores.push(...(s.masScores || []));
+      if(s.shareCode && !db?.students?.some(x=>x.id===s.id)){
+        sharedStudentIds.push(s.id);
+      }
+      // 기록 로드
       const recSnap = await FS.records(s.id).get();
-      recSnap.docs.forEach(r => allRecords.push({...r.data(), id: r.id, sid: r.data().sid || s.id}));
+      recSnap.docs.forEach(r => allRecords.push({...r.data(), id: r.id}));
     }
 
-    const firstCase = students[0] || normalizeCase({}, ulid());
+    // 설정은 globalSettings 우선, 없으면 첫 학생 문서에서 가져옴
+    const firstStudentData = students[0] ? snap.docs.find(d=>d.id===students[0].id)?.data() : null;
+    const behaviors   = settingsData?.behaviors   || firstStudentData?.behaviors   || [];
+    const aChips      = settingsData?.aChips      || firstStudentData?.aChips      || [];
+    const cChips      = settingsData?.cChips      || firstStudentData?.cChips      || [];
+    const masItems    = settingsData?.masItems    || firstStudentData?.masItems    || [];
+    const ivQuestions = settingsData?.ivQuestions || firstStudentData?.ivQuestions || [];
+
     return {
       students,
       records:     allRecords,
-      behaviors:   firstCase.behaviors,
-      aChips:      firstCase.aChips,
-      cChips:      firstCase.cChips,
-      masItems:    firstCase.masItems,
-      ivQuestions: firstCase.ivQuestions,
-      notes,
-      interviews,
-      masScores,
+      behaviors,
+      aChips,
+      cChips,
+      masItems,
+      ivQuestions,
+      notes:       [],
+      interviews:  [],
+      masScores:   [],
     };
   }catch(e){
     console.warn('loadData 오류:', e);
@@ -1726,108 +1629,9 @@ async function loadData(){
   }
 }
 
-// ── prototype6 students 구조 → prototype7 cases 구조 마이그레이션 ──
-async function migrateFromPrototype6Students(){
-  try{
-    if(localStorage.getItem('fba_migrated_v7_from_students_' + fbUser.uid)){
-      console.log('[마이그레이션] prototype6 students 로컬 완료 플래그 — 건너뜀');
-      return null;
-    }
-
-    console.log('[마이그레이션] prototype6 students 구조 읽기 시도...');
-    const legacySnap = await fbStore.collection('students')
-      .where('members', 'array-contains', fbUser.uid)
-      .get();
-    if(legacySnap.empty){
-      console.log('[마이그레이션] prototype6 students 데이터 없음');
-      return null;
-    }
-
-    let settingsData = null;
-    try{
-      const settingsSnap = await fbStore.collection('globalSettings').doc(fbUser.uid).get();
-      if(settingsSnap.exists) settingsData = settingsSnap.data();
-    }catch(e){
-      console.warn('[마이그레이션] prototype6 globalSettings 읽기 실패(기본값 사용):', e.code);
-    }
-    const base = caseDefaults();
-    settingsData = settingsData || {};
-
-    updateSyncUI('기존 공유 구조를 새 구조로 옮기는 중…');
-    for(const doc of legacySnap.docs){
-      const old = doc.data();
-      if(old.ownerUid && old.ownerUid !== fbUser.uid){
-        console.log('[마이그레이션] 내가 소유하지 않은 공유 학생은 건너뜀:', old.name);
-        continue;
-      }
-      const migrated = normalizeCase({
-        ...old,
-        ownerUid: old.ownerUid || fbUser.uid,
-        memberUids: old.members || [fbUser.uid],
-        members: old.members || [fbUser.uid],
-        behaviors: old.behaviors || settingsData.behaviors || base.behaviors,
-        aChips: old.aChips || settingsData.aChips || base.aChips,
-        cChips: old.cChips || settingsData.cChips || base.cChips,
-        masItems: old.masItems || settingsData.masItems || base.masItems,
-        ivQuestions: old.ivQuestions || settingsData.ivQuestions || base.ivQuestions,
-        notes: old.notes || [],
-        interviews: old.interviews || [],
-        masScores: old.masScores || [],
-        shareCode: null,
-        shareCodeExpiresAt: null,
-      }, doc.id);
-
-      console.log('[마이그레이션] prototype6 학생 → case:', migrated.name);
-      await FS.student(migrated.id).set(buildCasePayload(migrated), {merge:true});
-
-      const memberUids = migrated.memberUids || [fbUser.uid];
-      for(const uid of memberUids){
-        await FS.member(migrated.id, uid).set({
-          uid,
-          displayName: uid === fbUser.uid ? (fbUser.displayName || fbUser.email || '소유자') : '공유 관찰자',
-          email: uid === fbUser.uid ? (fbUser.email || '') : '',
-          role: uid === migrated.ownerUid ? 'owner' : 'observer',
-          joinedAt: firebase.firestore.FieldValue.serverTimestamp(),
-        }, {merge:true});
-      }
-
-      const recSnap = await fbStore.collection('students').doc(doc.id).collection('records').get();
-      for(const recDoc of recSnap.docs){
-        const r = recDoc.data();
-        await FS.record(migrated.id, recDoc.id).set({
-          ...r,
-          sid: migrated.id,
-          createdByUid: r.createdByUid || r.observerId || fbUser.uid,
-          createdByName: r.createdByName || fbUser.displayName || fbUser.email || '관찰자',
-          observerId: r.observerId || r.createdByUid || fbUser.uid,
-          deviceId: r.deviceId || DEVICE_ID,
-        }, {merge:true});
-      }
-    }
-
-    try{ localStorage.setItem('fba_migrated_v7_from_students_' + fbUser.uid, '1'); }catch(_){}
-    toast('기존 공유 데이터를 새 구조로 옮겼어요');
-    return await loadData();
-  }catch(e){
-    console.error('[마이그레이션] prototype6 students 오류:', e.code, e.message);
-    return null;
-  }
-}
-
 // ── 기존 userData → 새 구조 마이그레이션 ──
 async function migrateFromUserData(){
   try{
-    const existingSnap = await fbStore.collection('cases')
-      .where('memberUids', 'array-contains', fbUser.uid).limit(1).get();
-    if(!existingSnap.empty){
-      console.log('[마이그레이션] cases 구조에 데이터 존재 — 건너뜀');
-      return null;
-    }
-    if(localStorage.getItem('fba_migrated_v7_' + fbUser.uid)){
-      console.log('[마이그레이션] prototype7 로컬 완료 플래그 — 건너뜀');
-      return null;
-    }
-
     console.log('[마이그레이션] userData 읽기 시도...');
     const legacySnap = await fbStore.collection('userData').doc(fbUser.uid).get();
     if(!legacySnap.exists){
@@ -1840,49 +1644,58 @@ async function migrateFromUserData(){
       return null;
     }
 
-    console.log('[마이그레이션] prototype7 시작 — 학생:', data.students?.length, '기록:', data.records?.length);
+    console.log('[마이그레이션] 시작 — 학생:', data.students?.length, '기록:', data.records?.length);
     updateSyncUI( '데이터 업그레이드 중…');
-    const students = (data.students || []).map(s=>normalizeCase({
-      ...s,
-      ownerUid: fbUser.uid,
-      memberUids: [fbUser.uid],
-      members: [fbUser.uid],
-      behaviors: data.behaviors || caseDefaults().behaviors,
-      aChips: data.aChips || caseDefaults().aChips,
-      cChips: data.cChips || caseDefaults().cChips,
-      masItems: data.masItems || caseDefaults().masItems,
-      ivQuestions: data.ivQuestions || caseDefaults().ivQuestions,
-      notes: (data.notes || []).filter(n=>n.sid===s.id),
-      interviews: (data.interviews || []).filter(n=>n.sid===s.id),
-      masScores: (data.masScores || []).filter(n=>n.sid===s.id),
-    }, s.id));
+    const students = data.students || [];
 
     for(const s of students){
-      console.log('[마이그레이션] 케이스 저장:', s.name);
-      await FS.student(s.id).set(buildCasePayload(s));
-      await FS.member(s.id, fbUser.uid).set({
-        uid: fbUser.uid,
-        displayName: fbUser.displayName || fbUser.email || '소유자',
-        email: fbUser.email || '',
-        role: 'owner',
-        joinedAt: firebase.firestore.FieldValue.serverTimestamp(),
-      }, {merge:true});
+      console.log('[마이그레이션] 학생 저장:', s.name);
+      await FS.student(s.id).set({
+        name:           s.name,
+        color:          s.color,
+        sub:            s.sub || '',
+        behaviorOrder:  s.behaviorOrder || [],
+        shareCode:      null,
+        shareCodeExpiresAt: null,
+        ownerUid:       fbUser.uid,
+        members:        [fbUser.uid],
+        _updatedAt:     firebase.firestore.FieldValue.serverTimestamp(),
+      });
 
+      // 기록 개별 저장 (배치 대신 — 안정성 우선)
       const sRecords = (data.records || []).filter(r => r.sid === s.id);
       console.log('[마이그레이션]', s.name, '기록:', sRecords.length, '건');
       for(const r of sRecords){
-        await FS.record(s.id, r.id).set({
-          ...r,
-          sid: s.id,
-          createdByUid: r.createdByUid || fbUser.uid,
-          createdByName: r.createdByName || fbUser.displayName || fbUser.email || '관찰자',
-          observerId: r.observerId || fbUser.uid,
-          deviceId: r.deviceId || DEVICE_ID,
-        }, {merge:true});
+        await FS.record(s.id, r.id).set(r);
       }
     }
 
-    try{ localStorage.setItem('fba_migrated_v7_' + fbUser.uid, '1'); }catch(_){}
+    // 설정 저장 (실패해도 마이그레이션 계속)
+    console.log('[마이그레이션] 설정 저장...');
+    try{
+      await FS.settings(fbUser.uid).set({
+        behaviors:   data.behaviors   || [],
+        aChips:      data.aChips      || [],
+        cChips:      data.cChips      || [],
+        masItems:    data.masItems    || [],
+        ivQuestions: data.ivQuestions || [],
+        _updatedAt:  firebase.firestore.FieldValue.serverTimestamp(),
+      });
+    }catch(e){
+      console.warn('[마이그레이션] 설정 저장 실패(무시):', e.code);
+      // 학생 문서에 설정 병합 시도
+      if(students.length>0){
+        try{
+          await FS.student(students[0].id).update({_settings:{
+            behaviors:data.behaviors||[], aChips:data.aChips||[], cChips:data.cChips||[],
+            masItems:data.masItems||[], ivQuestions:data.ivQuestions||[]
+          }});
+        }catch(e2){}
+      }
+    }
+
+    // 완료 플래그
+    await fbStore.collection('userData').doc(fbUser.uid).update({_migratedV2: true});
     console.log('[마이그레이션] 완료!');
     toast(`데이터 업그레이드 완료 (${students.length}명)`);
     return await loadData();
@@ -1898,33 +1711,25 @@ function startSync(){
   // 기존 리스너 전체 해제
   Object.values(studentListeners).forEach(u => u());
   Object.values(recordListeners).forEach(u => u());
-  Object.values(recordRetryTimers).forEach(t => clearTimeout(t));
   studentListeners = {};
   recordListeners  = {};
-  recordRetryTimers = {};
   if(settingsListener){ settingsListener(); settingsListener = null; }
   if(unsubSync){ unsubSync(); unsubSync = null; }
 
-  // 내가 참가 중인 관찰 케이스 목록 감시
-  unsubSync = fbStore.collection('cases')
-    .where('memberUids', 'array-contains', fbUser.uid)
+  // 내가 member인 학생 목록 감시
+  unsubSync = fbStore.collection('students')
+    .where('members', 'array-contains', fbUser.uid)
     .onSnapshot(snap => {
       snap.docChanges().forEach(change => {
         const sid = change.doc.id;
-        const data = normalizeCase(change.doc.data(), sid);
+        const data = {id: sid, ...change.doc.data()};
         if(change.type === 'removed') return;
-        // 케이스 정보 업데이트
+        // 학생 정보 업데이트
         const idx = db.students.findIndex(s => s.id === sid);
         if(idx >= 0) db.students[idx] = {...db.students[idx], ...data};
         else{ db.students.push(data); reindex(); }
-        if(state.sid === sid) applyCaseToDb(db.students.find(s=>s.id===sid));
         // 기록 리스너 시작 (없으면)
-        if(!recordListeners[sid] && !recordRetryTimers[sid]){
-          recordRetryTimers[sid] = setTimeout(()=>{
-            delete recordRetryTimers[sid];
-            startRecordListener(sid);
-          }, 350);
-        }
+        if(!recordListeners[sid]) startRecordListener(sid);
       });
       refreshAll();
       updateSyncUI();
@@ -1932,7 +1737,7 @@ function startSync(){
 }
 
 // ── 학생별 기록 서브컬렉션 실시간 리스너 ──
-function startRecordListener(sid, attempt=0){
+function startRecordListener(sid){
   if(recordListeners[sid]){ recordListeners[sid](); }
   recordListeners[sid] = FS.records(sid)
     .onSnapshot(snap => {
@@ -1948,57 +1753,28 @@ function startRecordListener(sid, attempt=0){
         else db.records.push(rec);
       });
       reindex(); refreshAll();
-    }, e => {
-      if(recordListeners[sid]){ recordListeners[sid](); delete recordListeners[sid]; }
-      if(e.code === 'permission-denied' && attempt < 5){
-        clearTimeout(recordRetryTimers[sid]);
-        recordRetryTimers[sid] = setTimeout(()=>{
-          delete recordRetryTimers[sid];
-          startRecordListener(sid, attempt + 1);
-        }, 600 + attempt * 500);
-        return;
-      }
-      const s = db?.students?.find(x=>x.id===sid);
-      console.warn('기록 리스너 오류:', e.code || e.message || e, {
-        caseId: sid,
-        currentUid: fbUser?.uid,
-        ownerUid: s?.ownerUid,
-        memberUids: s?.memberUids || s?.members
-      });
-    });
+    }, e => console.warn('기록 리스너 오류:', e));
 }
 
 // ── 공유 코드 생성 (제한시간 24시간 + 랜덤) ──
 function genShareCode(){
   const CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  // 타임스탬프 기반 앞 2자 + 랜덤 2자 (총 4자)
+  const ts = Date.now().toString(36).toUpperCase().slice(-2);
   let rand = '';
-  for(let i=0;i<6;i++) rand += CHARS[Math.floor(Math.random()*CHARS.length)];
-  return 'FBA-' + rand;
+  for(let i=0;i<2;i++) rand += CHARS[Math.floor(Math.random()*CHARS.length)];
+  return 'FBA-' + ts + rand;
 }
 
 async function createShareCode(sid){
   if(!fbUser) return null;
-  if(state.sid === sid) syncActiveCaseFromDb();
   const s = db.students.find(s => s.id === sid);
   if(!s) return null;
-  if(s.ownerUid && s.ownerUid !== fbUser.uid){
-    toast('공유 코드는 학생을 만든 계정만 생성할 수 있어요');
-    return null;
-  }
 
   // 기존 코드가 아직 유효하면 반환
   if(s.shareCode && s.shareCodeExpiresAt){
     const exp = s.shareCodeExpiresAt.toDate ? s.shareCodeExpiresAt.toDate() : new Date(s.shareCodeExpiresAt);
-    if(exp > new Date()){
-      try{
-        const codeSnap = await FS.code(s.shareCode).get();
-        if(codeSnap.exists && validShareCodeData(codeSnap.data(), sid)){
-          return {code: s.shareCode, expiresAt: shareCodeExpiry(codeSnap.data())};
-        }
-      }catch(e){
-        console.warn('기존 공유 코드 확인 실패:', e.code || e);
-      }
-    }
+    if(exp > new Date()) return {code: s.shareCode, expiresAt: exp};
   }
 
   // 새 코드 생성 (중복 확인)
@@ -2011,13 +1787,12 @@ async function createShareCode(sid){
 
   const expiresAt = new Date(Date.now() + 24*60*60*1000); // 24시간 후
 
-  // 초대 코드 저장
+  // shareCodes에 저장
   await FS.code(code).set({
-    caseId:     sid,
+    studentId:  sid,
     ownerUid:   fbUser.uid,
-    caseName:   s.name,
     studentName: s.name,
-    expiresAt:  firebase.firestore.Timestamp.fromDate(expiresAt),
+    expiresAt:  firebase.firestore.FieldValue.serverTimestamp(),
     _expiresAt: expiresAt.toISOString(),
     createdAt:  firebase.firestore.FieldValue.serverTimestamp(),
   });
@@ -2033,37 +1808,33 @@ async function createShareCode(sid){
 // ── 공유 코드로 참가 ──
 async function joinByCode(inputCode){
   if(!fbUser){ toast('로그인이 필요해요'); return false; }
-  const code = normalizeShareCode(inputCode);
-  if(code.length < 7){ toast('공유 코드를 입력해 주세요'); return false; }
+  const code = inputCode.trim().toUpperCase();
   try{
     const codeSnap = await FS.code(code).get();
     if(!codeSnap.exists){ toast('유효하지 않은 코드예요'); return false; }
 
     const codeData = codeSnap.data();
     // 만료 확인
-    const exp = shareCodeExpiry(codeData);
-    if(!exp || exp < new Date()){
+    if(codeData._expiresAt && new Date(codeData._expiresAt) < new Date()){
       toast('만료된 코드예요. 새 코드를 받아주세요');
       return false;
     }
 
-    const sid = codeData.caseId;
-    if(!sid){ toast('초대 코드 정보가 올바르지 않아요'); return false; }
+    const sid = codeData.studentId;
+    // 이미 member인지 확인
+    const studentSnap = await FS.student(sid).get();
+    if(!studentSnap.exists){ toast('학생 정보를 찾을 수 없어요'); return false; }
+    const studentData = studentSnap.data();
+    if(studentData.members?.includes(fbUser.uid)){
+      toast('이미 참가 중인 학생이에요'); return false;
+    }
 
-    // 멤버 문서를 먼저 만들고, 케이스 목록 조회용 memberUids만 최소 변경한다.
-    await FS.member(sid, fbUser.uid).set({
-      uid: fbUser.uid,
-      displayName: fbUser.displayName || fbUser.email || '관찰자',
-      email: fbUser.email || '',
-      role: 'observer',
-      joinedAt: firebase.firestore.FieldValue.serverTimestamp(),
-    }, {merge:true});
-
+    // members에 추가
     await FS.student(sid).update({
-      memberUids: firebase.firestore.FieldValue.arrayUnion(fbUser.uid)
+      members: firebase.firestore.FieldValue.arrayUnion(fbUser.uid)
     });
 
-    toast(`<b>${codeData.caseName || codeData.studentName || '공유 관찰'}</b> 관찰에 참가했어요`);
+    toast(`<b>${codeData.studentName}</b> 관찰에 참가했어요`);
     // startSync가 자동으로 새 학생 감지해서 리스너 시작
     return true;
   }catch(e){
@@ -2076,7 +1847,7 @@ async function joinByCode(inputCode){
 // ── 공유 코드 미리보기 ──
 let joinPreviewTimer = null;
 async function previewJoinCode(val){
-  const clean = normalizeShareCode(val);
+  const clean = val.replace(/[^A-Z0-9-]/g,'');
   const preview = document.getElementById('joinPreview');
   if(clean.length < 7){ if(preview) preview.classList.remove('show'); return; }
   clearTimeout(joinPreviewTimer);
@@ -2086,10 +1857,9 @@ async function previewJoinCode(val){
       if(!preview) return;
       if(snap.exists){
         const data = snap.data();
-        const exp = shareCodeExpiry(data);
-        const expired = !exp || exp < new Date();
-        document.getElementById('joinPreviewName').textContent = expired ? '만료된 코드예요' : (data.caseName || data.studentName || '공유 관찰');
-        const expStr = exp ? exp.toLocaleString('ko-KR') : '';
+        const expired = data._expiresAt && new Date(data._expiresAt) < new Date();
+        document.getElementById('joinPreviewName').textContent = expired ? '만료된 코드예요' : data.studentName;
+        const expStr = data._expiresAt ? new Date(data._expiresAt).toLocaleString('ko-KR') : '';
         document.getElementById('joinPreviewSub').textContent = expired
           ? '새 코드를 요청하세요'
           : `참가 가능 ✓  만료: ${expStr}`;
@@ -2110,11 +1880,9 @@ async function leaveShared(sid){
   if(!fbUser) return;
   try{
     await FS.student(sid).update({
-      memberUids: firebase.firestore.FieldValue.arrayRemove(fbUser.uid)
+      members: firebase.firestore.FieldValue.arrayRemove(fbUser.uid)
     });
-    await FS.member(sid, fbUser.uid).delete();
     if(recordListeners[sid]){ recordListeners[sid](); delete recordListeners[sid]; }
-    if(recordRetryTimers[sid]){ clearTimeout(recordRetryTimers[sid]); delete recordRetryTimers[sid]; }
     db.students = db.students.filter(s => s.id !== sid);
     db.records  = db.records.filter(r => r.sid !== sid);
     reindex(); refreshAll();
@@ -2128,9 +1896,8 @@ async function doSignout(){
   if(unsubSync){ unsubSync(); unsubSync = null; }
   Object.values(studentListeners).forEach(u => u());
   Object.values(recordListeners).forEach(u => u());
-  Object.values(recordRetryTimers).forEach(t => clearTimeout(t));
   if(settingsListener){ settingsListener(); settingsListener = null; }
-  studentListeners = {}; recordListeners = {}; recordRetryTimers = {};
+  studentListeners = {}; recordListeners = {};
   sharedStudentIds = [];
   db = null;
   await fbAuth.signOut();
@@ -2166,7 +1933,7 @@ async function initApp(){
     if(!db.records)     db.records     = [];
     // P0 마이그레이션 필드
     db.records = db.records.map(r=>({
-      observerId: r.observerId || r.createdByUid || fbUser.uid,
+      observerId: r.observerId || OBSERVER_ID,
       deviceId:   r.deviceId   || DEVICE_ID,
       env:        r.env        || 'school',
       updatedAt:  r.updatedAt  || r.ts,
@@ -2185,19 +1952,16 @@ async function initApp(){
     db.notes      = [];
     db.interviews = [];
     db.masScores  = [];
-    const base = caseDefaults();
     db.students   = [{
       id: ulid(), name: '학생 1', color: '#0F6E6C', sub: '',
-      ownerUid: fbUser.uid, memberUids: [fbUser.uid], members: [fbUser.uid],
-      shareCode: null, shareCodeExpiresAt: null,
-      ...base
+      ownerUid: fbUser.uid, members: [fbUser.uid],
+      shareCode: null, shareCodeExpiresAt: null
     }];
     await persist();
   }
 
   if(!db.students.some(s => s.id === state.sid))
     state.sid = db.students[0]?.id || '';
-  applyCaseToDb(activeCase());
   reindex();
   paintStudent();
   renderSwitcher();
@@ -2377,7 +2141,7 @@ function tapBehavior(bid,btn,e){
       clearInterval(state.timer.iv);state.timer=null;
       const now=new Date().toISOString();
       let rec={id:ulid(),sid:state.sid,bid,ts:new Date().toISOString(),dur:sec,a:[],c:[],note:'',
-        observerId:fbUser?.uid||OBSERVER_ID,createdByUid:fbUser?.uid||OBSERVER_ID,createdByName:fbUser?.displayName||fbUser?.email||'관찰자',deviceId:DEVICE_ID,env:state.currentEnv,
+        observerId:OBSERVER_ID,deviceId:DEVICE_ID,env:state.currentEnv,
         updatedAt:now,deleted:false,dirty:true};
       rec=captureLatency(rec); // 지연시간 자동 첨부
       Repository.putRecord(rec);renderGrid();paintStudent();openSheet(rec.id);
@@ -2391,7 +2155,7 @@ function tapBehavior(bid,btn,e){
   }
   const now2=new Date().toISOString();
   let rec={id:ulid(),sid:state.sid,bid,ts:now2,dur:null,a:[],c:[],note:'',
-    observerId:fbUser?.uid||OBSERVER_ID,createdByUid:fbUser?.uid||OBSERVER_ID,createdByName:fbUser?.displayName||fbUser?.email||'관찰자',deviceId:DEVICE_ID,env:state.currentEnv,
+    observerId:OBSERVER_ID,deviceId:DEVICE_ID,env:state.currentEnv,
     updatedAt:now2,deleted:false,dirty:true};
   rec=captureLatency(rec); // 지연시간 자동 첨부
   Repository.putRecord(rec);renderGrid();paintStudent();openSheet(rec.id);
@@ -2417,7 +2181,7 @@ function renderChips(){
 function closeSheet(){$('#scrim').classList.remove('show');$('#sheet').classList.remove('open');state.sheetId=null;}
 function saveSheet(){
   const rec=db.records.find(r=>r.id===state.sheetId);if(!rec)return;
-  rec.a=[...state.sel.a];rec.c=[...state.sel.c];rec.note=$('#note').value;rec.updatedAt=new Date().toISOString();rec.dirty=true;saveRecord(rec).catch(e=>console.warn('saveSheet 기록 저장 오류:',e));persist();
+  rec.a=[...state.sel.a];rec.c=[...state.sel.c];rec.note=$('#note').value;persist();
   closeSheet();paintStudent();if(state.tab==='review')renderTimeline();
   toast(rec.a.length&&rec.c.length?'<b>ABC 완성</b> · 저장됐어요':'기록 저장됨 · A·C는 검토에서 채울 수 있어요');
 }
@@ -2594,13 +2358,7 @@ function renderSettings(){
       </button>
       <button class="iconbtn" data-edit-student="${s.id}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4v16h16v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4z"/></svg></button>
     </div>`).join('');
-  $('#setBehaviors').innerHTML=db.behaviors.map(b=>`
-    <div class="row"><div class="rdisc" style="background:${b.color}">${svg(b.icon)}</div>
-    <div class="rmeta"><b>${b.name}</b><span>${b.type==='freq'?'빈도 — 누를 때마다 +1':'지속시간 — 시작/종료 타이머'}</span></div>
-    <span class="pill-tag" style="background:${b.type==='freq'?'#eef3f1':'#fbeee9'};color:${b.type==='freq'?'#3a6f63':'#b4502f'}">${b.type==='freq'?'빈도형':'시간형'}</span>
-    <button class="iconbtn" data-edit-behavior="${b.id}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4v16h16v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4z"/></svg></button></div>`).join('');
-  $('#setAchips').innerHTML=sortedChips(db.aChips).map(c=>`<div class="schip ${c.fav?'fav':''}" data-edit-chip="a:${c.id}">${c.fav?'<span class="star">★</span>':''}${c.text}</div>`).join('')||'<span style="font-size:12.5px;color:#9aa6aa">칩이 없어요</span>';
-  $('#setCchips').innerHTML=sortedChips(db.cChips).map(c=>`<div class="schip ${c.fav?'fav':''}" data-edit-chip="c:${c.id}">${c.fav?'<span class="star">★</span>':''}${c.text}</div>`).join('')||'<span style="font-size:12.5px;color:#9aa6aa">칩이 없어요</span>';
+  // 행동/칩 목록은 각 관리 시트 안에서 렌더링
 }
 
 // ============ editor ============
@@ -2612,7 +2370,14 @@ function openEditor(kind,id){
   state.ed=ed;renderEditor();
   $('#edScrim').classList.add('show');$('#editor').classList.add('open');
 }
-function closeEditor(){$('#edScrim').classList.remove('show');$('#editor').classList.remove('open');state.ed=null;}
+function closeEditor(){
+  $('#edScrim').classList.remove('show');$('#editor').classList.remove('open');
+  state.ed=null;
+  // 시트 목록 갱신 (행동/칩 편집 후 목록 업데이트)
+  if($('#behaviorManagerSheet').classList.contains('open')) renderBehaviorManagerList();
+  if($('#achipManagerSheet').classList.contains('open')) renderAchipManagerList();
+  if($('#cchipManagerSheet').classList.contains('open')) renderCchipManagerList();
+}
 function renderEditor(){
   const ed=state.ed;$('#edDel').style.display=ed.id?'block':'none';
   const sw=(sel,active)=>PALETTE.map(c=>`<div class="sw ${c===active?'on':''}" style="background:${c}" data-color="${c}"></div>`).join('');
@@ -2644,7 +2409,7 @@ function saveEditor(){
   if(ed.kind==='student'){
     if(!ed.name.trim()){toast('이름을 입력하세요');return;}
     if(ed.id){const s=sMap[ed.id];s.name=ed.name.trim();s.color=ed.color;s.sub=ed.sub;}
-    else{syncActiveCaseFromDb();const s={id:ulid(),name:ed.name.trim(),color:ed.color,sub:ed.sub,ownerUid:fbUser?.uid||null,memberUids:fbUser?[fbUser.uid]:[],members:fbUser?[fbUser.uid]:[],shareCode:null,shareCodeExpiresAt:null,...caseDefaults()};db.students.push(s);state.sid=s.id;applyCaseToDb(s);}
+    else{const s={id:uid('s'),name:ed.name.trim(),color:ed.color,sub:ed.sub};db.students.push(s);state.sid=s.id;}
   }else if(ed.kind==='behavior'){
     if(!ed.name.trim()){toast('행동 이름을 입력하세요');return;}
     if(ed.id){const b=bMap[ed.id];b.name=ed.name.trim();b.color=ed.color;b.icon=ed.icon;b.type=ed.type;}
@@ -2655,14 +2420,39 @@ function saveEditor(){
     if(ed.id){const c=arr.find(x=>x.id===ed.id);c.text=ed.text.trim();c.fav=ed.fav;}
     else arr.push({id:uid('ch'),text:ed.text.trim(),fav:ed.fav});
   }
-  reindex();persist();closeEditor();refreshAll();toast('저장됐어요');
+  reindex();
+  // 학생 편집 시 Firestore 즉시 반영 (persist 디바운스 대기 안 하고 바로 저장)
+  if(ed.kind==='student' && fbUser){
+    const sid = ed.id || state.sid;
+    const editedS = db.students.find(s=>s.id===sid);
+    if(editedS){
+      fbStore.collection('students').doc(editedS.id).set({
+        name: editedS.name,
+        color: editedS.color,
+        sub: editedS.sub||'',
+        behaviorOrder: editedS.behaviorOrder||[],
+        ownerUid: editedS.ownerUid||fbUser.uid,
+        members: editedS.members||[fbUser.uid],
+        shareCode: editedS.shareCode||null,
+        shareCodeExpiresAt: editedS.shareCodeExpiresAt||null,
+        _updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      }, {merge:true}).catch(e=>console.warn('학생 즉시 저장 실패:', e.code));
+    }
+  }
+  persist();closeEditor();refreshAll();toast('저장됐어요');
 }
 function delEditor(){
   const ed=state.ed;
   if(ed.kind==='student'){
     if(db.students.length<=1){toast('최소 1명은 있어야 해요');return;}
+    const deletedSid = ed.id;
     db.students=db.students.filter(s=>s.id!==ed.id);db.records=db.records.filter(r=>r.sid!==ed.id);
     if(state.sid===ed.id)state.sid=db.students[0].id;
+    // Firestore에서 학생 문서 삭제 (오너만 가능)
+    if(fbUser){
+      fbStore.collection('students').doc(deletedSid).delete()
+        .catch(e=>console.warn('학생 Firestore 삭제 실패:', e.code));
+    }
   }else if(ed.kind==='behavior'){
     db.behaviors=db.behaviors.filter(b=>b.id!==ed.id);
   }else{
@@ -2814,15 +2604,85 @@ function saveMas(){
 // 설정 — MAS 항목 렌더링
 function renderMasSettings(){
   if(!db) return;
-  // 설정 탭 카운트 배지만 업데이트
+  // 설정 탭 카운트 배지 업데이트
   const items=db.masItems||MAS_DEFAULTS;
-  const sub=$('#masManagerSub'); if(sub)sub.textContent='항목 '+items.length+'개';
-  const ivsub=$('#ivManagerSub'); if(ivsub)ivsub.textContent='질문 '+(db.ivQuestions||[]).length+'개';
+  const sub=$('#masManagerSub'); if(sub) sub.textContent='항목 '+items.length+'개';
+  const ivsub=$('#ivManagerSub'); if(ivsub) ivsub.textContent='질문 '+(db.ivQuestions||[]).length+'개';
+  const bsub=$('#behaviorManagerSub'); if(bsub) bsub.textContent='행동 '+(db.behaviors||[]).length+'개';
+  const asub=$('#achipManagerSub'); if(asub) asub.textContent=(db.aChips||[]).length+'개 · ★ = 시트 상단 고정';
+  const csub=$('#cchipManagerSub'); if(csub) csub.textContent=(db.cChips||[]).length+'개';
 }
 function openMasManager(){
   renderMasManagerList();
   $('#masManagerScrim').classList.add('show');$('#masManagerSheet').classList.add('open');
 }
+
+// ============ 행동 정의 관리 시트 ============
+function openBehaviorManager(){
+  renderBehaviorManagerList();
+  $('#behaviorManagerScrim').classList.add('show');
+  $('#behaviorManagerSheet').classList.add('open');
+}
+function closeBehaviorManager(){
+  $('#behaviorManagerScrim').classList.remove('show');
+  $('#behaviorManagerSheet').classList.remove('open');
+}
+function renderBehaviorManagerList(){
+  const el=$('#behaviorManagerList'); if(!el) return;
+  const cnt=$('#behaviorManagerCount'); if(cnt) cnt.textContent='행동 '+db.behaviors.length+'개';
+  const sub=$('#behaviorManagerSub'); if(sub) sub.textContent='행동 '+db.behaviors.length+'개';
+  el.innerHTML=db.behaviors.map(b=>`
+    <div class="row" style="cursor:pointer" data-edit-behavior="${b.id}">
+      <div class="rdisc" style="background:${b.color}">${svg(b.icon)}</div>
+      <div class="rmeta">
+        <b>${b.name}</b>
+        <span>${b.type==='freq'?'빈도형 — 누를 때마다 +1':'시간형 — 시작/종료 타이머'}</span>
+      </div>
+      <span class="pill-tag" style="background:${b.type==='freq'?'#eef3f1':'#fbeee9'};color:${b.type==='freq'?'#3a6f63':'#b4502f'}">${b.type==='freq'?'빈도':'시간'}</span>
+      <button class="iconbtn" data-edit-behavior="${b.id}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4v16h16v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4z"/></svg>
+      </button>
+    </div>`).join('');
+}
+
+// ============ 선행사건 관리 시트 ============
+function openAchipManager(){
+  renderAchipManagerList();
+  $('#achipManagerScrim').classList.add('show');
+  $('#achipManagerSheet').classList.add('open');
+}
+function closeAchipManager(){
+  $('#achipManagerScrim').classList.remove('show');
+  $('#achipManagerSheet').classList.remove('open');
+}
+function renderAchipManagerList(){
+  const el=$('#achipManagerList'); if(!el) return;
+  const sub=$('#achipManagerSub'); if(sub) sub.textContent=db.aChips.length+'개 · ★ = 시트 상단 고정';
+  el.innerHTML=sortedChips(db.aChips).map(c=>`
+    <div class="schip ${c.fav?'fav':''}" data-edit-chip="a:${c.id}">
+      ${c.fav?'<span class="star">★</span>':''}${c.text}
+    </div>`).join('')||'<span style="font-size:12.5px;color:#9aa6aa">아직 없어요</span>';
+}
+
+// ============ 후속결과 관리 시트 ============
+function openCchipManager(){
+  renderCchipManagerList();
+  $('#cchipManagerScrim').classList.add('show');
+  $('#cchipManagerSheet').classList.add('open');
+}
+function closeCchipManager(){
+  $('#cchipManagerScrim').classList.remove('show');
+  $('#cchipManagerSheet').classList.remove('open');
+}
+function renderCchipManagerList(){
+  const el=$('#cchipManagerList'); if(!el) return;
+  const sub=$('#cchipManagerSub'); if(sub) sub.textContent=db.cChips.length+'개';
+  el.innerHTML=sortedChips(db.cChips).map(c=>`
+    <div class="schip ${c.fav?'fav':''}" data-edit-chip="c:${c.id}">
+      ${c.fav?'<span class="star">★</span>':''}${c.text}
+    </div>`).join('')||'<span style="font-size:12.5px;color:#9aa6aa">아직 없어요</span>';
+}
+
 function closeMasManager(){$('#masManagerScrim').classList.remove('show');$('#masManagerSheet').classList.remove('open');}
 function renderMasManagerList(){
   const items=db.masItems||MAS_DEFAULTS;
@@ -3744,11 +3604,8 @@ function updateStudioSync(){
 document.addEventListener('click', e=>{
   const ss=e.target.closest('[data-stsid]');
   if(ss&&isDesktop()){
-    syncActiveCaseFromDb();
     stSid=ss.dataset.stsid;
     state.sid=stSid;
-    applyCaseToDb(activeCase());
-    reindex();
     renderStudioSidebar();
     switchStTab(stTab);
     return;
@@ -3784,10 +3641,6 @@ function renderShareSection(){
 function openShareModal(sid){
   const s=db.students.find(s=>s.id===sid);
   if(!s) return;
-  if(s.ownerUid && s.ownerUid !== fbUser?.uid){
-    toast('공유 코드는 학생을 만든 계정만 생성할 수 있어요');
-    return;
-  }
 
   // 만료 확인
   const now=new Date();
@@ -3816,10 +3669,10 @@ function openShareModal(sid){
 
 async function loadSharedMembers(sid){
   try{
-    const snap=await FS.student(sid).get();
+    const snap=await fbStore.collection('sharedRecords').doc(sid).get();
     const el=$('#members-'+sid); if(!el) return;
     if(snap.exists){
-      const members=snap.data().memberUids||[];
+      const members=snap.data().members||[];
       el.textContent=`참가 중: ${members.length}명`;
     }
   }catch(e){}
@@ -3839,23 +3692,19 @@ function copyShareCode(code){
 
 // 코드 입력 시 미리보기
 async function previewJoinCode(val){
-  const clean=normalizeShareCode(val);
+  const clean=val.replace(/[^A-Z0-9-]/g,'');
   if(clean.length<7){ $('#joinPreview').classList.remove('show'); return; }
   clearTimeout(joinPreviewTimer);
   joinPreviewTimer=setTimeout(async()=>{
     try{
-      const snap=await FS.code(clean).get();
+      const snap=await fbStore.collection('shareCodes').doc(clean).get();
       const preview=$('#joinPreview');
       if(snap.exists){
         const data=snap.data();
-        const exp=shareCodeExpiry(data);
-        const expired=!exp || exp<new Date();
-        $('#joinPreviewName').textContent=expired?'만료된 코드예요':(data.caseName||data.studentName||'공유 관찰');
-        $('#joinPreviewSub').textContent=expired
-          ? '새 코드를 요청하세요'
-          : `참가 가능 ✓  만료: ${exp.toLocaleString('ko-KR')}`;
+        $('#joinPreviewName').textContent=data.studentName;
+        $('#joinPreviewSub').textContent='참가 가능한 공유 코드예요 ✓';
         preview.classList.add('show');
-        preview.style.background=expired?'#fdf0ec':'#eef6f5';
+        preview.style.background='#eef6f5';
       } else {
         $('#joinPreviewName').textContent='코드를 찾을 수 없어요';
         $('#joinPreviewSub').textContent='코드를 다시 확인해 주세요';
@@ -4075,7 +3924,7 @@ function stopInterval(){
     id:ulid(), sid:state.sid, bid:iv.bid,
     ts:now, dur:iv.elapsed,
     a:[], c:[], note:`간격기록: ${oCount}/${iv.marks.length}간격 발생 (${pct}%) — ${iv.intervalSec}초 간격`,
-    observerId:fbUser?.uid||OBSERVER_ID, createdByUid:fbUser?.uid||OBSERVER_ID, createdByName:fbUser?.displayName||fbUser?.email||'관찰자', deviceId:DEVICE_ID, env:state.currentEnv,
+    observerId:OBSERVER_ID, deviceId:DEVICE_ID, env:state.currentEnv,
     updatedAt:now, deleted:false, dirty:true,
     intervalData:{ intervalSec:iv.intervalSec, totalSec:iv.totalSec, marks:[...iv.marks], pct }
   };
@@ -4181,7 +4030,7 @@ document.addEventListener('click',e=>{
   const t=e.target;
   const tab=t.closest('[data-tab]'); if(tab){switchTab(tab.dataset.tab);return;}
   const bh=t.closest('[data-bh]'); if(bh){tapBehavior(bh.dataset.bh,bh,e);return;}
-  const pick=t.closest('[data-pick]'); if(pick){syncActiveCaseFromDb();state.sid=pick.dataset.pick;applyCaseToDb(activeCase());reindex();state.date=null;$('#switcher').classList.remove('open');renderSwitcher();paintStudent();renderGrid();toast(`<b>${cur().name}</b> 로 전환`);return;}
+  const pick=t.closest('[data-pick]'); if(pick){state.sid=pick.dataset.pick;state.date=null;$('#switcher').classList.remove('open');renderSwitcher();paintStudent();renderGrid();toast(`<b>${cur().name}</b> 로 전환`);return;}
   const editTime=t.closest('[data-edit-time]');
   if(editTime){ openTimeEdit(editTime.dataset.editTime); return; }
   const orderUp=t.closest('[data-order-up]');
@@ -4224,6 +4073,26 @@ document.addEventListener('click',e=>{
     else if(a==='add-memo')addMemo();
     else if(a==='save-interview')saveInterview();
     else if(a==='save-mas')saveMas();
+    else if(a==='open-behavior-manager')openBehaviorManager();
+    else if(a==='close-behavior-manager')closeBehaviorManager();
+    else if(a==='open-achip-manager')openAchipManager();
+    else if(a==='close-achip-manager')closeAchipManager();
+    else if(a==='open-cchip-manager')openCchipManager();
+    else if(a==='close-cchip-manager')closeCchipManager();
+    else if(a==='add-chip-a-sheet'){
+      const i=$('#addASheet');
+      if(i&&i.value.trim()){
+        db.aChips.push({id:uid('ch'),text:i.value.trim(),fav:false});
+        i.value='';persist();renderAchipManagerList();renderSettings();renderChips();
+      }
+    }
+    else if(a==='add-chip-c-sheet'){
+      const i=$('#addCSheet');
+      if(i&&i.value.trim()){
+        db.cChips.push({id:uid('ch'),text:i.value.trim(),fav:false});
+        i.value='';persist();renderCchipManagerList();renderSettings();renderChips();
+      }
+    }
     else if(a==='open-mas-manager')openMasManager();
     else if(a==='close-mas-manager')closeMasManager();
     else if(a==='open-iv-manager')openIvManager();
@@ -4251,8 +4120,8 @@ document.addEventListener('click',e=>{
     else if(a==='do-join')doJoin();
     else if(a==='gen-share-code'){
       const sid=act.dataset.sid;
-      createShareCode(sid).then(result=>{
-        if(result){ toast(`공유 코드 <b>${result.code}</b> 생성됐어요`); renderSettings(); }
+      createShareCode(sid).then(code=>{
+        if(code){ toast(`공유 코드 <b>${code}</b> 생성됐어요`); renderSettings(); }
       });
     }
     else if(a==='open-interval-setup')openIntervalSetup();
@@ -4272,7 +4141,10 @@ document.addEventListener('click',e=>{
     else if(a==='close-time-edit')closeTimeEdit();
     else if(a==='save-time-edit')saveTimeEdit();
     else if(a==='reset-all'){
-  resetAllData();
+  db=defaults();seed(db);
+  state.sid=db.students[0]?.id||'s1';
+  state.date=null;reindex();persist();refreshAll();switchTab('record');
+  toast('초기 상태로 되돌렸어요');
 }
     return;
   }
