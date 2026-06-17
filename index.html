@@ -1553,7 +1553,7 @@ async function migrateFromUserData(){
     }
 
     console.log('[마이그레이션] 시작 — 학생:', data.students?.length, '기록:', data.records?.length);
-    setSyncStatus('ok', '데이터 업그레이드 중…');
+    updateSyncUI( '데이터 업그레이드 중…');
     const students = data.students || [];
 
     for(const s of students){
@@ -1815,7 +1815,7 @@ fbAuth.onAuthStateChanged(async user => {
 });
 
 async function initApp(){
-  setSyncStatus('ok', '불러오는 중…');
+  updateSyncUI( '불러오는 중…');
   let saved = await loadData();
 
   if(saved){
@@ -2241,6 +2241,7 @@ function renderAnalysis(){
 
 // ============ settings ============
 function renderSettings(){
+  if(!db) return;
   renderMasSettings();
   renderShareSection();
   $('#setStudents').innerHTML=db.students.map(s=>`
@@ -2471,6 +2472,7 @@ function saveMas(){
 
 // 설정 — MAS 항목 렌더링
 function renderMasSettings(){
+  if(!db) return;
   // 설정 탭 카운트 배지만 업데이트
   const items=db.masItems||MAS_DEFAULTS;
   const sub=$('#masManagerSub'); if(sub)sub.textContent='항목 '+items.length+'개';
@@ -3811,6 +3813,7 @@ function saveOrder(){
 
 // ============ tabs ============
 function switchTab(t){
+  if(!db) return;
   state.tab=t;
   document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('on',b.dataset.tab===t));
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
