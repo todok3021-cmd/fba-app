@@ -2,6 +2,10 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8" />
+  <!-- 캐시 무효화 — 항상 최신 버전 로드 -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>FBA 기록·분석</title>
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
@@ -653,6 +657,51 @@
     background:#fff;outline:none;}
   .behavior-select:focus{border-color:var(--primary);}
 
+  /* ── 공유 코드 UI ── */
+  .share-card{background:#fff;border:1.5px solid var(--line);border-radius:16px;padding:16px;margin-bottom:12px;}
+  .share-card-head{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+  .share-card-av{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px;font-weight:800;flex:none;}
+  .share-card-name{font-size:14px;font-weight:800;color:var(--ink);}
+  .share-code-display{
+    display:flex;align-items:center;justify-content:space-between;
+    background:#f5f2ec;border-radius:11px;padding:12px 14px;margin-bottom:10px;
+  }
+  .share-code-val{font-size:22px;font-weight:800;color:var(--primary);letter-spacing:.08em;font-family:monospace;}
+  .share-code-copy{border:none;background:var(--primary);color:#fff;padding:7px 14px;
+    border-radius:9px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;}
+  .share-code-gen{width:100%;padding:10px;border:1.5px dashed var(--line);border-radius:11px;
+    background:none;color:var(--primary);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
+  .share-members{font-size:11.5px;color:var(--sub);margin-top:6px;}
+
+  /* 참가 시트 */
+  .join-input-row{display:flex;gap:8px;padding:16px 18px;}
+  .join-input-row input{flex:1;border:1.5px solid var(--line);border-radius:11px;
+    padding:11px 14px;font-size:16px;font-family:monospace;color:var(--ink);
+    letter-spacing:.06em;text-transform:uppercase;outline:none;}
+  .join-input-row input:focus{border-color:var(--primary);}
+  .join-input-row input::placeholder{font-size:13px;letter-spacing:normal;font-family:inherit;}
+  .join-preview{margin:0 18px 16px;background:#eef6f5;border-radius:12px;padding:14px;display:none;}
+  .join-preview.show{display:block;}
+  .join-preview-name{font-size:15px;font-weight:800;color:var(--ink);margin-bottom:4px;}
+  .join-preview-sub{font-size:12px;color:var(--sub);}
+
+  /* IOA 분석 */
+  .ioa-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:12px;}
+  .ioa-title{font-size:13px;font-weight:800;color:var(--ink);margin-bottom:10px;}
+  .ioa-rate{font-size:36px;font-weight:800;letter-spacing:-.02em;}
+  .ioa-rate.good{color:#5E9A57;}
+  .ioa-rate.warn{color:#E0972F;}
+  .ioa-rate.bad{color:#E2603F;}
+  .ioa-bar-row{display:flex;gap:4px;margin:10px 0;}
+  .ioa-seg{height:20px;border-radius:4px;flex:none;}
+  .ioa-seg.match{background:#7fd9c4;}
+  .ioa-seg.miss{background:#E2603F;}
+  .ioa-seg.only-a{background:#3E86C0;}
+  .ioa-seg.only-b{background:#E0972F;}
+  .ioa-legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;}
+  .ioa-leg-item{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--sub);}
+  .ioa-leg-dot{width:10px;height:10px;border-radius:3px;flex:none;}
+
 </style>
 <!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -914,6 +963,10 @@
             <div class="rmeta"><b id="settingUserName">로그인 중…</b><span id="settingUserEmail"></span></div>
           </div>
 
+          <div class="gh" style="padding-top:22px"><span>공유 협업</span></div>
+          <div id="shareSection"></div>
+          <button class="addbtn" style="border-color:#c8dce0;color:#0F6E6C" data-action="open-join">+ 공유 코드 입력 (다른 교사 학생 참가)</button>
+
           <div class="gh" style="padding-top:22px"><span>데이터</span></div>
           <button class="addbtn" style="border-color:#f0d0c8;color:#c0392b" data-action="reset-all">기록 전체 초기화</button>
           <div style="height:24px"></div>
@@ -1018,6 +1071,31 @@
         </div>
         <button class="btn-prim" style="width:100%;margin-top:20px;padding:14px;font-size:15px;border-radius:14px" data-action="save-time-edit">저장</button>
         <div style="height:16px"></div>
+      </div>
+    </div>
+
+    <!-- 공유 코드 참가 시트 -->
+    <div class="scrim" id="joinScrim" data-action="close-join"></div>
+    <div class="sheet" id="joinSheet">
+      <div class="grab"></div>
+      <div class="sheet-head">
+        <div class="stit"><b>공유 코드 입력</b><span>다른 교사의 학생 관찰에 참가</span></div>
+        <button class="ghostbtn" data-action="close-join">닫기</button>
+      </div>
+      <div style="padding:0 0 8px">
+        <div class="join-input-row">
+          <input id="joinCodeInput" placeholder="예: FBA-AB2C" maxlength="8"
+            oninput="this.value=this.value.toUpperCase();previewJoinCode(this.value)">
+          <button class="btn-prim" style="flex:none;padding:11px 16px;border-radius:12px;font-size:13px" data-action="do-join">참가</button>
+        </div>
+        <div class="join-preview" id="joinPreview">
+          <div class="join-preview-name" id="joinPreviewName"></div>
+          <div class="join-preview-sub" id="joinPreviewSub"></div>
+        </div>
+        <div style="padding:0 18px 20px;font-size:12.5px;color:var(--sub);line-height:1.6">
+          다른 교사에게 공유 코드를 받아 입력하면 같은 학생의 관찰 기록을 함께 볼 수 있어요.<br>
+          각자 독립적으로 기록하고, 나중에 일치도(IOA)를 분석할 수 있어요.
+        </div>
       </div>
     </div>
 
@@ -1360,6 +1438,168 @@ function mergeRemote(remote){
   if(changed){reindex();refreshAll();toast('다른 기기의 기록이 동기화됐어요');}
 }
 
+
+// ═══════════════════════════════════════════════════
+// 공유 코드 기반 다교사 협업 시스템
+// 기존 userData/{uid} 구조 완전 유지
+// shareCodes/{code} + sharedRecords/{studentId} 추가
+// ═══════════════════════════════════════════════════
+
+// ── 공유 상태 ──
+let sharedStudentIds = []; // 내가 참가한 공유 학생 ID 목록
+let sharedListeners = {};  // sid → unsubscribe
+
+// ── 공유 코드 생성 (6자리 영숫자) ──
+function genShareCode(){
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // 혼동 문자 제외
+  let code = 'FBA-';
+  for(let i=0;i<4;i++) code += chars[Math.floor(Math.random()*chars.length)];
+  return code;
+}
+
+// ── 공유 코드 생성 및 Firestore 저장 ──
+async function createShareCode(sid){
+  if(!fbUser) return null;
+  const s = db.students.find(s=>s.id===sid);
+  if(!s) return null;
+
+  // 이미 코드 있으면 반환
+  if(s.shareCode) return s.shareCode;
+
+  // 중복 없는 코드 생성
+  let code, exists = true;
+  while(exists){
+    code = genShareCode();
+    const snap = await fbStore.collection('shareCodes').doc(code).get();
+    exists = snap.exists;
+  }
+
+  // shareCodes에 저장
+  await fbStore.collection('shareCodes').doc(code).set({
+    ownerUid: fbUser.uid,
+    studentId: sid,
+    studentName: s.name,
+    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  });
+
+  // sharedRecords 초기화 (빈 문서)
+  await fbStore.collection('sharedRecords').doc(sid).set({
+    ownerUid: fbUser.uid,
+    members: [fbUser.uid],
+    studentName: s.name,
+    shareCode: code,
+    records: [],
+    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  });
+
+  // 로컬 학생 정보에 코드 저장
+  s.shareCode = code;
+  persist();
+  return code;
+}
+
+// ── 공유 코드로 참가 ──
+async function joinByCode(code){
+  if(!fbUser){ toast('로그인이 필요해요'); return false; }
+  const trimmed = code.trim().toUpperCase();
+
+  try{
+    // 코드 조회
+    const codeSnap = await fbStore.collection('shareCodes').doc(trimmed).get();
+    if(!codeSnap.exists){ toast('유효하지 않은 코드예요'); return false; }
+
+    const codeData = codeSnap.data();
+    const sid = codeData.studentId;
+
+    // 이미 참가한 경우
+    if(sharedStudentIds.includes(sid)){ toast('이미 참가 중인 학생이에요'); return false; }
+
+    // 내 uid를 members에 추가
+    await fbStore.collection('sharedRecords').doc(sid).update({
+      members: firebase.firestore.FieldValue.arrayUnion(fbUser.uid)
+    });
+
+    // 공유 학생 목록에 추가
+    sharedStudentIds.push(sid);
+    // 내 userData에도 저장
+    if(!db.sharedStudentIds) db.sharedStudentIds = [];
+    if(!db.sharedStudentIds.includes(sid)) db.sharedStudentIds.push(sid);
+    persist();
+
+    // 리스너 시작
+    startSharedListener(sid);
+    toast(`<b>${codeData.studentName}</b> 관찰에 참가했어요`);
+    return true;
+  }catch(e){
+    console.error('참가 오류:', e);
+    toast('오류가 발생했어요: ' + e.message);
+    return false;
+  }
+}
+
+// ── 공유 기록 저장 (Repository.putRecord 오버라이드) ──
+// 내 기록을 sharedRecords에도 동시 저장
+async function syncRecordToShared(rec){
+  const s = db.students.find(s=>s.id===rec.sid);
+  if(!s?.shareCode) return; // 공유 학생 아니면 스킵
+  try{
+    await fbStore.collection('sharedRecords').doc(rec.sid).update({
+      records: firebase.firestore.FieldValue.arrayUnion(rec)
+    });
+  }catch(e){ console.warn('공유 기록 저장 실패:', e); }
+}
+
+// ── 공유 학생 실시간 리스너 ──
+function startSharedListener(sid){
+  if(sharedListeners[sid]){ sharedListeners[sid](); } // 기존 해제
+  sharedListeners[sid] = fbStore.collection('sharedRecords').doc(sid)
+    .onSnapshot(snap=>{
+      if(!snap.exists) return;
+      const remote = snap.data();
+      mergeSharedRecords(sid, remote.records||[]);
+    }, e=>console.warn('공유 리스너 오류:', e));
+}
+
+// ── 공유 기록 병합 ──
+function mergeSharedRecords(sid, remoteRecords){
+  const localIds = new Set((db.records||[]).map(r=>r.id));
+  let added = 0;
+  remoteRecords.forEach(r=>{
+    if(!localIds.has(r.id) && r.sid===sid){
+      db.records.push(r);
+      added++;
+    }
+  });
+  if(added>0){
+    reindex(); refreshAll();
+    toast(`공유 기록 ${added}건이 동기화됐어요`);
+  }
+}
+
+// ── 앱 시작 시 기존 공유 학생 리스너 재연결 ──
+function resumeSharedListeners(){
+  const ids = db.sharedStudentIds||[];
+  ids.forEach(sid=>{
+    sharedStudentIds.push(sid);
+    startSharedListener(sid);
+  });
+}
+
+// ── 공유 학생 떠나기 ──
+async function leaveShared(sid){
+  if(!fbUser) return;
+  try{
+    await fbStore.collection('sharedRecords').doc(sid).update({
+      members: firebase.firestore.FieldValue.arrayRemove(fbUser.uid)
+    });
+    sharedStudentIds = sharedStudentIds.filter(id=>id!==sid);
+    if(db.sharedStudentIds) db.sharedStudentIds = db.sharedStudentIds.filter(id=>id!==sid);
+    if(sharedListeners[sid]){ sharedListeners[sid](); delete sharedListeners[sid]; }
+    persist();
+    toast('공유 관찰에서 나왔어요');
+  }catch(e){ console.warn('나가기 오류:', e); }
+}
+
 // ── Auth 상태 감지 — 앱 진입점 ──
 fbAuth.onAuthStateChanged(async user=>{
   const wall=document.getElementById('authWall');
@@ -1465,6 +1705,8 @@ const Repository = {
     if(idx>=0) db.records[idx]=rec;
     else db.records.push(rec);
     persist();
+    // 공유 학생이면 sharedRecords에도 동시 저장
+    syncRecordToShared(rec);
   },
   // tombstone 삭제 (하드 삭제 금지)
   removeRecord(id){
@@ -1734,7 +1976,39 @@ function renderAnalysis(){
   const max=Math.max(...Object.values(byB));
   const bars=Object.keys(byB).sort((a,b)=>byB[b]-byB[a]).map(id=>{const b=bMap[id]||{name:'?',color:'#9aa6aa'};return `<div class="barrow"><div class="bl">${b.name}</div><div class="bt"><div class="bf" style="width:${byB[id]/max*100}%;background:${b.color}"></div></div><div class="bn">${byB[id]}</div></div>`;}).join('');
 
-  body.innerHTML=hyp
+  // IOA 섹션 — 공유 학생이면 표시
+  const curStudent=cur();
+  const ioaHtml=curStudent?.shareCode ? renderIOASection(curStudent.id) : '';
+
+  // 환경 비교
+  const allMine2=activeRecords().filter(r=>r.sid===state.sid&&new Date(r.ts).getTime()>since);
+  const schoolRecs=allMine2.filter(r=>r.env!=='home');
+  const homeRecs=allMine2.filter(r=>r.env==='home');
+  let envHtml='';
+  if(homeRecs.length>0){
+    const byBSchool={},byBHome={};
+    schoolRecs.forEach(r=>byBSchool[r.bid]=(byBSchool[r.bid]||0)+1);
+    homeRecs.forEach(r=>byBHome[r.bid]=(byBHome[r.bid]||0)+1);
+    const both=Object.keys(byBSchool).filter(id=>byBHome[id]);
+    const schoolOnly=Object.keys(byBSchool).filter(id=>!byBHome[id]);
+    const homeOnly=Object.keys(byBHome).filter(id=>!byBSchool[id]);
+    const bName=id=>(bMap[id]||{name:'?'}).name;
+    envHtml=`<div class="card"><h3>가정-학교 환경 비교</h3>
+      <div style="display:flex;gap:8px;margin-bottom:8px">
+        <div style="flex:1;background:#eef6f5;border-radius:10px;padding:12px">
+          <div style="font-size:11px;font-weight:800;color:#0F6E6C">🏫 학교 ${schoolRecs.length}건</div>
+          <div style="font-size:11.5px;color:var(--sub);margin-top:4px">${schoolOnly.length?'학교에서만: '+schoolOnly.map(bName).join(', '):'가정과 동일'}</div>
+        </div>
+        <div style="flex:1;background:#f3eef9;border-radius:10px;padding:12px">
+          <div style="font-size:11px;font-weight:800;color:#5B4A8A">🏠 가정 ${homeRecs.length}건</div>
+          <div style="font-size:11.5px;color:var(--sub);margin-top:4px">${homeOnly.length?'가정에서만: '+homeOnly.map(bName).join(', '):'학교와 동일'}</div>
+        </div>
+      </div>
+      ${both.length?`<div style="font-size:12px;color:var(--sub)">양쪽 모두: <b>${both.map(bName).join(', ')}</b></div>`:''}
+    </div>`;
+  }
+
+  body.innerHTML=ioaHtml+envHtml+hyp
     +`<div class="card"><h3>주간 산점도</h3><p class="csub">최근 7일 · 시간대별 발생 (6시–20시)</p>
        <div class="scatter"><div class="sc-hours"><span style="top:0">06</span><span style="top:21%">09</span><span style="top:43%">12</span><span style="top:64%">15</span><span style="top:86%">18</span></div>
        <div class="sc-grid">${colHTML}</div><div class="sc-days">${dayLabels}</div></div>
@@ -1745,6 +2019,7 @@ function renderAnalysis(){
 // ============ settings ============
 function renderSettings(){
   renderMasSettings();
+  renderShareSection();
   $('#setStudents').innerHTML=db.students.map(s=>`
     <div class="row"><div class="rdisc" style="background:${s.color}">${s.name[0]}</div>
     <div class="rmeta"><b>${s.name}</b><span>${s.sub||'설명 없음'}</span></div>
@@ -2925,6 +3200,178 @@ window.addEventListener('resize', ()=>{
   if(isDesktop()&&db) initStudio();
 });
 
+
+// ============ 공유 코드 UI ============
+function renderShareSection(){
+  const el=$('#shareSection'); if(!el) return;
+  if(!db.students||!db.students.length){
+    el.innerHTML='<div style="font-size:12.5px;color:var(--sub);padding:4px 0">학생을 먼저 추가해 주세요</div>';
+    return;
+  }
+  el.innerHTML=db.students.map(s=>`
+    <div class="share-card">
+      <div class="share-card-head">
+        <div class="share-card-av" style="background:${s.color}">${s.name[0]}</div>
+        <div>
+          <div class="share-card-name">${s.name}</div>
+          <div style="font-size:11.5px;color:var(--sub)">${s.sub||''}</div>
+        </div>
+      </div>
+      ${s.shareCode
+        ? `<div class="share-code-display">
+            <div>
+              <div style="font-size:10.5px;color:var(--sub);margin-bottom:3px">공유 코드</div>
+              <div class="share-code-val">${s.shareCode}</div>
+            </div>
+            <button class="share-code-copy" onclick="copyShareCode('${s.shareCode}')">복사</button>
+          </div>
+          <div class="share-members" id="members-${s.id}">멤버 확인 중…</div>`
+        : `<button class="share-code-gen" data-action="gen-share-code" data-sid="${s.id}">
+            🔗 공유 코드 생성하기
+          </button>`
+      }
+    </div>`).join('');
+  // 멤버 수 로드
+  db.students.forEach(s=>{
+    if(s.shareCode) loadSharedMembers(s.id);
+  });
+}
+
+async function loadSharedMembers(sid){
+  try{
+    const snap=await fbStore.collection('sharedRecords').doc(sid).get();
+    const el=$('#members-'+sid); if(!el) return;
+    if(snap.exists){
+      const members=snap.data().members||[];
+      el.textContent=`참가 중: ${members.length}명`;
+    }
+  }catch(e){}
+}
+
+function copyShareCode(code){
+  navigator.clipboard.writeText(code).then(()=>toast(`<b>${code}</b> 복사됐어요`))
+    .catch(()=>{
+      // 클립보드 API 안 되면 수동
+      const el=document.createElement('input');
+      el.value=code; document.body.appendChild(el);
+      el.select(); document.execCommand('copy');
+      document.body.removeChild(el);
+      toast(`<b>${code}</b> 복사됐어요`);
+    });
+}
+
+// 코드 입력 시 미리보기
+let joinPreviewTimer=null;
+async function previewJoinCode(val){
+  const clean=val.replace(/[^A-Z0-9-]/g,'');
+  if(clean.length<7){ $('#joinPreview').classList.remove('show'); return; }
+  clearTimeout(joinPreviewTimer);
+  joinPreviewTimer=setTimeout(async()=>{
+    try{
+      const snap=await fbStore.collection('shareCodes').doc(clean).get();
+      const preview=$('#joinPreview');
+      if(snap.exists){
+        const data=snap.data();
+        $('#joinPreviewName').textContent=data.studentName;
+        $('#joinPreviewSub').textContent='참가 가능한 공유 코드예요 ✓';
+        preview.classList.add('show');
+        preview.style.background='#eef6f5';
+      } else {
+        $('#joinPreviewName').textContent='코드를 찾을 수 없어요';
+        $('#joinPreviewSub').textContent='코드를 다시 확인해 주세요';
+        preview.classList.add('show');
+        preview.style.background='#fdf0ec';
+      }
+    }catch(e){}
+  },600);
+}
+
+function openJoinSheet(){
+  const inp=$('#joinCodeInput'); if(inp) inp.value='';
+  const preview=$('#joinPreview'); if(preview) preview.classList.remove('show');
+  $('#joinScrim').classList.add('show');
+  $('#joinSheet').classList.add('open');
+}
+function closeJoinSheet(){
+  $('#joinScrim').classList.remove('show');
+  $('#joinSheet').classList.remove('open');
+}
+async function doJoin(){
+  const code=($('#joinCodeInput')||{}).value||'';
+  if(code.length<7){toast('코드를 입력해 주세요');return;}
+  const btn=document.querySelector('[data-action="do-join"]');
+  if(btn){btn.disabled=true;btn.textContent='참가 중…';}
+  const ok=await joinByCode(code);
+  if(btn){btn.disabled=false;btn.textContent='참가';}
+  if(ok){ closeJoinSheet(); renderSettings(); }
+}
+
+// ============ IOA 분석 ============
+function calcIOA(sid, intervalSec=10){
+  // sharedRecords에서 두 관찰자 이상의 기록 비교
+  const allRecs=activeRecords().filter(r=>r.sid===sid);
+  const observers=[...new Set(allRecs.map(r=>r.observerId||'unknown'))];
+  if(observers.length<2) return null;
+
+  const [obsA, obsB]=observers;
+  const recsA=allRecs.filter(r=>(r.observerId||'unknown')===obsA);
+  const recsB=allRecs.filter(r=>(r.observerId||'unknown')===obsB);
+
+  // 겹치는 시간 구간 찾기
+  if(!recsA.length||!recsB.length) return null;
+  const startA=Math.min(...recsA.map(r=>new Date(r.ts).getTime()));
+  const endA=Math.max(...recsA.map(r=>new Date(r.ts).getTime()));
+  const startB=Math.min(...recsB.map(r=>new Date(r.ts).getTime()));
+  const endB=Math.max(...recsB.map(r=>new Date(r.ts).getTime()));
+  const overlapStart=Math.max(startA,startB);
+  const overlapEnd=Math.min(endA,endB);
+  if(overlapEnd<=overlapStart) return null;
+
+  // 간격별 발생 여부
+  const intervals=[];
+  for(let t=overlapStart; t<overlapEnd; t+=intervalSec*1000){
+    const te=t+intervalSec*1000;
+    const inA=recsA.some(r=>{const rt=new Date(r.ts).getTime();return rt>=t&&rt<te;});
+    const inB=recsB.some(r=>{const rt=new Date(r.ts).getTime();return rt>=t&&rt<te;});
+    intervals.push({inA,inB});
+  }
+  if(!intervals.length) return null;
+
+  const match=intervals.filter(i=>i.inA===i.inB).length;
+  const rate=Math.round(match/intervals.length*100);
+  return {rate,intervals,obsA,obsB,total:intervals.length,match};
+}
+
+function renderIOASection(sid){
+  const result=calcIOA(sid);
+  if(!result) return `<div class="ioa-card">
+    <div class="ioa-title">관찰자간 일치도 (IOA)</div>
+    <div style="font-size:13px;color:var(--sub)">두 관찰자 이상의 기록이 겹치는 시간대가 있어야 계산할 수 있어요.</div>
+  </div>`;
+
+  const rateClass=result.rate>=80?'good':result.rate>=60?'warn':'bad';
+  const segWidth=Math.max(4, Math.min(20, Math.floor(280/result.total)));
+  const segs=result.intervals.map(i=>{
+    const cls=i.inA&&i.inB?'match':!i.inA&&!i.inB?'match':i.inA?'only-a':'only-b';
+    return `<div class="ioa-seg ${cls}" style="width:${segWidth}px"></div>`;
+  }).join('');
+
+  return `<div class="ioa-card">
+    <div class="ioa-title">관찰자간 일치도 (IOA)</div>
+    <div class="ioa-rate ${rateClass}">${result.rate}%</div>
+    <div style="font-size:12px;color:var(--sub);margin:4px 0 10px">
+      ${result.total}개 간격 중 ${result.match}개 일치
+      ${result.rate>=80?'✅ 신뢰할 수 있는 데이터':'⚠️ 추가 관찰 필요'}
+    </div>
+    <div class="ioa-bar-row">${segs}</div>
+    <div class="ioa-legend">
+      <div class="ioa-leg-item"><div class="ioa-leg-dot" style="background:#7fd9c4"></div>둘 다 일치</div>
+      <div class="ioa-leg-item"><div class="ioa-leg-dot" style="background:#3E86C0"></div>A만 기록</div>
+      <div class="ioa-leg-item"><div class="ioa-leg-dot" style="background:#E0972F"></div>B만 기록</div>
+    </div>
+  </div>`;
+}
+
 // ============ 환경 토글 (학교/가정) ============
 function setEnv(env){
   state.currentEnv = env;
@@ -3209,6 +3656,15 @@ document.addEventListener('click',e=>{
     else if(a==='iv-editor-cancel')closeIvEditor();
     else if(a==='export-pdf')exportPdf();
     else if(a==='open-order')openOrderSheet();
+    else if(a==='open-join')openJoinSheet();
+    else if(a==='close-join')closeJoinSheet();
+    else if(a==='do-join')doJoin();
+    else if(a==='gen-share-code'){
+      const sid=act.dataset.sid;
+      createShareCode(sid).then(code=>{
+        if(code){ toast(`공유 코드 <b>${code}</b> 생성됐어요`); renderSettings(); }
+      });
+    }
     else if(a==='open-interval-setup')openIntervalSetup();
     else if(a==='close-interval-setup')closeIntervalSetup();
     else if(a==='start-interval')startInterval();
