@@ -1395,6 +1395,7 @@ async function doSignout(){
 let sharedStudentIds = [];
 let studentListeners  = {}; // sid → unsubscribe (학생 문서 리스너)
 let recordListeners   = {}; // sid → unsubscribe (기록 서브컬렉션 리스너)
+let recordRetryTimers = {}; // sid → retry timer
 let settingsListener  = null;
 
 // ── Firestore 경로 헬퍼 ──
@@ -1614,9 +1615,11 @@ async function resetCloudDataForCurrentUser(){
   if(unsubSync){ unsubSync(); unsubSync = null; }
   Object.values(studentListeners).forEach(u => u());
   Object.values(recordListeners).forEach(u => u());
+  Object.values(recordRetryTimers).forEach(t => clearTimeout(t));
   if(settingsListener){ settingsListener(); settingsListener = null; }
   studentListeners = {};
   recordListeners = {};
+  recordRetryTimers = {};
 
   // prototype7 cases 구조 정리
   const caseSnap = await fbStore.collection('cases')
@@ -1895,8 +1898,10 @@ function startSync(){
   // 기존 리스너 전체 해제
   Object.values(studentListeners).forEach(u => u());
   Object.values(recordListeners).forEach(u => u());
+  Object.values(recordRetryTimers).forEach(t => clearTimeout(t));
   studentListeners = {};
   recordListeners  = {};
+  recordRetryTimers = {};
   if(settingsListener){ settingsListener(); settingsListener = null; }
   if(unsubSync){ unsubSync(); unsubSync = null; }
 
@@ -1914,7 +1919,12 @@ function startSync(){
         else{ db.students.push(data); reindex(); }
         if(state.sid === sid) applyCaseToDb(db.students.find(s=>s.id===sid));
         // 기록 리스너 시작 (없으면)
-        if(!recordListeners[sid]) startRecordListener(sid);
+        if(!recordListeners[sid] && !recordRetryTimers[sid]){
+          recordRetryTimers[sid] = setTimeout(()=>{
+            delete recordRetryTimers[sid];
+            startRecordListener(sid);
+          }, 350);
+        }
       });
       refreshAll();
       updateSyncUI();
@@ -1922,7 +1932,7 @@ function startSync(){
 }
 
 // ── 학생별 기록 서브컬렉션 실시간 리스너 ──
-function startRecordListener(sid){
+function startRecordListener(sid, attempt=0){
   if(recordListeners[sid]){ recordListeners[sid](); }
   recordListeners[sid] = FS.records(sid)
     .onSnapshot(snap => {
@@ -1938,7 +1948,24 @@ function startRecordListener(sid){
         else db.records.push(rec);
       });
       reindex(); refreshAll();
-    }, e => console.warn('기록 리스너 오류:', e));
+    }, e => {
+      if(recordListeners[sid]){ recordListeners[sid](); delete recordListeners[sid]; }
+      if(e.code === 'permission-denied' && attempt < 5){
+        clearTimeout(recordRetryTimers[sid]);
+        recordRetryTimers[sid] = setTimeout(()=>{
+          delete recordRetryTimers[sid];
+          startRecordListener(sid, attempt + 1);
+        }, 600 + attempt * 500);
+        return;
+      }
+      const s = db?.students?.find(x=>x.id===sid);
+      console.warn('기록 리스너 오류:', e.code || e.message || e, {
+        caseId: sid,
+        currentUid: fbUser?.uid,
+        ownerUid: s?.ownerUid,
+        memberUids: s?.memberUids || s?.members
+      });
+    });
 }
 
 // ── 공유 코드 생성 (제한시간 24시간 + 랜덤) ──
@@ -2087,6 +2114,7 @@ async function leaveShared(sid){
     });
     await FS.member(sid, fbUser.uid).delete();
     if(recordListeners[sid]){ recordListeners[sid](); delete recordListeners[sid]; }
+    if(recordRetryTimers[sid]){ clearTimeout(recordRetryTimers[sid]); delete recordRetryTimers[sid]; }
     db.students = db.students.filter(s => s.id !== sid);
     db.records  = db.records.filter(r => r.sid !== sid);
     reindex(); refreshAll();
@@ -2100,8 +2128,9 @@ async function doSignout(){
   if(unsubSync){ unsubSync(); unsubSync = null; }
   Object.values(studentListeners).forEach(u => u());
   Object.values(recordListeners).forEach(u => u());
+  Object.values(recordRetryTimers).forEach(t => clearTimeout(t));
   if(settingsListener){ settingsListener(); settingsListener = null; }
-  studentListeners = {}; recordListeners = {};
+  studentListeners = {}; recordListeners = {}; recordRetryTimers = {};
   sharedStudentIds = [];
   db = null;
   await fbAuth.signOut();
