@@ -513,6 +513,33 @@
   #studio{display:none!important;}
 }
 
+  /* ── 환경 토글 (학교/가정) ── */
+  .env-toggle{
+    display:flex;align-items:center;gap:6px;
+    margin:10px 20px 0;
+    background:rgba(0,0,0,.18);border-radius:20px;
+    padding:4px;width:fit-content;
+  }
+  .env-btn{
+    padding:6px 14px;border-radius:16px;border:none;
+    font-size:12.5px;font-weight:700;font-family:inherit;
+    cursor:pointer;transition:.15s;color:rgba(255,255,255,.6);
+    background:transparent;display:flex;align-items:center;gap:5px;
+  }
+  .env-btn.on{background:rgba(255,255,255,.95);color:var(--ink);}
+  .env-btn svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;}
+  /* 가정 모드일 때 히어로 색상 오버레이 */
+  .hero.home-mode{background:linear-gradient(160deg,#5B4A8A 0%,#3D2F6B 100%)!important;}
+  /* 분석 탭 환경 비교 */
+  .env-compare{display:flex;gap:10px;margin-bottom:16px;}
+  .env-compare-card{flex:1;background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 16px;}
+  .env-compare-card .ec-label{font-size:11px;font-weight:800;margin-bottom:8px;display:flex;align-items:center;gap:5px;}
+  .env-compare-card .ec-count{font-size:26px;font-weight:800;color:var(--ink);}
+  .env-compare-card .ec-sub{font-size:11.5px;color:var(--sub);margin-top:2px;}
+  .env-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:800;padding:2px 7px;border-radius:6px;}
+  .env-badge.school{background:#eef6f5;color:#0F6E6C;}
+  .env-badge.home{background:#f0eef9;color:#5B4A8A;}
+
 </style>
 <!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -641,6 +668,16 @@
             <div class="stat"><b id="stToday">0</b><span>오늘 기록</span></div>
             <div class="stat warn"><b id="stIncomp">0</b><span>ABC 미완성</span></div>
             <div class="stat"><b id="stWeek">0</b><span>이번 주 합계</span></div>
+          </div>
+          <div class="env-toggle">
+            <button class="env-btn on" id="envSchool" data-action="set-env" data-env="school">
+              <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+              학교
+            </button>
+            <button class="env-btn" id="envHome" data-action="set-env" data-env="home">
+              <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+              가정
+            </button>
           </div>
           <div id="syncBadge"><div class="sb-dot" id="sbDot"></div><span id="sbText"></span></div>
         <div class="note-fab" data-action="open-note">
@@ -1177,7 +1214,7 @@ async function initApp(){
 }
 
 // ============ state ============
-const state={tab:'record',sid:'s1',timer:null,sheetId:null,sel:{a:new Set(),c:new Set()},date:null,ed:null,noteTab:'memo',memoTag:'before',masTemp:{},ivTemp:{}};
+const state={tab:'record',sid:'s1',timer:null,sheetId:null,sel:{a:new Set(),c:new Set()},date:null,ed:null,noteTab:'memo',memoTag:'before',masTemp:{},ivTemp:{},currentEnv:'school'};
 let bMap={},sMap={};
 function reindex(){ bMap=Object.fromEntries(db.behaviors.map(b=>[b.id,b])); sMap=Object.fromEntries(db.students.map(s=>[s.id,s])); }
 function activeRecords(){ return (db.records||[]).filter(r=>!r.deleted); }
@@ -1280,9 +1317,27 @@ function renderSwitcher(){
 
 // ============ behavior grid ============
 function renderGrid(){
+  if(!cur()){$('#behaviorGrid').innerHTML='<div style="color:rgba(255,255,255,.6);font-size:13px;padding:20px;text-align:center">설정 탭에서 학생을 먼저 추가해 주세요</div>';return;}
   const today=dkey(new Date());
   const mine=activeRecords().filter(r=>r.sid===state.sid&&dkey(new Date(r.ts))===today);
-  $('#behaviorGrid').innerHTML=db.behaviors.map(b=>{
+
+  // 학생별 최근 기록 순서로 행동 정렬
+  // 최근 30일 기록에서 bid별 마지막 기록 시각을 구해 정렬
+  const recent=activeRecords().filter(r=>r.sid===state.sid&&new Date(r.ts).getTime()>Date.now()-30*864e5);
+  const lastSeen={}; // bid → 마지막 기록 ts
+  recent.forEach(r=>{
+    if(!lastSeen[r.bid]||r.ts>lastSeen[r.bid]) lastSeen[r.bid]=r.ts;
+  });
+  // 기록 없는 행동은 맨 뒤로 (등록 순서 유지)
+  const sorted=[...db.behaviors].sort((a,b)=>{
+    const ta=lastSeen[a.id]||''; const tb=lastSeen[b.id]||'';
+    if(ta&&tb) return tb>ta?1:-1; // 둘 다 있으면 최근순
+    if(ta) return -1; // a만 있으면 a 앞
+    if(tb) return 1;  // b만 있으면 b 앞
+    return 0; // 둘 다 없으면 원래 순서
+  });
+
+  $('#behaviorGrid').innerHTML=sorted.map(b=>{
     const c=mine.filter(r=>r.bid===b.id).length;
     const running=state.timer&&state.timer.bid===b.id;
     return `<button class="btn ${b.type==='dur'?'dur':''} ${running?'running':''}" data-bh="${b.id}">
@@ -1311,7 +1366,7 @@ function tapBehavior(bid,btn,e){
       clearInterval(state.timer.iv);state.timer=null;
       const now=new Date().toISOString();
       const rec={id:ulid(),sid:state.sid,bid,ts:new Date().toISOString(),dur:sec,a:[],c:[],note:'',
-        observerId:OBSERVER_ID,deviceId:DEVICE_ID,env:'school',
+        observerId:OBSERVER_ID,deviceId:DEVICE_ID,env:state.currentEnv,
         updatedAt:now,deleted:false,dirty:true};
       Repository.putRecord(rec);renderGrid();paintStudent();openSheet(rec.id);
     }else{
@@ -1324,7 +1379,7 @@ function tapBehavior(bid,btn,e){
   }
   const now2=new Date().toISOString();
   const rec={id:ulid(),sid:state.sid,bid,ts:now2,dur:null,a:[],c:[],note:'',
-    observerId:OBSERVER_ID,deviceId:DEVICE_ID,env:'school',
+    observerId:OBSERVER_ID,deviceId:DEVICE_ID,env:state.currentEnv,
     updatedAt:now2,deleted:false,dirty:true};
   Repository.putRecord(rec);renderGrid();paintStudent();openSheet(rec.id);
 }
@@ -1414,7 +1469,7 @@ function renderTimeline(){
       </div>
       <div class="tl-dot" style="background:${b.color}"></div>
       <div class="tl-body">
-        <div class="bh">${b.name}<span class="tag ${b.type}">${b.type==='freq'?'빈도':(r.dur?fmtDur(r.dur):'시간')}</span></div>
+        <div class="bh">${b.name}<span class="tag ${b.type}">${b.type==='freq'?'빈도':(r.dur?fmtDur(r.dur):'시간')}</span>${r.env==='home'?'<span class="env-badge home">🏠 가정</span>':''}</div>
         ${pills?`<div class="abc-line">${pills}</div>`:''}
         ${r.note?`<div class="abc-line"><span class="abc-pill"><span class="k">메모</span>${r.note}</span></div>`:''}
         ${incmp?`<button class="fillbtn" data-rec="${r.id}">＋ ABC 채우기</button>`:''}
@@ -2605,6 +2660,22 @@ document.addEventListener('click', e=>{
 window.addEventListener('resize', ()=>{
   if(isDesktop()&&db) initStudio();
 });
+
+// ============ 환경 토글 (학교/가정) ============
+function setEnv(env){
+  state.currentEnv = env;
+  const hero=$('.hero');
+  const btnS=$('#envSchool'), btnH=$('#envHome');
+  if(btnS) btnS.classList.toggle('on', env==='school');
+  if(btnH) btnH.classList.toggle('on', env==='home');
+  if(hero){
+    if(env==='home') hero.classList.add('home-mode');
+    else hero.classList.remove('home-mode');
+  }
+  toast(env==='school'?
+    '<b>학교</b> 관찰 모드예요':'<b>가정</b> 관찰 모드예요 🏠');
+}
+
 // ============ tabs ============
 function switchTab(t){
   state.tab=t;
@@ -2673,6 +2744,7 @@ document.addEventListener('click',e=>{
     else if(a==='iv-editor-del')delIvEditor();
     else if(a==='iv-editor-cancel')closeIvEditor();
     else if(a==='export-pdf')exportPdf();
+    else if(a==='set-env'){setEnv(act.dataset.env);return;}
     else if(a==='do-signout')doSignout();
     else if(a==='close-time-edit')closeTimeEdit();
     else if(a==='save-time-edit')saveTimeEdit();
