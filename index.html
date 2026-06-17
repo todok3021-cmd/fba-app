@@ -963,11 +963,8 @@
             <div class="rmeta"><b id="settingUserName">로그인 중…</b><span id="settingUserEmail"></span></div>
           </div>
 
-          <div class="gh" style="padding-top:22px"><span>공유 협업</span></div>
-          <div id="shareSection"></div>
-          <button class="addbtn" style="border-color:#c8dce0;color:#0F6E6C" data-action="open-join">+ 공유 코드 입력 (다른 교사 학생 참가)</button>
-
           <div class="gh" style="padding-top:22px"><span>데이터</span></div>
+          <button class="addbtn" style="border-color:#c8dce0;color:#0F6E6C;margin-bottom:6px" data-action="open-join">🔗 공유 코드로 참가 (다른 교사 학생)</button>
           <button class="addbtn" style="border-color:#f0d0c8;color:#c0392b" data-action="reset-all">기록 전체 초기화</button>
           <div style="height:24px"></div>
         </div>
@@ -1374,7 +1371,13 @@ async function doSignup(){
 // ── 로그아웃 ──
 async function doSignout(){
   if(!confirm('로그아웃 하시겠어요?')) return;
+  // 모든 리스너 해제
   if(unsubSync){unsubSync();unsubSync=null;}
+  Object.values(sharedListeners).forEach(u=>u());
+  sharedListeners={};
+  sharedStudentIds=[];
+  // db 초기화 (다음 로그인 시 깨끗하게 시작)
+  db=null;
   await fbAuth.signOut();
 }
 
@@ -1562,16 +1565,19 @@ function startSharedListener(sid){
 
 // ── 공유 기록 병합 ──
 function mergeSharedRecords(sid, remoteRecords){
-  const localIds = new Set((db.records||[]).map(r=>r.id));
+  if(!db||!db.records) return;
+  const localIds = new Set(db.records.map(r=>r.id));
   let added = 0;
   remoteRecords.forEach(r=>{
-    if(!localIds.has(r.id) && r.sid===sid){
+    // 내 기록 제외, 이미 있는 기록 제외
+    if(!localIds.has(r.id) && r.sid===sid && r.observerId!==fbUser?.uid){
       db.records.push(r);
       added++;
     }
   });
   if(added>0){
     reindex(); refreshAll();
+    persist(); // userData에도 저장 → 다음 로그인 시도 유지
     toast(`공유 기록 ${added}건이 동기화됐어요`);
   }
 }
@@ -2021,9 +2027,14 @@ function renderSettings(){
   renderMasSettings();
   renderShareSection();
   $('#setStudents').innerHTML=db.students.map(s=>`
-    <div class="row"><div class="rdisc" style="background:${s.color}">${s.name[0]}</div>
-    <div class="rmeta"><b>${s.name}</b><span>${s.sub||'설명 없음'}</span></div>
-    <button class="iconbtn" data-edit-student="${s.id}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4v16h16v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4z"/></svg></button></div>`).join('');
+    <div class="row">
+      <div class="rdisc" style="background:${s.color}">${s.name[0]}</div>
+      <div class="rmeta"><b>${s.name}</b><span>${s.sub||'설명 없음'}</span></div>
+      <button class="iconbtn" title="${s.shareCode?'공유 코드: '+s.shareCode:'공유 코드 생성'}" data-share-sid="${s.id}" style="color:${s.shareCode?'#0F6E6C':'var(--sub)'}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+      </button>
+      <button class="iconbtn" data-edit-student="${s.id}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4v16h16v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4z"/></svg></button>
+    </div>`).join('');
   $('#setBehaviors').innerHTML=db.behaviors.map(b=>`
     <div class="row"><div class="rdisc" style="background:${b.color}">${svg(b.icon)}</div>
     <div class="rmeta"><b>${b.name}</b><span>${b.type==='freq'?'빈도 — 누를 때마다 +1':'지속시간 — 시작/종료 타이머'}</span></div>
@@ -3203,38 +3214,29 @@ window.addEventListener('resize', ()=>{
 
 // ============ 공유 코드 UI ============
 function renderShareSection(){
-  const el=$('#shareSection'); if(!el) return;
-  if(!db.students||!db.students.length){
-    el.innerHTML='<div style="font-size:12.5px;color:var(--sub);padding:4px 0">학생을 먼저 추가해 주세요</div>';
-    return;
-  }
-  el.innerHTML=db.students.map(s=>`
-    <div class="share-card">
-      <div class="share-card-head">
-        <div class="share-card-av" style="background:${s.color}">${s.name[0]}</div>
-        <div>
-          <div class="share-card-name">${s.name}</div>
-          <div style="font-size:11.5px;color:var(--sub)">${s.sub||''}</div>
-        </div>
-      </div>
-      ${s.shareCode
-        ? `<div class="share-code-display">
-            <div>
-              <div style="font-size:10.5px;color:var(--sub);margin-bottom:3px">공유 코드</div>
-              <div class="share-code-val">${s.shareCode}</div>
-            </div>
-            <button class="share-code-copy" onclick="copyShareCode('${s.shareCode}')">복사</button>
-          </div>
-          <div class="share-members" id="members-${s.id}">멤버 확인 중…</div>`
-        : `<button class="share-code-gen" data-action="gen-share-code" data-sid="${s.id}">
-            🔗 공유 코드 생성하기
-          </button>`
+  // 설정 탭 공유 섹션 제거됨 — 학생 명단 아이콘으로 대체
+}
+
+// 학생 공유 모달 (시트)
+function openShareModal(sid){
+  const s=db.students.find(s=>s.id===sid);
+  if(!s) return;
+  // 기존 ABC 시트 재활용 대신 toast + 처리
+  if(s.shareCode){
+    // 이미 코드 있으면 복사 옵션
+    copyShareCode(s.shareCode);
+    toast(`<b>${s.shareCode}</b> 복사됐어요 — 협업할 교사에게 보내주세요`);
+  } else {
+    // 코드 생성
+    if(!confirm(`${s.name}의 공유 코드를 생성할까요?`)) return;
+    createShareCode(sid).then(code=>{
+      if(code){
+        copyShareCode(code);
+        renderSettings();
+        toast(`공유 코드 <b>${code}</b> 생성 및 복사됐어요`);
       }
-    </div>`).join('');
-  // 멤버 수 로드
-  db.students.forEach(s=>{
-    if(s.shareCode) loadSharedMembers(s.id);
-  });
+    });
+  }
 }
 
 async function loadSharedMembers(sid){
