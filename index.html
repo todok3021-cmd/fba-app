@@ -740,7 +740,7 @@
   .join-preview-sub{font-size:12px;color:var(--sub);}
 
   /* IOA 분석 */
-  .ioa-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:12px;}
+  .ioa-card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:18px;margin:14px 18px;box-sizing:border-box;}
   .ioa-title{font-size:13px;font-weight:800;color:var(--ink);margin-bottom:10px;}
   .ioa-rate{font-size:36px;font-weight:800;letter-spacing:-.02em;}
   .ioa-rate.good{color:#5E9A57;}
@@ -3923,47 +3923,7 @@ function renderAnalysis(){
   const curStudent=cur();
   const ioaHtml=curStudent?.shareCode ? renderIOASection(curStudent.id) : '';
 
-  // 환경 비교
-  const allMine2=activeRecords().filter(r=>r.sid===state.sid&&new Date(r.ts).getTime()>since);
-  const schoolRecs=allMine2.filter(r=>r.env!=='home');
-  const homeRecs=allMine2.filter(r=>r.env==='home');
-  let envHtml='';
-  if(homeRecs.length>0){
-    const byBSchool={},byBHome={};
-    schoolRecs.forEach(r=>byBSchool[r.bid]=(byBSchool[r.bid]||0)+1);
-    homeRecs.forEach(r=>byBHome[r.bid]=(byBHome[r.bid]||0)+1);
-    const both=Object.keys(byBSchool).filter(id=>byBHome[id]);
-    const schoolOnly=Object.keys(byBSchool).filter(id=>!byBHome[id]);
-    const homeOnly=Object.keys(byBHome).filter(id=>!byBSchool[id]);
-    const bName=id=>escHtml(localText((bMap[id]||{name:'?'}).name));
-    envHtml=appLang==='en'?`<div class="card"><h3>Home-School Environment Comparison</h3>
-      <div style="display:flex;gap:8px;margin-bottom:8px">
-        <div style="flex:1;background:#eef6f5;border-radius:10px;padding:12px">
-          <div style="font-size:11px;font-weight:800;color:#0F6E6C">School ${schoolRecs.length} records</div>
-          <div style="font-size:11.5px;color:var(--sub);margin-top:4px">${schoolOnly.length?'Only at school: '+schoolOnly.map(bName).join(', '):'Same as home'}</div>
-        </div>
-        <div style="flex:1;background:#f3eef9;border-radius:10px;padding:12px">
-          <div style="font-size:11px;font-weight:800;color:#5B4A8A">Home ${homeRecs.length} records</div>
-          <div style="font-size:11.5px;color:var(--sub);margin-top:4px">${homeOnly.length?'Only at home: '+homeOnly.map(bName).join(', '):'Same as school'}</div>
-        </div>
-      </div>
-      ${both.length?`<div style="font-size:12px;color:var(--sub)">Both settings: <b>${both.map(bName).join(', ')}</b></div>`:''}
-    </div>`:`<div class="card"><h3>가정-학교 환경 비교</h3>
-      <div style="display:flex;gap:8px;margin-bottom:8px">
-        <div style="flex:1;background:#eef6f5;border-radius:10px;padding:12px">
-          <div style="font-size:11px;font-weight:800;color:#0F6E6C">🏫 학교 ${schoolRecs.length}건</div>
-          <div style="font-size:11.5px;color:var(--sub);margin-top:4px">${schoolOnly.length?'학교에서만: '+schoolOnly.map(bName).join(', '):'가정과 동일'}</div>
-        </div>
-        <div style="flex:1;background:#f3eef9;border-radius:10px;padding:12px">
-          <div style="font-size:11px;font-weight:800;color:#5B4A8A">🏠 가정 ${homeRecs.length}건</div>
-          <div style="font-size:11.5px;color:var(--sub);margin-top:4px">${homeOnly.length?'가정에서만: '+homeOnly.map(bName).join(', '):'학교와 동일'}</div>
-        </div>
-      </div>
-      ${both.length?`<div style="font-size:12px;color:var(--sub)">양쪽 모두: <b>${both.map(bName).join(', ')}</b></div>`:''}
-    </div>`;
-  }
-
-  body.innerHTML=ioaHtml+envHtml+hyp+measurementHtml
+  body.innerHTML=ioaHtml+hyp+measurementHtml
     +(appLang==='en'
       ? `<div class="card"><h3>Weekly Scatterplot</h3><p class="csub">Recent 7 days · occurrence by time (6:00-20:00)</p>`
       : `<div class="card"><h3>주간 산점도</h3><p class="csub">최근 7일 · 시간대별 발생 (6시–20시)</p>`)
