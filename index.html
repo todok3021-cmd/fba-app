@@ -84,9 +84,9 @@
   @keyframes rip{to{transform:scale(2.6); opacity:0;}}
 
   /* sheet (shared) */
-  .scrim{position:absolute; inset:0; background:rgba(20,32,36,.42); opacity:0; pointer-events:none; transition:opacity .3s; z-index:48;}
+  .scrim{position:absolute; inset:0; background:rgba(251,250,246,.68); opacity:0; pointer-events:none; transition:opacity .3s; z-index:9997; backdrop-filter:none!important; -webkit-backdrop-filter:none!important;}
   .scrim.show{opacity:1; pointer-events:auto;}
-  .sheet{position:absolute; left:0; right:0; bottom:0; z-index:50; background:var(--paper); border-radius:28px 28px 0 0; transform:translateY(101%); transition:transform .36s cubic-bezier(.22,.61,.36,1); box-shadow:0 -18px 50px -12px rgba(14,40,45,.4); max-height:86%; display:flex; flex-direction:column; overflow:hidden;}
+  .sheet{position:absolute; left:0; right:0; bottom:0; z-index:10000; background:var(--paper); border-radius:28px 28px 0 0; transform:translateY(101%); transition:transform .36s cubic-bezier(.22,.61,.36,1); box-shadow:0 -18px 50px -12px rgba(14,40,45,.4); max-height:86%; display:flex; flex-direction:column; overflow:hidden;}
   .sheet.open{transform:translateY(0);}
   .grab{width:38px;height:5px;border-radius:3px;background:var(--line); margin:11px auto 4px;}
   .sheet-head{padding:6px 22px 14px; display:flex; align-items:center; gap:12px; border-bottom:1px solid var(--line2); flex:none;}
@@ -240,7 +240,7 @@
   .sw-toggle.on::after{left:21px;}
 
   /* tabbar */
-  .tabbar{position:fixed; left:0; right:0; bottom:0; height:88px; min-height:88px; z-index:42; background:#FBFAF6!important; border-top:1.5px solid #E5E0D5; display:flex; padding:9px 12px calc(16px + env(safe-area-inset-bottom, 0px)); box-shadow:none!important; opacity:1!important; filter:none!important; backdrop-filter:none!important; -webkit-backdrop-filter:none!important; isolation:isolate; overflow:hidden;}
+  .tabbar{position:fixed; left:0; right:0; bottom:0; height:88px; min-height:88px; z-index:9998; background:#FBFAF6!important; border-top:1.5px solid #E5E0D5; display:flex; padding:9px 12px calc(16px + env(safe-area-inset-bottom, 0px)); box-shadow:none!important; opacity:1!important; filter:none!important; backdrop-filter:none!important; -webkit-backdrop-filter:none!important; isolation:isolate; overflow:hidden;}
   .tabbar-bg{position:absolute;inset:-2px 0 -120px;z-index:0;background:#FBFAF6!important;pointer-events:none;}
   .tabbar::before{content:"";position:absolute;left:0;right:0;bottom:-90px;height:180px;z-index:0;background:#FBFAF6!important;pointer-events:none;}
   .tabbar::after{content:"";position:absolute;inset:0;z-index:0;background:#FBFAF6!important;pointer-events:none;}
@@ -624,7 +624,7 @@
 
   /* ── 간격 기록 진행 오버레이 ── */
   #intervalOverlay{
-    position:absolute;inset:0;z-index:50;
+    position:absolute;inset:0;z-index:10000;
     background:linear-gradient(160deg,#0d4a48 0%,#082e2c 100%);
     display:none;flex-direction:column;align-items:center;justify-content:center;
     color:#fff;padding:28px;
