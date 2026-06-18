@@ -1091,6 +1091,14 @@
             </div>
             <div class="rmeta"><b id="settingUserName">로그인 중…</b><span id="settingUserEmail"></span></div>
           </div>
+          <div class="row">
+            <div class="rdisc" style="background:#3E86C0">L</div>
+            <div class="rmeta"><b data-i18n="language">언어</b><span data-i18n="languageSettingSub">앱 화면 언어</span></div>
+            <select class="ui-lang-select" onchange="setAppLang(this.value)" style="border:1px solid var(--line);border-radius:10px;padding:8px 10px;background:#fff;font-family:inherit;font-weight:800;color:var(--ink)">
+              <option value="ko">한국어</option>
+              <option value="en">English</option>
+            </select>
+          </div>
 
           <div class="gh" style="padding-top:22px"><span>데이터</span></div>
           <button class="addbtn" style="border-color:#c8dce0;color:#0F6E6C;margin-bottom:6px" data-action="open-join">🔗 공유 코드로 참가 (다른 교사 학생)</button>
@@ -1607,7 +1615,7 @@ let db=null, fbUser=null, saveT=null, unsubSync=null;
 // ============ UI language ============
 const I18N={
   ko:{
-    appTitle:'FBA 기록·분석', appSub:'특수교육 현장용 기능평가 앱', language:'언어',
+    appTitle:'FBA 기록·분석', appSub:'특수교육 현장용 기능평가 앱', language:'언어', languageSettingSub:'앱 화면 언어',
     loginTab:'로그인', signupTab:'회원가입', email:'이메일', password:'비밀번호', signupPassword:'비밀번호 (6자 이상)',
     name:'이름', loginSubmit:'로그인', signupSubmit:'가입하기', emailPlaceholder:'teacher@school.kr', passwordPlaceholder:'비밀번호 입력', namePlaceholder:'홍길동',
     pleaseWait:'잠시만요…', errUserNotFound:'등록되지 않은 이메일이에요', errWrongPassword:'비밀번호가 틀렸어요', errInvalidCredential:'이메일 또는 비밀번호가 올바르지 않아요',
@@ -1644,9 +1652,11 @@ const I18N={
     recordNotePlaceholder:'예: 수학 학습지 제시 직후 발생', delete:'삭제', later:'나중에', saveAndClose:'저장하고 닫기',
     addAntecedentChips:'설정에서 선행사건 칩을 추가하세요', addConsequenceChips:'설정에서 후속결과 칩을 추가하세요',
     abcComplete:'<b>ABC 완성</b> · 저장됐어요', recordSavedReview:'기록 저장됨 · A·C는 검토에서 채울 수 있어요', recordDeleted:'기록을 삭제했어요'
+    ,reviewIncomplete:'ABC 미완성 {n}건 — 톡 눌러 채우세요', reviewReady:'기록을 누르면 ABC를 수정할 수 있어요', emptyDate:'이 날짜엔 기록이 없어요.<br>기록 탭에서 행동 버튼을 눌러보세요.',
+    observationMemo:'관찰 노트 메모', deletedBehavior:'(삭제된 행동)', editTimeTitle:'탭하면 시간 수정', edit:'수정', recorder:'기록자 {name}', intervalShort:'간격', latencyShort:'지연', memoShort:'메모', fillABC:'＋ ABC 채우기'
   },
   en:{
-    appTitle:'FBA Record & Analysis', appSub:'Functional assessment for special education teams', language:'Language',
+    appTitle:'FBA Record & Analysis', appSub:'Functional assessment for special education teams', language:'Language', languageSettingSub:'App display language',
     loginTab:'Log in', signupTab:'Sign up', email:'Email', password:'Password', signupPassword:'Password (6+ characters)',
     name:'Name', loginSubmit:'Log in', signupSubmit:'Create account', emailPlaceholder:'teacher@school.edu', passwordPlaceholder:'Enter password', namePlaceholder:'Your name',
     pleaseWait:'Please wait...', errUserNotFound:'No account was found for this email.', errWrongPassword:'The password is incorrect.', errInvalidCredential:'The email or password is incorrect.',
@@ -1683,6 +1693,8 @@ const I18N={
     recordNotePlaceholder:'Example: occurred right after math worksheet was presented', delete:'Delete', later:'Later', saveAndClose:'Save and close',
     addAntecedentChips:'Add antecedent chips in Settings.', addConsequenceChips:'Add consequence chips in Settings.',
     abcComplete:'<b>ABC complete</b> · Saved', recordSavedReview:'Record saved · Add A/C details in Review', recordDeleted:'Record deleted'
+    ,reviewIncomplete:'ABC incomplete: {n} - tap to fill in', reviewReady:'Tap a record to edit ABC details', emptyDate:'No records for this date.<br>Tap a behavior button on the Record tab.',
+    observationMemo:'Observation note memo', deletedBehavior:'(deleted behavior)', editTimeTitle:'Tap to edit time', edit:'Edit', recorder:'Recorder {name}', intervalShort:'Interval', latencyShort:'Latency', memoShort:'Memo', fillABC:'+ Fill ABC'
   }
 };
 function readAppLang(){
@@ -1695,17 +1707,169 @@ function msg(key, vars={}){
   const raw=pack[key] ?? I18N.ko[key] ?? key;
   return String(raw).replace(/\{(\w+)\}/g,(_,k)=>vars[k]??'');
 }
+const STATIC_EN={
+  '학생 명단':'Student List','학생 추가':'Add Student','＋ 학생 추가':'+ Add Student','＋ 추가':'+ Add',
+  '기록 항목':'Recording Items','행동정의 편집':'Edit Behavior Definitions','선행사건 편집':'Edit Antecedents','후속결과 편집':'Edit Consequences',
+  '행동평정척도 (MAS)':'Motivation Assessment Scale (MAS)','MAS 항목 편집 / 추가':'Edit / Add MAS Items','면담 질문':'Interview Questions','면담 질문 편집 / 추가':'Edit / Add Interview Questions',
+  '계정':'Account','데이터':'Data','공유 코드로 참가 (다른 교사 학생)':'Join with Share Code (another teacher)','기록 전체 초기화':'Reset All Records',
+  'MAS 항목 편집':'Edit MAS Items','항목 추가':'Add Item','＋ 항목 추가':'+ Add Item','면담 질문 편집':'Edit Interview Questions','＋ 질문 추가':'+ Add Question',
+  '행동정의 편집':'Edit Behavior Definitions','＋ 행동 추가':'+ Add Behavior','현재 학생 행동 순서 편집':'Edit Current Student Behavior Order',
+  '선행사건 추가':'Add Antecedent','＋ 선행사건 추가':'+ Add Antecedent','후속결과 추가':'Add Consequence','＋ 후속결과 추가':'+ Add Consequence',
+  '닫기':'Close','편집':'Edit','삭제':'Delete','취소':'Cancel','저장':'Save','저장하고 닫기':'Save and Close','나중에':'Later',
+  '관찰 노트':'Observation Notes','메모':'Memo','면담':'Interview','행동척도':'Behavior Scale','관찰 메모를 입력하세요':'Enter an observation memo',
+  '관찰 전':'Before observation','관찰 중':'During observation','추가':'Add','면담 대상 (예: 보호자, 담임교사)':'Interviewee (e.g., caregiver, homeroom teacher)',
+  '동기평가척도 (MAS)':'Motivation Assessment Scale (MAS)','각 항목에 0–6점을 선택하세요':'Select a 0-6 score for each item',
+  '기능 가설 편집':'Edit Function Hypothesis','4요소를 검토하고 확정하세요':'Review and confirm the four elements',
+  '상태':'Status','자동 초안':'Auto Draft','검토 중':'In Review','확정':'Confirmed','보류':'On Hold',
+  '상황 / 설정사건':'Setting / Setting Event','선행사건 A':'Antecedent A','문제행동 B':'Behavior B','후속결과 C':'Consequence C','추정 기능':'Hypothesized Function',
+  '회피·도피':'Escape / Avoidance','관심 획득':'Attention','원하는 것 획득':'Tangible Access','감각 자극':'Sensory','추가 관찰':'More Observation','추가 관찰 필요':'More observation needed',
+  '가설문':'Hypothesis Statement','가설문을 직접 수정할 수 있어요':'You can edit the hypothesis statement directly',
+  '특정 상황':'a specific setting','특정 선행사건':'a specific antecedent','문제행동':'the target behavior','특정 후속결과':'a specific consequence','관찰이 많이 발생한 상황':'the setting where observations occur most often',
+  '자동 초안 불러오기':'Load Auto Draft','4요소로 문장 만들기':'Build Sentence from 4 Elements','덧붙임 / 검토 메모':'Addendum / Review Notes','가설 저장':'Save Hypothesis',
+  '기록 시간 수정':'Edit Record Time','발생 날짜·시각':'Date and Time','지속시간':'Duration','분':'min','초':'sec',
+  '공유 코드 입력':'Enter Share Code','다른 교사의 학생 관찰에 참가':'Join another teacher’s student observation','예: FBA-AB2C9K':'Example: FBA-AB2C9K','참가':'Join',
+  '행동 순서 편집':'Edit Behavior Order','▲▼ 버튼으로 순서를 바꾸세요. 학생마다 다르게 설정할 수 있어요.':'Use ▲▼ to change order. Each student can have a different order.',
+  '행동':'Behavior','행동 이름':'Behavior Name','측정 방식':'Measurement Type','빈도형':'Count','시간형':'Duration','횟수를 셈':'Counts occurrences','지속시간을 잼':'Measures duration',
+  '색상':'Color','색상 — 기록 화면이 이 색을 입습니다':'Color - used on the recording screen','아이콘':'Icon','이름':'Name','내용':'Content',
+  '관찰 메모 (선택)':'Observation Memo (optional)','시트 상단 고정 (★)':'Pin to top of sheet (★)','자주 쓰는 칩이면 켜세요. 기록할 때 맨 앞에 떠요.':'Turn this on for frequently used chips. They appear first while recording.',
+  '질문 내용':'Question','기능 분류':'Function Category','학생 현황':'Student Status','최근 7일':'Recent 7 days','오늘':'Today','이번 주':'This week',
+  '주요 행동':'Top behavior','기능 가설':'Function Hypothesis','행동별 빈도':'Behavior Frequency','주간 발생 현황 (시간대별)':'Weekly Occurrence by Time',
+  '기록이 없어요':'No records yet','학생을 선택해 주세요':'Select a student','메모가 없어요':'No memos yet','MAS 기록이 없어요':'No MAS record yet','면담 기록이 없어요':'No interview record yet',
+  'PDF 리포트':'PDF Report','PDF 리포트 생성':'Generate PDF Report','PDF 저장':'Save PDF','생성 중…':'Generating...','리포트 생성 중 오류가 발생했어요':'An error occurred while creating the report',
+  '최근 7일 행동 데이터, 기능 가설, 산점도, MAS 척도, 면담 기록, 관찰 메모를 포함한 PDF를 생성해요.':'Generate a PDF with recent 7-day behavior data, function hypothesis, scatterplot, MAS scale, interview records, and observation memos.',
+  '생성 후 브라우저 인쇄 기능으로 PDF 저장하세요.':'After generating it, use the browser print feature to save as PDF.',
+  '리포트가 열렸어요 — 공유 버튼으로 PDF 저장':'Report opened - use the share/print button to save as PDF','PDF 저장: 공유 버튼 → 인쇄 선택':'Save PDF: Share button -> Print','✕ 닫기':'✕ Close',
+  'FBA 기록·분석 리포트':'FBA Record & Analysis Report','최근 7일 행동 데이터 분석':'Recent 7-day behavior data analysis','최근 7일 기록':'Recent 7-day records','ABC 완성률':'ABC completion','전체 누적 기록':'Total records',
+  '기능 가설 요약':'Function Hypothesis Summary','행동별 빈도 (최근 7일)':'Behavior Frequency (recent 7 days)','주간 발생 현황 (시간대별)':'Weekly Occurrence by Time','주간 산점도':'Weekly Scatterplot','최근 7일 · 시간대별 발생 (6시–20시)':'Recent 7 days · occurrence by time (6:00-20:00)','최근 7일 합계':'Recent 7-day total',
+  '동기평가척도 (MAS) 결과':'Motivation Assessment Scale (MAS) Results','면담 기록':'Interview Record','관찰 메모':'Observation Memo',
+  '자리 이탈':'Leaving seat','때리기':'Hitting','소리지르기':'Screaming','물건 던지기':'Throwing objects','울음':'Crying','자기자극':'Self-stimulation',
+  '과제 제시':'Task presented','전이 상황':'Transition','또래 접근':'Peer approach','관심 줄어듦':'Attention reduced','원하는 것 거부됨':'Denied access','시끄러운 환경':'Noisy setting',
+  '과제 제거':'Task removed','교사 관심':'Teacher attention','또래 반응':'Peer response','원하는 것 제공':'Access provided','무시함':'Ignored','타임아웃':'Timeout',
+  '과제나 활동이 어려울 때 이 행동을 하는가?':'Does the behavior occur when tasks or activities are difficult?',
+  '어렵거나 긴 과제가 제시될 때 이 행동이 더 자주 발생하는가?':'Does the behavior occur more often when difficult or lengthy tasks are presented?',
+  '과제 중에 이 행동을 보인 후 과제가 중단되는가?':'After the behavior occurs during a task, is the task stopped or delayed?',
+  '요구 상황에서 벗어나기 위해 이 행동을 하는 것 같은가?':'Does the behavior appear to help the student escape a demand?',
+  '교사나 성인의 주의가 줄어들 때 이 행동이 증가하는가?':'Does the behavior increase when teacher or adult attention decreases?',
+  '다른 사람이 자신에게 관심을 기울이지 않을 때 이 행동을 하는가?':'Does the behavior occur when others are not paying attention to the student?',
+  '이 행동을 하면 교사나 또래의 반응을 이끌어 낼 수 있는가?':'Does the behavior usually produce a response from teachers or peers?',
+  '관심을 받기 위해 이 행동을 의도적으로 하는 것 같은가?':'Does the behavior appear intentional in order to gain attention?',
+  '원하는 물건이나 활동을 얻지 못할 때 이 행동이 발생하는가?':'Does the behavior occur when the student cannot access a preferred item or activity?',
+  '원하는 것을 달라고 요청한 후 거절당하면 이 행동을 하는가?':'Does the behavior occur after a request for a preferred item or activity is denied?',
+  '이 행동 이후 원하는 물건이나 활동을 제공받는가?':'After the behavior, does the student receive a preferred item or activity?',
+  '좋아하는 물건·활동을 빼앗겼을 때 이 행동이 나타나는가?':'Does the behavior occur when a preferred item or activity is removed?',
+  '혼자 있을 때도 이 행동이 발생하는가?':'Does the behavior occur even when the student is alone?',
+  '이 행동이 반복적이고 리듬감 있는 패턴을 보이는가?':'Does the behavior show a repetitive or rhythmic pattern?',
+  '특별한 외부 촉발 요인 없이 자발적으로 이 행동을 하는가?':'Does the behavior occur spontaneously without an obvious external trigger?',
+  '이 행동 자체가 즐겁거나 자기 자극적인 것처럼 보이는가?':'Does the behavior itself appear enjoyable or self-stimulatory?',
+  '이 행동이 처음 나타난 것은 언제인가요?':'When did this behavior first appear?',
+  '행동이 주로 언제(시간대·상황) 발생하나요?':'When does the behavior usually occur (time period or situation)?',
+  '행동 직전에 어떤 일이 있었나요?':'What usually happens right before the behavior?',
+  '행동이 일어났을 때 주변은 어떻게 반응했나요?':'How do people around the student usually respond when the behavior occurs?',
+  '가정에서도 같은 행동이 나타나나요?':'Does the same behavior occur at home?',
+  '이 행동이 없어지거나 줄어드는 상황이 있나요?':'Are there situations where the behavior disappears or decreases?',
+  '아이가 특히 좋아하는 것·싫어하는 것은 무엇인가요?':'What does the student especially like or dislike?',
+  '최근 가정환경에 변화가 있었나요?':'Have there been any recent changes in the home environment?',
+  '설명 없음':'No description','공유받은 학생':'Shared student','공유 코드 생성':'Create share code','공유 코드':'Share code',
+  '일반':'Standard','상단 고정':'Pinned','등록된 행동이 없어요.':'No behaviors yet.','등록된 항목이 없어요.':'No items yet.','아직 메모가 없어요':'No memos yet','아직 질문이 없어요':'No questions yet',
+  '답변을 입력하세요':'Enter response','설정에서 면담 질문을 추가하세요':'Add interview questions in Settings','전혀 없음':'Never','거의 없음':'Almost never','드물게':'Rarely','가끔':'Sometimes','자주':'Often','매우 자주':'Very often','항상':'Always',
+  '일':'Sun','월':'Mon','화':'Tue','수':'Wed','목':'Thu','금':'Fri','토':'Sat','일시':'Date/Time','관찰':'Observation','원자료 요약':'Raw Data Summary','회기':'Session','날짜':'Date','평균':'Average','회기 수':'Sessions',
+  '간격·시간표집 그래프':'Interval / Time Sampling Graph','지속시간 그래프':'Duration Graph','발생 간격 수':'Intervals with Behavior','간격 수':'Intervals','발생 간격 백분율':'Occurrence Percentage','백분율':'Percentage',
+  '시간표집':'Time sampling','간격 기록':'Interval recording','지속시간':'Duration','그래프로 표시할 값이 없어요.':'No values to graph.',
+  '로그아웃 하시겠어요?':'Sign out?','로그인 후 사용하세요':'Please log in first.','로그인이 필요해요':'Login is required.','현재 계정의 관찰 데이터를 초기화할까요? 내가 만든 학생/기록은 서버에서도 삭제됩니다.':'Reset observation data for this account? Students and records you created will also be deleted from the server.',
+  '서버 데이터까지 초기화했어요':'Server data has been reset.','기존 공유 데이터를 새 구조로 옮겼어요':'Existing shared data has been moved to the new structure.','공유 코드는 학생을 만든 계정만 생성할 수 있어요':'Only the account that created the student can generate a share code.',
+  '공유 코드를 입력해 주세요':'Enter a share code.','유효하지 않은 코드예요':'This code is not valid.','만료된 코드예요. 새 코드를 받아주세요':'This code has expired. Please request a new code.','초대 코드 정보가 올바르지 않아요':'The invite code information is invalid.',
+  '코드를 찾을 수 없어요':'Code not found.','코드를 다시 확인해 주세요':'Check the code again.','공유 관찰에서 나왔어요':'You left the shared observation.','코드를 입력해 주세요':'Enter a code.','참가 중…':'Joining...','참가':'Join',
+  '가설의 4요소를 모두 입력해 주세요':'Enter all four hypothesis elements.','기능 가설을 저장했어요':'Function hypothesis saved.','이름을 입력하세요':'Enter a name.','공유받은 학생 정보는 만든 계정에서만 수정할 수 있어요':'Shared student information can only be edited by the account that created it.',
+  '행동 이름을 입력하세요':'Enter a behavior name.','내용을 입력하세요':'Enter content.','저장됐어요':'Saved.','최소 1명은 있어야 해요':'At least one student is required.','학생과 기록을 삭제했어요':'Student and records deleted.','삭제했어요':'Deleted.',
+  '메모 내용을 입력하세요':'Enter memo content.','메모 저장됐어요':'Memo saved.','면담 대상이나 답변을 입력하세요':'Enter an interviewee or at least one response.','면담 기록 저장됐어요':'Interview record saved.','행동척도 저장됐어요':'Behavior scale saved.',
+  '최소 한 항목에 점수를 입력하세요':'Score at least one item.','질문 내용을 입력하세요':'Enter question text.','MAS 항목 저장됐어요':'MAS item saved.','최소 1개 항목이 있어야 해요':'At least one item is required.','MAS 항목 삭제됐어요':'MAS item deleted.','면담 질문 저장됐어요':'Interview question saved.','면담 질문 삭제됐어요':'Interview question deleted.',
+  '날짜와 시각을 모두 입력해 주세요':'Enter both date and time.','기록 시간이 수정됐어요':'Record time updated.','학생을 먼저 선택해 주세요':'Select a student first.','행동 순서가 저장됐어요':'Behavior order saved.','메모 삭제됨':'Memo deleted.','업그레이드 완료!':'Upgrade complete!','이미 업그레이드됐거나 데이터가 없어요':'Already upgraded, or no data was found.'
+};
+const STATIC_KO=Object.fromEntries(Object.entries(STATIC_EN).map(([ko,en])=>[en,ko]));
+function localText(value){
+  const s=String(value??'');
+  if(!s.trim()) return s;
+  const leading=s.match(/^\s*/)?.[0]||'';
+  const trailing=s.match(/\s*$/)?.[0]||'';
+  const core=s.trim();
+  const map=appLang==='en'?STATIC_EN:STATIC_KO;
+  return Object.prototype.hasOwnProperty.call(map, core)?leading+map[core]+trailing:s;
+}
+function countPhrase(kind,n){
+  if(appLang==='en'){
+    const labels={behavior:'behavior',antecedent:'antecedent',consequence:'consequence',item:'item',question:'question',memo:'memo',record:'record',session:'session'};
+    const label=labels[kind]||kind;
+    return `${n} ${label}${n===1?'':'s'}`;
+  }
+  const labels={behavior:'행동',antecedent:'선행사건',consequence:'후속결과',item:'항목',question:'질문',memo:'메모',record:'기록',session:'회기'};
+  return `${labels[kind]||kind} ${n}개`;
+}
+function translateStaticDom(root=document.body){
+  if(!root) return;
+  const skipTags=new Set(['SCRIPT','STYLE','TEXTAREA']);
+  const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{
+    acceptNode(node){
+      const p=node.parentElement;
+      if(!p||skipTags.has(p.tagName)) return NodeFilter.FILTER_REJECT;
+      if(!node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
+      return NodeFilter.FILTER_ACCEPT;
+    }
+  });
+  const nodes=[];
+  while(walker.nextNode()) nodes.push(walker.currentNode);
+  nodes.forEach(node=>{
+    const next=localText(node.nodeValue);
+    if(next!==node.nodeValue) node.nodeValue=next;
+  });
+  root.querySelectorAll?.('[placeholder],[title]').forEach(el=>{
+    if(el.hasAttribute('placeholder')){
+      const next=localText(el.getAttribute('placeholder'));
+      if(next!==el.getAttribute('placeholder')) el.setAttribute('placeholder',next);
+    }
+    if(el.hasAttribute('title')){
+      const next=localText(el.getAttribute('title'));
+      if(next!==el.getAttribute('title')) el.setAttribute('title',next);
+    }
+  });
+}
+let i18nObserver=null;
+let i18nBusy=false;
+function startI18nObserver(){
+  if(i18nObserver||!document.body) return;
+  i18nObserver=new MutationObserver(mutations=>{
+    if(i18nBusy) return;
+    i18nBusy=true;
+    queueMicrotask(()=>{
+      mutations.forEach(m=>{
+        if(m.type==='characterData'){
+          const node=m.target;
+          const next=localText(node.nodeValue);
+          if(next!==node.nodeValue) node.nodeValue=next;
+        }
+        m.addedNodes?.forEach(node=>{
+          if(node.nodeType===1) translateStaticDom(node);
+          else if(node.nodeType===3){
+            const next=localText(node.nodeValue);
+            if(next!==node.nodeValue) node.nodeValue=next;
+          }
+        });
+      });
+      i18nBusy=false;
+    });
+  });
+  i18nObserver.observe(document.body,{childList:true,characterData:true,subtree:true});
+}
 function applyStaticI18n(){
   document.documentElement.lang=appLang;
   document.title=msg('appTitle');
-  const sel=document.getElementById('langSelect');
-  if(sel) sel.value=appLang;
+  document.querySelectorAll('#langSelect,.ui-lang-select').forEach(sel=>{sel.value=appLang;});
   document.querySelectorAll('[data-i18n]').forEach(el=>{el.textContent=msg(el.dataset.i18n);});
   document.querySelectorAll('[data-i18n-html]').forEach(el=>{el.innerHTML=msg(el.dataset.i18nHtml);});
   document.querySelectorAll('[data-i18n-placeholder]').forEach(el=>{el.placeholder=msg(el.dataset.i18nPlaceholder);});
   const unit=document.getElementById('ivUnitLabel');
   const mode=document.getElementById('ivMode')?.value==='sample'?'sample':'ox';
   if(unit) unit.textContent=msg(mode==='sample'?'secPerCode':'secPerOx');
+  translateStaticDom(document.body);
 }
 function refreshLanguageSensitiveUi(){
   applyStaticI18n();
@@ -1724,6 +1888,7 @@ function setAppLang(lang){
   refreshLanguageSensitiveUi();
 }
 applyStaticI18n();
+startI18nObserver();
 
 // ── 인증 UI 헬퍼 ──
 function showAuthTab(tab){
@@ -1773,7 +1938,7 @@ async function doSignup(){
 
 // ── 로그아웃 ──
 async function doSignout(){
-  if(!confirm('로그아웃 하시겠어요?')) return;
+  if(!confirm(localText('로그아웃 하시겠어요?'))) return;
   // 모든 리스너 해제
   if(unsubSync){unsubSync();unsubSync=null;}
   Object.values(sharedListeners).forEach(u=>u());
@@ -2231,7 +2396,7 @@ async function resetCloudDataForCurrentUser(){
 
 async function resetAllData(){
   if(!fbUser){ toast('로그인 후 사용하세요'); return; }
-  if(!confirm('현재 계정의 관찰 데이터를 초기화할까요? 내가 만든 학생/기록은 서버에서도 삭제됩니다.')) return;
+  if(!confirm(localText('현재 계정의 관찰 데이터를 초기화할까요? 내가 만든 학생/기록은 서버에서도 삭제됩니다.'))) return;
   try{
     updateSyncUI('초기화 중…');
     await resetCloudDataForCurrentUser();
@@ -2773,7 +2938,7 @@ async function leaveShared(sid){
 
 // ── 로그아웃 ──
 async function doSignout(){
-  if(!confirm('로그아웃 하시겠어요?')) return;
+  if(!confirm(localText('로그아웃 하시겠어요?'))) return;
   try{ await persistNow(); }catch(e){ console.warn('로그아웃 전 저장 실패:', e); }
   clearClientSession();
   await fbAuth.signOut();
@@ -2963,11 +3128,11 @@ const Repository = {
   // 전체 기록 (동기화용 — deleted 포함)
   listAllRecords(){ return db.records||[]; },
 };
-function toast(html){const t=$('#toast');t.innerHTML=html;t.classList.add('show');clearTimeout(t._);t._=setTimeout(()=>t.classList.remove('show'),1900);}
+function toast(html){const t=$('#toast');t.innerHTML=html;translateStaticDom(t);t.classList.add('show');clearTimeout(t._);t._=setTimeout(()=>t.classList.remove('show'),1900);}
 function shade(hex,p){let n=parseInt(hex.slice(1),16),r=(n>>16)+p*2,g=((n>>8)&255)+p*2,b=(n&255)+p*2;const c=x=>Math.max(0,Math.min(255,x));return '#'+((1<<24)+(c(r)<<16)+(c(g)<<8)+c(b)).toString(16).slice(1);}
-function to12(d){let h=d.getHours(),m=d.getMinutes();const ap=h<12?'오전':'오후';h=h%12||12;return `${ap} ${h}:${String(m).padStart(2,'0')}`;}
+function to12(d){let h=d.getHours(),m=d.getMinutes();const ap=appLang==='en'?(h<12?'AM':'PM'):(h<12?'오전':'오후');h=h%12||12;return `${ap} ${h}:${String(m).padStart(2,'0')}`;}
 function dkey(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
-function fmtDur(s){const m=Math.floor(s/60);return m>0?`${m}분 ${s%60}초`:`${s}초`;}
+function fmtDur(s){const m=Math.floor(s/60),sec=s%60;return appLang==='en'?(m>0?`${m}m ${sec}s`:`${s}s`):(m>0?`${m}분 ${sec}초`:`${s}초`);}
 function fmtClock(s){return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');}
 function toClock(){const d=new Date();return `${d.getHours()%12||12}:${String(d.getMinutes()).padStart(2,'0')}`;}
 
@@ -3121,7 +3286,7 @@ function renderTimeline(){
   const mine=activeRecords().filter(r=>r.sid===state.sid&&dkey(new Date(r.ts))===state.date)
     .sort((a,b)=>new Date(b.ts)-new Date(a.ts));
   const inc=activeRecords().filter(r=>r.sid===state.sid&&!r.a.length&&!r.c.length).length;
-  $('#reviewSub').innerHTML=inc?`ABC 미완성 ${inc}건 — 톡 눌러 채우세요`:'기록을 누르면 ABC를 수정할 수 있어요';
+  $('#reviewSub').innerHTML=inc?msg('reviewIncomplete',{n:inc}):msg('reviewReady');
 
   // 관찰 노트 메모도 같은 날짜에서 가져오기
   const memos=getNotes(state.sid).filter(n=>dkey(new Date(n.ts))===state.date);
@@ -3132,7 +3297,7 @@ function renderTimeline(){
     ...memos.map(m=>({type:'memo',ts:m.ts,data:m}))
   ].sort((a,b)=>new Date(b.ts)-new Date(a.ts));
 
-  if(!items.length){$('#timeline').innerHTML='<div class="empty">이 날짜엔 기록이 없어요.<br>기록 탭에서 행동 버튼을 눌러보세요.</div>';return;}
+  if(!items.length){$('#timeline').innerHTML=`<div class="empty">${msg('emptyDate')}</div>`;return;}
 
   $('#timeline').innerHTML=items.map(item=>{
     if(item.type==='memo'){
@@ -3145,29 +3310,29 @@ function renderTimeline(){
         <div class="tl-dot" style="background:#aac8c7;width:10px;height:10px;margin-top:4px"></div>
         <div class="tl-body">
           <div class="bh" style="font-size:12.5px;color:#666">
-            <span style="display:inline-block;background:${tagBg};color:${tagColor};font-size:10px;font-weight:800;padding:2px 7px;border-radius:6px;margin-right:6px">${tagLabel}</span>관찰 노트 메모
+            <span style="display:inline-block;background:${tagBg};color:${tagColor};font-size:10px;font-weight:800;padding:2px 7px;border-radius:6px;margin-right:6px">${tagLabel}</span>${msg('observationMemo')}
           </div>
           <div style="font-size:13px;color:var(--ink);margin-top:4px;line-height:1.5">${m.text.replace(/</g,'&lt;')}</div>
         </div>
       </div>`;
     }
     const r=item.data;
-    const b=bMap[r.bid]||{name:'(삭제된 행동)',color:'#9aa6aa',type:'freq'};const incmp=!r.a.length&&!r.c.length;
-    const observerName=escHtml(r.createdByName||r.observerName||'관찰자');
+    const b=bMap[r.bid]||{name:msg('deletedBehavior'),color:'#9aa6aa',type:'freq'};const incmp=!r.a.length&&!r.c.length;
+    const observerName=escHtml(r.createdByName||r.observerName||msg('observer'));
     const pills=[...r.a.map(v=>`<span class="abc-pill a"><span class="k">A</span>${v}</span>`),...r.c.map(v=>`<span class="abc-pill c"><span class="k">C</span>${v}</span>`)].join('');
     return `<div class="tl-item" data-rec="${r.id}">
-      <div class="tl-time" data-edit-time="${r.id}" title="탭하면 시간 수정">
+      <div class="tl-time" data-edit-time="${r.id}" title="${msg('editTimeTitle')}">
         ${to12(new Date(r.ts))}
-        <div style="font-size:9.5px;color:var(--primary);margin-top:1px;opacity:.8">✏️ 수정</div>
+        <div style="font-size:9.5px;color:var(--primary);margin-top:1px;opacity:.8">✏️ ${msg('edit')}</div>
       </div>
       <div class="tl-dot" style="background:${b.color}"></div>
       <div class="tl-body">
-        <div class="bh">${b.name}<span class="tag ${b.type}">${b.type==='freq'?'빈도':(r.dur?fmtDur(r.dur):'시간')}</span><span class="observer-badge">기록자 ${observerName}</span></div>
+        <div class="bh">${b.name}<span class="tag ${b.type}">${b.type==='freq'?msg('count'):(r.dur?fmtDur(r.dur):msg('duration'))}</span><span class="observer-badge">${msg('recorder',{name:observerName})}</span></div>
         ${pills?`<div class="abc-line">${pills}</div>`:''}
-        ${r.intervalData?`<div class="abc-line"><span class="abc-pill" style="background:#eef6f5;color:#0F6E6C"><span class="k">간격</span>${intervalBadgeText(r)}</span></div>`:''}
-        ${r.latency?`<div class="abc-line"><span class="abc-pill" style="background:#f3eef9;color:#5B4A8A"><span class="k">지연</span>${r.latency}초</span></div>`:''}
-        ${r.note&&!r.intervalData?`<div class="abc-line"><span class="abc-pill"><span class="k">메모</span>${r.note}</span></div>`:''}
-        ${incmp?`<button class="fillbtn" data-rec="${r.id}">＋ ABC 채우기</button>`:''}
+        ${r.intervalData?`<div class="abc-line"><span class="abc-pill" style="background:#eef6f5;color:#0F6E6C"><span class="k">${msg('intervalShort')}</span>${intervalBadgeText(r)}</span></div>`:''}
+        ${r.latency?`<div class="abc-line"><span class="abc-pill" style="background:#f3eef9;color:#5B4A8A"><span class="k">${msg('latencyShort')}</span>${r.latency}${appLang==='en'?'s':'초'}</span></div>`:''}
+        ${r.note&&!r.intervalData?`<div class="abc-line"><span class="abc-pill"><span class="k">${msg('memoShort')}</span>${r.note}</span></div>`:''}
+        ${incmp?`<button class="fillbtn" data-rec="${r.id}">${msg('fillABC')}</button>`:''}
       </div>
       ${incmp?'<div class="pulse-dot"></div>':''}
     </div>`;
@@ -3191,7 +3356,7 @@ function isHypothesisDoc(n){return n?.kind==='hypothesis'||n?.type==='hypothesis
 function hypDocId(sid){return 'hyp_'+sid;}
 function hypFuncLabel(keyOrLabel){
   const found=HYP_FUNCTIONS.find(f=>f.key===keyOrLabel||f.label===keyOrLabel);
-  return found?found.label:(keyOrLabel||'추가 관찰 필요');
+  return localText(found?found.label:(keyOrLabel||'추가 관찰 필요'));
 }
 function hypFuncKey(label){
   const found=HYP_FUNCTIONS.find(f=>f.key===label||f.label===label);
@@ -3249,12 +3414,15 @@ function timeSettingHint(records){
   return topCount(counts)?.label||'';
 }
 function buildHypothesisSentence(h,sid){
-  const s=db?.students?.find(x=>x.id===sid)||cur()||{name:'학생'};
-  const setting=(h.setting||'특정 상황').trim();
-  const antecedent=(h.antecedent||'특정 선행사건').trim();
-  const behavior=(h.behavior||'문제행동').trim();
-  const consequence=(h.consequence||'특정 후속결과').trim();
+  const s=db?.students?.find(x=>x.id===sid)||cur()||{name:appLang==='en'?'the student':'학생'};
+  const setting=localText((h.setting||'특정 상황').trim());
+  const antecedent=localText((h.antecedent||'특정 선행사건').trim());
+  const behavior=localText((h.behavior||'문제행동').trim());
+  const consequence=localText((h.consequence||'특정 후속결과').trim());
   const fn=hypFuncLabel(h.functionKey||h.functionName);
+  if(appLang==='en'){
+    return `When ${s.name} is in ${setting}, following ${antecedent}, the student engages in ${behavior}. The behavior is followed by ${consequence}, suggesting the behavior may be maintained by ${fn}.`;
+  }
   return `${s.name} 학생은 ${setting}에서 ${antecedent} 이후 ${behavior} 행동을 보이며, 그 결과 ${consequence}가 뒤따라 ${fn} 기능으로 유지되는 것으로 가설화됩니다.`;
 }
 function buildHypothesisCandidate(sid,days=7){
@@ -3387,11 +3555,11 @@ function fillHypothesisEditor(data,sid){
   const s=db.students.find(x=>x.id===sid)||cur();
   const auto=buildHypothesisCandidate(sid);
   state.hypDraft=auto;
-  $('#hypSheetTitle').textContent=(s?.name||'학생')+' 기능 가설';
-  $('#hypSheetSub').textContent='상황 · 선행 · 행동 · 후속/기능';
+  $('#hypSheetTitle').textContent=appLang==='en'?'Function Hypothesis - '+(s?.name||'Student'):(s?.name||'학생')+' 기능 가설';
+  $('#hypSheetSub').textContent=appLang==='en'?'Setting · Antecedent · Behavior · Consequence/Function':'상황 · 선행 · 행동 · 후속/기능';
   $('#hypAutoBox').innerHTML=auto.ready
-    ? `자동 초안 근거: ${auto.evidence.map(escHtml).join(' · ')}`
-    : `최근 기록이 충분하지 않아 자동 초안의 신뢰도가 낮아요. 직접 작성하거나 ABC 기록을 더 모은 뒤 다시 확인하세요.`;
+    ? (appLang==='en'?`Auto draft evidence: ${auto.evidence.map(x=>escHtml(localText(x))).join(' · ')}`:`자동 초안 근거: ${auto.evidence.map(escHtml).join(' · ')}`)
+    : (appLang==='en'?'Recent records are not sufficient, so the auto draft is tentative. You can write it manually or collect more ABC records.':`최근 기록이 충분하지 않아 자동 초안의 신뢰도가 낮아요. 직접 작성하거나 ABC 기록을 더 모은 뒤 다시 확인하세요.`);
   $('#hypSetting').value=data.setting||'';
   $('#hypAntecedent').value=data.antecedent||'';
   $('#hypBehavior').value=data.behavior||'';
@@ -3429,7 +3597,7 @@ async function saveHypothesis(){
   const existing=getSavedHypothesis(sid)||{};
   const data=readHypothesisForm();
   if(!data.setting||!data.antecedent||!data.behavior||!data.consequence){
-    toast('가설의 4요소를 모두 입력해 주세요');
+    toast(localText('가설의 4요소를 모두 입력해 주세요'));
     return;
   }
   if(!data.summary) data.summary=buildHypothesisSentence(data,sid);
@@ -3456,7 +3624,7 @@ async function saveHypothesis(){
   persist();
   closeHypothesisEditor();
   refreshAll();
-  toast('기능 가설을 저장했어요');
+  toast(localText('기능 가설을 저장했어요'));
 }
 function fmtNum(v){
   const n=Number(v)||0;
@@ -3467,13 +3635,13 @@ function fmtShortDate(d){
 }
 function intervalBadgeText(r){
   const s=normalizeIntervalSession(r);
-  if(!s) return '간격 기록';
+  if(!s) return msg('intervalRecording');
   if(s.mode==='sample'){
     const parts=s.codes.slice(0,3).map(c=>`${c.code} ${s.counts[c.code]||0}`).join(' · ');
-    const more=s.codes.length>3?' 외':'';
-    return `시간표집 ${s.pct}% (${parts}${more})`;
+    const more=s.codes.length>3?(appLang==='en'?' more':' 외'):'';
+    return appLang==='en'?`Time sampling ${s.pct}% (${parts}${more})`:`시간표집 ${s.pct}% (${parts}${more})`;
   }
-  return `간격 ${s.pct}% 발생 (${s.occurCount}/${s.total})`;
+  return appLang==='en'?`Interval ${s.pct}% occurred (${s.occurCount}/${s.total})`:`간격 ${s.pct}% 발생 (${s.occurCount}/${s.total})`;
 }
 function normalizeIntervalSession(rec){
   const data=rec?.intervalData;
@@ -3498,13 +3666,13 @@ function normalizeIntervalSession(rec){
       return {
         code:String(c.code||c.label||c.symbol||String.fromCharCode(65+i)).trim().toUpperCase(),
         bid,
-        name:c.name||cb.name||`코드 ${i+1}`,
+        name:c.name||cb.name||(appLang==='en'?`Code ${i+1}`:`코드 ${i+1}`),
         color:c.color||cb.color||PALETTE[i%PALETTE.length]
       };
     }).filter(c=>c.code&&c.code!=='-');
     if(!codes.length){
       const uniq=[...new Set(marks.filter(m=>m&&m!=='-'&&m!=='X'))];
-      codes=uniq.map((code,i)=>({code,bid:rec.bid,name:`코드 ${code}`,color:PALETTE[i%PALETTE.length]}));
+      codes=uniq.map((code,i)=>({code,bid:rec.bid,name:appLang==='en'?`Code ${code}`:`코드 ${code}`,color:PALETTE[i%PALETTE.length]}));
     }
   }else{
     codes=[{code:'O',bid:rec.bid,name:b.name,color:b.color||'#0F6E6C'}];
@@ -3525,7 +3693,7 @@ function normalizeIntervalSession(rec){
     id:rec.id,sid:rec.sid,bid:rec.bid,ts:rec.ts,date:new Date(rec.ts),
     mode,intervalSec:data.intervalSec||0,totalSec:data.totalSec||data.observedSec||rec.dur||0,
     marks,total,occurCount,pct,counts,codes,
-    label:mode==='sample'?'시간표집':b.name,
+    label:mode==='sample'?localText('시간표집'):b.name,
     color:b.color||'#0F6E6C'
   };
 }
@@ -3786,9 +3954,9 @@ function renderSettings(){
       <button class="iconbtn" data-edit-student="${s.id}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4v16h16v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4z"/></svg></button>
     </div>`).join('');
   const setText=(sel,text)=>{const el=$(sel); if(el) el.textContent=text;};
-  setText('#behaviorManagerSub','행동 '+(db.behaviors||[]).length+'개');
-  setText('#antecedentManagerSub','선행사건 '+(db.aChips||[]).length+'개');
-  setText('#consequenceManagerSub','후속결과 '+(db.cChips||[]).length+'개');
+  setText('#behaviorManagerSub',countPhrase('behavior',(db.behaviors||[]).length));
+  setText('#antecedentManagerSub',countPhrase('antecedent',(db.aChips||[]).length));
+  setText('#consequenceManagerSub',countPhrase('consequence',(db.cChips||[]).length));
   if($('#behaviorManagerSheet')?.classList.contains('open')) renderBehaviorManagerList();
   if($('#antecedentManagerSheet')?.classList.contains('open')) renderChipManager('a');
   if($('#consequenceManagerSheet')?.classList.contains('open')) renderChipManager('c');
@@ -3801,7 +3969,7 @@ function openBehaviorManager(){
 function closeBehaviorManager(){$('#behaviorManagerScrim').classList.remove('show');$('#behaviorManagerSheet').classList.remove('open');}
 function renderBehaviorManagerList(){
   const list=db.behaviors||[];
-  const cnt=$('#behaviorManagerCount'); if(cnt)cnt.textContent='행동 '+list.length+'개';
+  const cnt=$('#behaviorManagerCount'); if(cnt)cnt.textContent=countPhrase('behavior',list.length);
   const el=$('#behaviorManagerList'); if(!el)return;
   el.innerHTML=list.length?list.map(b=>`<div class="mas-edit-item">
     <div class="rdisc" style="width:34px;height:34px;border-radius:10px;background:${b.color};margin:-2px 0;color:#fff;display:flex;align-items:center;justify-content:center;flex:none">${svg(b.icon).replace('stroke="currentColor"','stroke="#fff"')}</div>
@@ -3825,7 +3993,7 @@ function renderChipManager(which){
   const arr=sortedChips(isA?db.aChips:db.cChips);
   const listSel=isA?'#antecedentManagerList':'#consequenceManagerList';
   const countSel=isA?'#antecedentManagerCount':'#consequenceManagerCount';
-  const cnt=$(countSel); if(cnt)cnt.textContent=(isA?'선행사건 ':'후속결과 ')+arr.length+'개';
+  const cnt=$(countSel); if(cnt)cnt.textContent=countPhrase(isA?'antecedent':'consequence',arr.length);
   const el=$(listSel); if(!el)return;
   el.innerHTML=arr.length?arr.map(c=>`<div class="mas-edit-item">
     <div class="func-dot" style="background:${c.fav?'#E0972F':'#9aa6aa'}"></div>
@@ -4065,8 +4233,8 @@ function renderMasSettings(){
   if(!db) return;
   // 설정 탭 카운트 배지만 업데이트
   const items=db.masItems||MAS_DEFAULTS;
-  const sub=$('#masManagerSub'); if(sub)sub.textContent='항목 '+items.length+'개';
-  const ivsub=$('#ivManagerSub'); if(ivsub)ivsub.textContent='질문 '+(db.ivQuestions||[]).length+'개';
+  const sub=$('#masManagerSub'); if(sub)sub.textContent=countPhrase('item',items.length);
+  const ivsub=$('#ivManagerSub'); if(ivsub)ivsub.textContent=countPhrase('question',(db.ivQuestions||[]).length);
 }
 function openMasManager(){
   renderMasManagerList();
@@ -4077,7 +4245,7 @@ function renderMasManagerList(){
   const items=db.masItems||MAS_DEFAULTS;
   const funcNames={escape:'회피·도피',attention:'관심 획득',tangible:'원하는 것 획득',sensory:'감각 자극'};
   const el=$('#masManagerList'); if(!el)return;
-  const cnt=$('#masManagerCount'); if(cnt)cnt.textContent='항목 '+items.length+'개';
+  const cnt=$('#masManagerCount'); if(cnt)cnt.textContent=countPhrase('item',items.length);
   el.innerHTML=items.map(m=>`<div class="mas-edit-item">
     <div class="func-dot" style="background:${FUNC_COLORS[m.func]}"></div>
     <div class="me-text">${m.q}</div>
@@ -4093,7 +4261,7 @@ function closeIvManager(){$('#ivManagerScrim').classList.remove('show');$('#ivMa
 function renderIvManagerList(){
   const questions=db.ivQuestions||[];
   const el=$('#ivManagerList'); if(!el)return;
-  const cnt=$('#ivManagerCount'); if(cnt)cnt.textContent='질문 '+questions.length+'개';
+  const cnt=$('#ivManagerCount'); if(cnt)cnt.textContent=countPhrase('question',questions.length);
   el.innerHTML=questions.length
     ? questions.map((q,i)=>`<div class="mas-edit-item">
         <div class="func-dot" style="background:#E0972F;min-width:9px"></div>
