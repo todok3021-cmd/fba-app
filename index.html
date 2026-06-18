@@ -133,10 +133,11 @@
   .tl-time{width:64px; flex:none; text-align:right; font-size:12.5px; color:var(--sub); font-weight:700; font-variant-numeric:tabular-nums; padding-top:2px;}
   .tl-dot{width:11px;height:11px;border-radius:50%; margin-top:5px; flex:none;}
   .tl-body{flex:1;}
-  .tl-body .bh{font-size:15px; font-weight:800; letter-spacing:-.01em; display:flex; align-items:center; gap:8px;}
+  .tl-body .bh{font-size:15px; font-weight:800; letter-spacing:-.01em; display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
   .tag{font-size:10px; font-weight:800; padding:2px 7px; border-radius:7px;}
   .tag.freq{background:#eef3f1; color:#3a6f63;}
   .tag.dur{background:#fbeee9; color:#b4502f;}
+  .observer-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:800;padding:2px 7px;border-radius:7px;background:#f3f0e8;color:#6f777a;}
   .abc-line{display:flex; gap:6px; flex-wrap:wrap; margin-top:7px;}
   .abc-pill{font-size:11.5px; padding:4px 9px; border-radius:8px; background:#f3f0e8; color:var(--sub); font-weight:600; display:flex; gap:5px; align-items:center;}
   .abc-pill .k{font-weight:800; color:#9aa6aa;}
@@ -541,33 +542,12 @@
   #studio{display:none!important;}
 }
 
-  /* ── 환경 토글 (학교/가정) ── */
-  .env-toggle{
-    display:flex;align-items:center;gap:6px;
-    margin:10px 20px 0;
-    background:rgba(0,0,0,.18);border-radius:20px;
-    padding:4px;width:fit-content;
-  }
-  .env-btn{
-    padding:6px 14px;border-radius:16px;border:none;
-    font-size:12.5px;font-weight:700;font-family:inherit;
-    cursor:pointer;transition:.15s;color:rgba(255,255,255,.6);
-    background:transparent;display:flex;align-items:center;gap:5px;
-  }
-  .env-btn.on{background:rgba(255,255,255,.95);color:var(--ink);}
-  .env-btn svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;}
-  /* 가정 모드일 때 히어로 색상 오버레이 */
-  .hero.home-mode{background:linear-gradient(160deg,#5B4A8A 0%,#3D2F6B 100%)!important;}
   /* 분석 탭 환경 비교 */
   .env-compare{display:flex;gap:10px;margin-bottom:16px;}
   .env-compare-card{flex:1;background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 16px;}
   .env-compare-card .ec-label{font-size:11px;font-weight:800;margin-bottom:8px;display:flex;align-items:center;gap:5px;}
   .env-compare-card .ec-count{font-size:26px;font-weight:800;color:var(--ink);}
   .env-compare-card .ec-sub{font-size:11.5px;color:var(--sub);margin-top:2px;}
-  .env-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:800;padding:2px 7px;border-radius:6px;}
-  .env-badge.school{background:#eef6f5;color:#0F6E6C;}
-  .env-badge.home{background:#f0eef9;color:#5B4A8A;}
-
   /* 데스크톱 설정 탭 편집 UI */
   @media(min-width:1024px){
     .st-settings-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
@@ -610,17 +590,17 @@
   .order-btn:hover{border-color:var(--primary);color:var(--primary);}
   .order-btn:disabled{opacity:.3;cursor:not-allowed;}
 
-  /* ── 간격형·지연형 버튼 (히어로 하단 행) ── */
-  .measure-row{display:flex;gap:8px;margin:8px 20px 4px;}
+  /* ── 직접기록 보조 버튼 ── */
+  .measure-row{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:10px 20px 0;margin:0;}
   .meas-btn{flex:1;display:flex;align-items:center;gap:7px;
-    background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.25);
-    border-radius:13px;padding:10px 13px;cursor:pointer;color:#fff;
-    font-size:12.5px;font-weight:700;font-family:inherit;transition:.15s;}
-  .meas-btn:hover{background:rgba(255,255,255,.25);}
-  .meas-btn.active{background:rgba(255,255,255,.9);color:var(--ink);}
+    background:#fff;border:1px solid var(--line);
+    border-radius:16px;padding:13px 14px;cursor:pointer;color:var(--ink);
+    font-size:12.5px;font-weight:800;font-family:inherit;transition:.15s;}
+  .meas-btn:hover{border-color:#c8e0dc;background:#f5fbfa;}
+  .meas-btn.active{background:#eef6f5;color:var(--primary);border-color:#c8e0dc;box-shadow:0 0 0 2px rgba(15,110,108,.08);}
   .meas-btn svg{width:15px;height:15px;stroke:currentColor;fill:none;
     stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;flex:none;}
-  .meas-btn .mb-sub{font-size:10.5px;opacity:.75;margin-top:1px;font-weight:500;}
+  .meas-btn .mb-sub{font-size:10.5px;color:var(--sub);margin-top:1px;font-weight:600;}
 
   /* ── 간격 기록 진행 오버레이 ── */
   #intervalOverlay{
@@ -944,31 +924,11 @@
             <div class="stat warn"><b id="stIncomp">0</b><span>ABC 미완성</span></div>
             <div class="stat"><b id="stWeek">0</b><span>이번 주 합계</span></div>
           </div>
-          <div class="env-toggle">
-            <button class="env-btn on" id="envSchool" data-action="set-env" data-env="school">
-              <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-              학교
-            </button>
-            <button class="env-btn" id="envHome" data-action="set-env" data-env="home">
-              <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-              가정
-            </button>
-          </div>
           <div id="syncBadge"><div class="sb-dot" id="sbDot"></div><span id="sbText"></span></div>
         <div class="note-fab" data-action="open-note">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-9"/><path d="M14 3l5 5"/><path d="M9 13h6M9 17h4"/></svg>
             <div><div>관찰 노트</div><div class="nf-sub">면담 · 척도 · 메모</div></div>
             <span class="nf-badge" id="noteBadge">열기</span>
-          </div>
-          <div class="measure-row">
-            <button class="meas-btn" id="btnInterval" data-action="open-interval-setup">
-              <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18"/></svg>
-              <div><div>간격 기록</div><div class="mb-sub">Interval</div></div>
-            </button>
-            <button class="meas-btn" id="btnLatency" data-action="start-latency">
-              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 8 14"/></svg>
-              <div><div>선행 시작</div><div class="mb-sub">Latency</div></div>
-            </button>
           </div>
         </div>
 
@@ -1006,7 +966,17 @@
           <button class="iv-stop-btn" data-action="stop-interval">관찰 종료</button>
         </div>
 
-        <div class="sect-label">행동 기록 <em>누르면 바로 저장됩니다</em></div>
+        <div class="sect-label">행동 기록 <em>간격 · 지연 · 행동</em></div>
+        <div class="measure-row">
+          <button class="meas-btn" id="btnInterval" data-action="open-interval-setup">
+            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18"/></svg>
+            <div><div>간격 기록</div><div class="mb-sub">Interval</div></div>
+          </button>
+          <button class="meas-btn" id="btnLatency" data-action="start-latency">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 8 14"/></svg>
+            <div><div>선행 시작</div><div class="mb-sub">Latency</div></div>
+          </button>
+        </div>
         <div class="grid" id="behaviorGrid"></div>
       </div>
 
@@ -2890,6 +2860,7 @@ function renderTimeline(){
     }
     const r=item.data;
     const b=bMap[r.bid]||{name:'(삭제된 행동)',color:'#9aa6aa',type:'freq'};const incmp=!r.a.length&&!r.c.length;
+    const observerName=escHtml(r.createdByName||r.observerName||'관찰자');
     const pills=[...r.a.map(v=>`<span class="abc-pill a"><span class="k">A</span>${v}</span>`),...r.c.map(v=>`<span class="abc-pill c"><span class="k">C</span>${v}</span>`)].join('');
     return `<div class="tl-item" data-rec="${r.id}">
       <div class="tl-time" data-edit-time="${r.id}" title="탭하면 시간 수정">
@@ -2898,7 +2869,7 @@ function renderTimeline(){
       </div>
       <div class="tl-dot" style="background:${b.color}"></div>
       <div class="tl-body">
-        <div class="bh">${b.name}<span class="tag ${b.type}">${b.type==='freq'?'빈도':(r.dur?fmtDur(r.dur):'시간')}</span>${r.env==='home'?'<span class="env-badge home">🏠 가정</span>':''}</div>
+        <div class="bh">${b.name}<span class="tag ${b.type}">${b.type==='freq'?'빈도':(r.dur?fmtDur(r.dur):'시간')}</span><span class="observer-badge">기록자 ${observerName}</span></div>
         ${pills?`<div class="abc-line">${pills}</div>`:''}
         ${r.intervalData?`<div class="abc-line"><span class="abc-pill" style="background:#eef6f5;color:#0F6E6C"><span class="k">간격</span>${intervalBadgeText(r)}</span></div>`:''}
         ${r.latency?`<div class="abc-line"><span class="abc-pill" style="background:#f3eef9;color:#5B4A8A"><span class="k">지연</span>${r.latency}초</span></div>`:''}
@@ -4691,23 +4662,6 @@ function renderIOASection(sid){
   </div>`;
 }
 
-// ============ 환경 토글 (학교/가정) ============
-function setEnv(env){
-  state.currentEnv = env;
-  const hero=$('.hero');
-  const btnS=$('#envSchool'), btnH=$('#envHome');
-  if(btnS) btnS.classList.toggle('on', env==='school');
-  if(btnH) btnH.classList.toggle('on', env==='home');
-  if(hero){
-    if(env==='home') hero.classList.add('home-mode');
-    else hero.classList.remove('home-mode');
-  }
-  toast(env==='school'?
-    '<b>학교</b> 관찰 모드예요':'<b>가정</b> 관찰 모드예요 🏠');
-}
-
-
-
 // ═══════════════════════════════════════
 // 간격형 기록 (Interval Recording)
 // ═══════════════════════════════════════
@@ -5103,7 +5057,6 @@ document.addEventListener('click',e=>{
     else if(a==='st-add-chip-c'){const i=$('#stAddC');if(i&&i.value.trim()){db.cChips.push({id:uid('ch'),text:i.value.trim(),fav:false});i.value='';persist();renderSettings();if(isDesktop())renderStSettings();}}
     else if(a==='close-order')closeOrderSheet();
     else if(a==='save-order')saveOrder();
-    else if(a==='set-env'){setEnv(act.dataset.env);return;}
     else if(a==='do-signout')doSignout();
     else if(a==='close-time-edit')closeTimeEdit();
     else if(a==='save-time-edit')saveTimeEdit();
