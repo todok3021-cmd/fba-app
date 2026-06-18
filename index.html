@@ -168,6 +168,28 @@
   .hyp .arr{opacity:.7; font-weight:800;}
   .hyp .verdict{background:rgba(255,255,255,.2); padding:13px 15px; border-radius:14px; font-size:13.5px; line-height:1.55;}
   .hyp .verdict b{font-weight:800;}
+  .hyp-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px;}
+  .hyp-head h3{margin:0 0 4px;}
+  .hyp-edit-btn{border:1px solid rgba(255,255,255,.45);background:rgba(255,255,255,.16);color:#fff;border-radius:10px;padding:7px 11px;font-size:12px;font-weight:800;font-family:inherit;cursor:pointer;white-space:nowrap;}
+  .hyp-elements{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
+  .hyp-el{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.18);border-radius:12px;padding:10px 11px;min-height:58px;}
+  .hyp-el span{display:block;font-size:10.5px;font-weight:800;opacity:.72;margin-bottom:4px;}
+  .hyp-el b{display:block;font-size:12.5px;line-height:1.35;}
+  .hyp-evidence{display:flex;flex-wrap:wrap;gap:6px;margin-top:11px;}
+  .hyp-evidence span{font-size:10.5px;font-weight:800;padding:4px 8px;border-radius:8px;background:rgba(255,255,255,.18);color:rgba(255,255,255,.88);}
+  .hyp-addendum{margin-top:8px;font-size:12.5px;line-height:1.55;color:rgba(255,255,255,.85);}
+  .hyp-status{display:inline-flex;align-items:center;font-size:10.5px;font-weight:800;padding:3px 8px;border-radius:999px;background:rgba(255,255,255,.18);color:rgba(255,255,255,.88);}
+  .hyp-editor-body{padding:16px 20px 18px;overflow-y:auto;flex:1;min-height:0;}
+  .hyp-auto-box{background:#eef6f5;border:1px solid #c8e0dc;border-radius:14px;padding:12px 13px;font-size:12.5px;color:var(--ink);line-height:1.55;margin-bottom:14px;}
+  .hyp-form-grid{display:grid;grid-template-columns:1fr;gap:12px;}
+  .hyp-field label{display:block;font-size:12px;font-weight:800;color:var(--sub);margin-bottom:6px;}
+  .hyp-field input,.hyp-field textarea{width:100%;border:1.5px solid var(--line);border-radius:13px;padding:10px 12px;font-size:13.5px;font-family:inherit;color:var(--ink);background:#fff;resize:none;}
+  .hyp-field input:focus,.hyp-field textarea:focus{outline:none;border-color:var(--primary);}
+  .hyp-func-row,.hyp-status-row{display:flex;flex-wrap:wrap;gap:7px;}
+  .hyp-func-row button,.hyp-status-row button{border:1.5px solid var(--line);background:#fff;color:var(--ink);border-radius:999px;padding:8px 11px;font-size:12px;font-weight:800;font-family:inherit;cursor:pointer;}
+  .hyp-func-row button.on,.hyp-status-row button.on{background:var(--primary);border-color:var(--primary);color:#fff;}
+  .hyp-tools{display:flex;gap:8px;margin-top:8px;}
+  .hyp-tools button{flex:1;border:1px solid var(--line);background:#fff;color:var(--sub);border-radius:11px;padding:9px 10px;font-size:12px;font-weight:800;font-family:inherit;cursor:pointer;}
   .legend{display:flex; flex-wrap:wrap; gap:11px; margin-top:14px;}
   .legend span{display:flex; align-items:center; gap:6px; font-size:11.5px; color:var(--sub); font-weight:600;}
   .legend i{width:11px;height:11px;border-radius:3px;}
@@ -512,6 +534,14 @@
   .hyp-box.b{border-color:var(--primary);background:#eef6f5;color:var(--primary);}
   .hyp-box.c{border-color:#C77A1E;background:#fdf3e7;color:#C77A1E;}
   .hyp-verdict{font-size:12.5px;color:#444;line-height:1.6;}
+  .hyp-card .hyp-edit-btn{border-color:#c8e0dc;background:#fff;color:var(--primary);}
+  .hyp-card .hyp-elements{grid-template-columns:1fr 1fr;margin-bottom:12px;}
+  .hyp-card .hyp-el{background:#fff;border-color:#dbe9e6;}
+  .hyp-card .hyp-el span{color:var(--sub);opacity:1;}
+  .hyp-card .hyp-el b{color:var(--ink);}
+  .hyp-card .hyp-evidence span{background:#fff;color:var(--sub);border:1px solid #dbe9e6;}
+  .hyp-card .hyp-addendum{color:#555;}
+  .hyp-card .hyp-status{background:#fff;color:var(--primary);border:1px solid #dbe9e6;}
 
   /* 노트 패널 */
   .note-panels{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;}
@@ -1176,6 +1206,74 @@
       </div>
     </div>
 
+    <!-- 기능 가설 편집 시트 -->
+    <div class="scrim" id="hypScrim" data-action="close-hypothesis"></div>
+    <div class="sheet" id="hypSheet" style="max-height:92%">
+      <div class="grab"></div>
+      <div class="sheet-head">
+        <div class="stit"><b id="hypSheetTitle">기능 가설 편집</b><span id="hypSheetSub">4요소를 검토하고 확정하세요</span></div>
+        <button class="ghostbtn" data-action="close-hypothesis">닫기</button>
+      </div>
+      <div class="hyp-editor-body">
+        <div class="hyp-auto-box" id="hypAutoBox"></div>
+        <div class="hyp-form-grid">
+          <div class="hyp-field">
+            <label>상태</label>
+            <div class="hyp-status-row" id="hypStatusRow">
+              <button type="button" data-hyp-status="draft">자동 초안</button>
+              <button type="button" data-hyp-status="review">검토 중</button>
+              <button type="button" data-hyp-status="confirmed">확정</button>
+              <button type="button" data-hyp-status="hold">보류</button>
+            </div>
+            <input type="hidden" id="hypStatus" value="review">
+          </div>
+          <div class="hyp-field">
+            <label>상황 / 설정사건</label>
+            <textarea id="hypSetting" data-hyp-input rows="2" placeholder="예: 어려운 과제가 제시되는 독립 수행 시간"></textarea>
+          </div>
+          <div class="hyp-field">
+            <label>선행사건 A</label>
+            <input id="hypAntecedent" data-hyp-input placeholder="예: 과제 시작 지시">
+          </div>
+          <div class="hyp-field">
+            <label>문제행동 B</label>
+            <input id="hypBehavior" data-hyp-input placeholder="예: 자리 이탈">
+          </div>
+          <div class="hyp-field">
+            <label>후속결과 C</label>
+            <input id="hypConsequence" data-hyp-input placeholder="예: 과제 요구 지연 또는 감소">
+          </div>
+          <div class="hyp-field">
+            <label>추정 기능</label>
+            <div class="hyp-func-row" id="hypFuncRow">
+              <button type="button" data-hyp-func="escape">회피·도피</button>
+              <button type="button" data-hyp-func="attention">관심 획득</button>
+              <button type="button" data-hyp-func="tangible">원하는 것 획득</button>
+              <button type="button" data-hyp-func="sensory">감각 자극</button>
+              <button type="button" data-hyp-func="unknown">추가 관찰</button>
+            </div>
+            <input type="hidden" id="hypFunctionKey" value="unknown">
+          </div>
+          <div class="hyp-field">
+            <label>가설문</label>
+            <textarea id="hypSummary" rows="4" placeholder="가설문을 직접 수정할 수 있어요"></textarea>
+            <div class="hyp-tools">
+              <button type="button" data-action="reset-hypothesis-auto">자동 초안 불러오기</button>
+              <button type="button" data-action="build-hypothesis-summary">4요소로 문장 만들기</button>
+            </div>
+          </div>
+          <div class="hyp-field">
+            <label>덧붙임 / 검토 메모</label>
+            <textarea id="hypAddendum" rows="3" placeholder="예: 보호자 면담 후 재검토 필요, 수학 시간 자료를 더 모을 것"></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="sheet-foot">
+        <button class="btn-ghost" data-action="close-hypothesis">취소</button>
+        <button class="btn-prim" data-action="save-hypothesis">가설 저장</button>
+      </div>
+    </div>
+
     <!-- 시간 수정 시트 -->
     <div class="scrim" id="timeEditScrim" data-action="close-time-edit"></div>
     <div class="sheet" id="timeEditSheet">
@@ -1779,7 +1877,7 @@ async function saveSharedExtra(kind, item){
   try{
     await sharedExtraRef(kind, item.sid, item.id).set(payload, {merge:true});
   }catch(e){
-    console.warn('관찰노트 저장 실패:', e.code || e.message || e, {kind, caseId:item.sid, docId:item.id, currentUid:fbUser?.uid});
+    console.warn('공유 데이터 저장 실패:', e.code || e.message || e, {kind, caseId:item.sid, docId:item.id, currentUid:fbUser?.uid});
   }
 }
 
@@ -1788,7 +1886,7 @@ async function deleteSharedExtra(kind, sid, id){
   try{
     await sharedExtraRef(kind, sid, id).delete();
   }catch(e){
-    console.warn('관찰노트 삭제 실패:', e.code || e.message || e, {kind, caseId:sid, docId:id, currentUid:fbUser?.uid});
+    console.warn('공유 데이터 삭제 실패:', e.code || e.message || e, {kind, caseId:sid, docId:id, currentUid:fbUser?.uid});
   }
 }
 
@@ -2605,7 +2703,7 @@ function resumeSharedListeners(){
 
 
 // ============ state ============
-const state={tab:'record',sid:'s1',timer:null,sheetId:null,sel:{a:new Set(),c:new Set()},date:null,ed:null,noteTab:'memo',memoTag:'before',masTemp:{},ivTemp:{},currentEnv:'school'};
+const state={tab:'record',sid:'s1',timer:null,sheetId:null,sel:{a:new Set(),c:new Set()},date:null,ed:null,noteTab:'memo',memoTag:'before',masTemp:{},ivTemp:{},currentEnv:'school',hypSid:null,hypDraft:null};
 let bMap={},sMap={};
 function reindex(){ bMap=Object.fromEntries(db.behaviors.map(b=>[b.id,b])); sMap=Object.fromEntries(db.students.map(s=>[s.id,s])); }
 function activeRecords(){ return (db.records||[]).filter(r=>!r.deleted); }
@@ -2831,7 +2929,7 @@ function renderTimeline(){
   $('#reviewSub').innerHTML=inc?`ABC 미완성 ${inc}건 — 톡 눌러 채우세요`:'기록을 누르면 ABC를 수정할 수 있어요';
 
   // 관찰 노트 메모도 같은 날짜에서 가져오기
-  const memos=(db.notes||[]).filter(n=>n.sid===state.sid&&dkey(new Date(n.ts))===state.date);
+  const memos=getNotes(state.sid).filter(n=>dkey(new Date(n.ts))===state.date);
 
   // 행동기록 + 메모를 시각 기준으로 합쳐서 정렬
   const items=[
@@ -2883,8 +2981,287 @@ function renderTimeline(){
 
 // ============ analysis ============
 const FUNC_MAP={'과제 제거':'회피·도피','타임아웃':'회피·도피','교사 관심':'관심 획득','또래 반응':'관심 획득','또래 관심':'관심 획득','원하는 것 제공':'원하는 것 획득'};
+const HYP_FUNCTIONS=[
+  {key:'escape',label:'회피·도피'},
+  {key:'attention',label:'관심 획득'},
+  {key:'tangible',label:'원하는 것 획득'},
+  {key:'sensory',label:'감각 자극'},
+  {key:'unknown',label:'추가 관찰 필요'},
+];
+const HYP_STATUS_LABELS={draft:'자동 초안',review:'검토 중',confirmed:'확정',hold:'보류'};
 function escHtml(v){
   return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+function isHypothesisDoc(n){return n?.kind==='hypothesis'||n?.type==='hypothesis';}
+function hypDocId(sid){return 'hyp_'+sid;}
+function hypFuncLabel(keyOrLabel){
+  const found=HYP_FUNCTIONS.find(f=>f.key===keyOrLabel||f.label===keyOrLabel);
+  return found?found.label:(keyOrLabel||'추가 관찰 필요');
+}
+function hypFuncKey(label){
+  const found=HYP_FUNCTIONS.find(f=>f.key===label||f.label===label);
+  return found?found.key:'unknown';
+}
+function topCount(map){
+  const keys=Object.keys(map||{});
+  if(!keys.length) return null;
+  const label=keys.sort((a,b)=>map[b]-map[a])[0];
+  return {label,count:map[label]};
+}
+function pct(count,total){return total?Math.round(count/total*100):0;}
+function getSavedHypothesis(sid){
+  return (db?.notes||[])
+    .filter(n=>n.sid===sid&&isHypothesisDoc(n))
+    .sort((a,b)=>new Date(b.updatedAt||b.ts||0)-new Date(a.updatedAt||a.ts||0))[0]||null;
+}
+function getMasFunctionSummary(sid){
+  const latest=getLatestMas(sid);
+  if(!latest) return null;
+  const items=db?.masItems?.length?db.masItems:MAS_DEFAULTS;
+  const totals={escape:0,attention:0,tangible:0,sensory:0};
+  const maxes={escape:0,attention:0,tangible:0,sensory:0};
+  items.forEach(item=>{
+    if(!(item.func in totals)) return;
+    totals[item.func]+=Number(latest.scores?.[item.id]||0);
+    maxes[item.func]+=6;
+  });
+  const keys=Object.keys(totals).filter(k=>maxes[k]>0);
+  if(!keys.length) return null;
+  const key=keys.sort((a,b)=>(totals[b]/maxes[b])-(totals[a]/maxes[a]))[0];
+  return {key,label:hypFuncLabel(key),score:totals[key],max:maxes[key],pct:pct(totals[key],maxes[key])};
+}
+function interviewSettingHint(sid){
+  const iv=getLatestIv(sid);
+  if(!iv?.answers) return '';
+  const qs=db?.ivQuestions||[];
+  const q=qs.find(x=>/주로|언제|시간대|상황/.test(x.q||''))||qs[1];
+  return String(iv.answers[q?.id]||'').trim();
+}
+function timeSettingHint(records){
+  if(!records?.length) return '';
+  const slots=[
+    {label:'오전 수업 시간',test:h=>h>=8&&h<12},
+    {label:'점심 전후 전환 시간',test:h=>h>=12&&h<14},
+    {label:'오후 활동 시간',test:h=>h>=14&&h<17},
+    {label:'하교 전후 시간',test:h=>h>=17&&h<20},
+  ];
+  const counts={};
+  records.forEach(r=>{
+    const h=new Date(r.ts).getHours();
+    const slot=slots.find(s=>s.test(h))?.label||`${String(h).padStart(2,'0')}시 전후`;
+    counts[slot]=(counts[slot]||0)+1;
+  });
+  return topCount(counts)?.label||'';
+}
+function buildHypothesisSentence(h,sid){
+  const s=db?.students?.find(x=>x.id===sid)||cur()||{name:'학생'};
+  const setting=(h.setting||'특정 상황').trim();
+  const antecedent=(h.antecedent||'특정 선행사건').trim();
+  const behavior=(h.behavior||'문제행동').trim();
+  const consequence=(h.consequence||'특정 후속결과').trim();
+  const fn=hypFuncLabel(h.functionKey||h.functionName);
+  return `${s.name} 학생은 ${setting}에서 ${antecedent} 이후 ${behavior} 행동을 보이며, 그 결과 ${consequence}가 뒤따라 ${fn} 기능으로 유지되는 것으로 가설화됩니다.`;
+}
+function buildHypothesisCandidate(sid,days=7){
+  const since=Date.now()-days*864e5;
+  const recs=activeRecords().filter(r=>r.sid===sid&&new Date(r.ts).getTime()>since);
+  const byB={}; recs.forEach(r=>byB[r.bid]=(byB[r.bid]||0)+1);
+  const topB=topCount(byB);
+  const tb=topB?(bMap[topB.label]||{id:topB.label,name:'행동',color:'#0F6E6C'}):null;
+  const tRecs=tb?recs.filter(r=>r.bid===tb.id):[];
+  const aCount={},cCount={}; let fullABC=0, partialABC=0;
+  tRecs.forEach(r=>{
+    if(r.a?.length&&r.c?.length) fullABC++;
+    if(r.a?.length||r.c?.length) partialABC++;
+    (r.a||[]).forEach(x=>aCount[x]=(aCount[x]||0)+1);
+    (r.c||[]).forEach(x=>cCount[x]=(cCount[x]||0)+1);
+  });
+  const topA=topCount(aCount);
+  const topC=topCount(cCount);
+  const mas=getMasFunctionSummary(sid);
+  const fnLabel=FUNC_MAP[topC?.label]||mas?.label||'추가 관찰 필요';
+  const candidate={
+    id:hypDocId(sid),
+    sid,
+    kind:'hypothesis',
+    type:'hypothesis',
+    status:'draft',
+    setting:interviewSettingHint(sid)||timeSettingHint(tRecs)||'관찰이 많이 발생한 상황',
+    antecedent:topA?.label||'추가 관찰 필요',
+    behavior:tb?.name||'추가 관찰 필요',
+    consequence:topC?.label||'추가 관찰 필요',
+    functionName:fnLabel,
+    functionKey:hypFuncKey(fnLabel),
+    addendum:'',
+    ready:!!(tb&&recs.length>=3),
+    stats:{
+      days,total:recs.length,behaviorCount:tRecs.length,behaviorName:tb?.name||'',
+      antecedentPct:pct(topA?.count||0,tRecs.length),
+      consequencePct:pct(topC?.count||0,tRecs.length),
+      fullABC,partialABC,mas
+    }
+  };
+  candidate.summary=buildHypothesisSentence(candidate,sid);
+  candidate.evidence=[
+    candidate.ready?`최근 ${days}일 ${recs.length}건 중 ${candidate.behavior} ${tRecs.length}건`:`최근 ${days}일 기록 ${recs.length}건`,
+    topA?`선행 ${topA.label} ${candidate.stats.antecedentPct}%`:'선행 자료 부족',
+    topC?`후속 ${topC.label} ${candidate.stats.consequencePct}%`:'후속 자료 부족',
+    `ABC 완성 ${fullABC}/${Math.max(tRecs.length,1)}건`,
+    mas?`MAS ${mas.label} ${mas.pct}%`:'MAS 없음'
+  ];
+  return candidate;
+}
+function hypothesisForDisplay(sid){
+  const auto=buildHypothesisCandidate(sid);
+  const saved=getSavedHypothesis(sid);
+  if(!saved) return {data:auto,auto,saved:null};
+  return {data:{...auto,...saved,evidence:auto.evidence,stats:auto.stats,ready:auto.ready},auto,saved};
+}
+function escLines(v){return escHtml(v||'').replace(/\n/g,'<br>');}
+function renderHypElements(h){
+  return `<div class="hyp-elements">
+    <div class="hyp-el"><span>상황 / 설정사건</span><b>${escHtml(h.setting||'추가 관찰 필요')}</b></div>
+    <div class="hyp-el"><span>선행사건 A</span><b>${escHtml(h.antecedent||'추가 관찰 필요')}</b></div>
+    <div class="hyp-el"><span>문제행동 B</span><b>${escHtml(h.behavior||'추가 관찰 필요')}</b></div>
+    <div class="hyp-el"><span>후속결과 / 기능</span><b>${escHtml(h.consequence||'추가 관찰 필요')} · ${escHtml(hypFuncLabel(h.functionKey||h.functionName))}</b></div>
+  </div>`;
+}
+function renderHypothesisCard(sid,opts={}){
+  const pack=hypothesisForDisplay(sid);
+  const h=pack.data;
+  const saved=pack.saved;
+  const desktop=!!opts.desktop;
+  const outer=desktop?'hyp-card':'card hyp';
+  const title=saved?'기능 가설':'자동 가설 초안';
+  const status=HYP_STATUS_LABELS[h.status]||'검토 중';
+  const updated=saved?.updatedAt||saved?.ts;
+  const sub=saved
+    ? `${status}${updated?' · '+fmtShortDate(new Date(updated)):''}`
+    : `최근 ${h.stats?.days||7}일 기록 기반`;
+  const empty=!h.ready&&!saved;
+  const evidence=(h.evidence||[]).map(x=>`<span>${escHtml(x)}</span>`).join('');
+  return `<div class="${outer}">
+    <div class="hyp-head">
+      <div>
+        ${desktop?`<span class="hyp-status">${escHtml(sub)}</span>`:`<h3>${title}</h3><p class="csub">${escHtml(sub)}</p>`}
+      </div>
+      <button class="hyp-edit-btn" data-hyp-edit="${sid}">${saved?'수정':'작성'}</button>
+    </div>
+    ${empty?`<div class="${desktop?'hyp-verdict':'verdict'}">기록이 더 쌓이면 자동 초안이 정교해집니다. 지금도 직접 가설을 작성할 수 있어요.</div>`:renderHypElements(h)}
+    ${!empty?`<div class="${desktop?'hyp-verdict':'verdict'}">${escLines(h.summary||buildHypothesisSentence(h,sid))}</div>`:''}
+    ${h.addendum?`<div class="hyp-addendum"><b>덧붙임</b> · ${escLines(h.addendum)}</div>`:''}
+    ${evidence?`<div class="hyp-evidence">${evidence}</div>`:''}
+  </div>`;
+}
+function renderHypothesisReport(sid){
+  const {data:h,saved}=hypothesisForDisplay(sid);
+  if(!h.ready&&!saved) return `<p class="verdict" style="color:#9aa">분석할 기록이 아직 적어요. 기록이 쌓이면 기능 가설이 나타납니다.</p>`;
+  const evidence=(h.evidence||[]).map(x=>`<span class="report-pill">${escHtml(x)}</span>`).join('');
+  return `${renderHypElements(h)}
+    <p class="verdict">${escLines(h.summary||buildHypothesisSentence(h,sid))}</p>
+    ${h.addendum?`<p class="verdict"><strong>덧붙임</strong><br>${escLines(h.addendum)}</p>`:''}
+    ${evidence?`<div class="report-evidence">${evidence}</div>`:''}`;
+}
+function setHypStatus(status){
+  const val=status||'review';
+  const inp=$('#hypStatus'); if(inp) inp.value=val;
+  document.querySelectorAll('[data-hyp-status]').forEach(b=>b.classList.toggle('on',b.dataset.hypStatus===val));
+}
+function setHypFunction(key){
+  const val=key||'unknown';
+  const inp=$('#hypFunctionKey'); if(inp) inp.value=val;
+  document.querySelectorAll('[data-hyp-func]').forEach(b=>b.classList.toggle('on',b.dataset.hypFunc===val));
+}
+function readHypothesisForm(){
+  const sid=state.hypSid||state.sid;
+  const key=$('#hypFunctionKey')?.value||'unknown';
+  return {
+    sid,
+    status:$('#hypStatus')?.value||'review',
+    setting:$('#hypSetting')?.value.trim()||'',
+    antecedent:$('#hypAntecedent')?.value.trim()||'',
+    behavior:$('#hypBehavior')?.value.trim()||'',
+    consequence:$('#hypConsequence')?.value.trim()||'',
+    functionKey:key,
+    functionName:hypFuncLabel(key),
+    summary:$('#hypSummary')?.value.trim()||'',
+    addendum:$('#hypAddendum')?.value.trim()||''
+  };
+}
+function fillHypothesisEditor(data,sid){
+  const s=db.students.find(x=>x.id===sid)||cur();
+  const auto=buildHypothesisCandidate(sid);
+  state.hypDraft=auto;
+  $('#hypSheetTitle').textContent=(s?.name||'학생')+' 기능 가설';
+  $('#hypSheetSub').textContent='상황 · 선행 · 행동 · 후속/기능';
+  $('#hypAutoBox').innerHTML=auto.ready
+    ? `자동 초안 근거: ${auto.evidence.map(escHtml).join(' · ')}`
+    : `최근 기록이 충분하지 않아 자동 초안의 신뢰도가 낮아요. 직접 작성하거나 ABC 기록을 더 모은 뒤 다시 확인하세요.`;
+  $('#hypSetting').value=data.setting||'';
+  $('#hypAntecedent').value=data.antecedent||'';
+  $('#hypBehavior').value=data.behavior||'';
+  $('#hypConsequence').value=data.consequence||'';
+  $('#hypSummary').value=data.summary||buildHypothesisSentence(data,sid);
+  $('#hypAddendum').value=data.addendum||'';
+  setHypStatus(data.status||'review');
+  setHypFunction(data.functionKey||hypFuncKey(data.functionName));
+}
+function openHypothesisEditor(sid=state.sid,forceAuto=false){
+  state.hypSid=sid;
+  const auto=buildHypothesisCandidate(sid);
+  const saved=getSavedHypothesis(sid);
+  const data=forceAuto||!saved?auto:{...auto,...saved};
+  fillHypothesisEditor(data,sid);
+  $('#hypScrim').classList.add('show');
+  $('#hypSheet').classList.add('open');
+}
+function closeHypothesisEditor(){
+  $('#hypScrim').classList.remove('show');
+  $('#hypSheet').classList.remove('open');
+  state.hypSid=null;
+  state.hypDraft=null;
+}
+function resetHypothesisAuto(){
+  const sid=state.hypSid||state.sid;
+  fillHypothesisEditor(buildHypothesisCandidate(sid),sid);
+}
+function buildHypothesisSummaryFromForm(){
+  const data=readHypothesisForm();
+  $('#hypSummary').value=buildHypothesisSentence(data,data.sid);
+}
+async function saveHypothesis(){
+  const sid=state.hypSid||state.sid;
+  const existing=getSavedHypothesis(sid)||{};
+  const data=readHypothesisForm();
+  if(!data.setting||!data.antecedent||!data.behavior||!data.consequence){
+    toast('가설의 4요소를 모두 입력해 주세요');
+    return;
+  }
+  if(!data.summary) data.summary=buildHypothesisSentence(data,sid);
+  const now=new Date().toISOString();
+  const hyp={
+    ...existing,
+    ...data,
+    id:hypDocId(sid),
+    sid,
+    kind:'hypothesis',
+    type:'hypothesis',
+    ts:existing.ts||now,
+    updatedAt:now,
+    updatedByUid:fbUser?.uid||OBSERVER_ID,
+    updatedByName:fbUser?.displayName||fbUser?.email||'관찰자',
+    evidenceSnapshot:buildHypothesisCandidate(sid).evidence
+  };
+  if(!db.notes) db.notes=[];
+  const idx=db.notes.findIndex(n=>n.id===hyp.id);
+  if(idx>=0) db.notes[idx]={...db.notes[idx],...hyp};
+  else db.notes.push(hyp);
+  if(state.sid===sid) syncActiveCaseFromDb();
+  await saveSharedExtra('notes', hyp);
+  persist();
+  closeHypothesisEditor();
+  refreshAll();
+  toast('기능 가설을 저장했어요');
 }
 function fmtNum(v){
   const n=Number(v)||0;
@@ -3130,25 +3507,13 @@ function renderAnalysis(){
   const mine=activeRecords().filter(r=>r.sid===state.sid&&new Date(r.ts).getTime()>since);
   const body=$('#analysisBody');
   const measurementHtml=renderMeasurementGraphs(state.sid);
-  if(mine.length<3){body.innerHTML=measurementHtml||'<div class="empty" style="margin-top:30px">분석할 기록이 아직 적어요.<br>기록이 쌓이면 산점도와 기능 가설이 나타납니다.</div>';return;}
-  // hypothesis: top behavior
-  const byB={};mine.forEach(r=>byB[r.bid]=(byB[r.bid]||0)+1);
-  const topB=Object.keys(byB).sort((a,b)=>byB[b]-byB[a])[0];
-  const tb=bMap[topB];const tRecs=mine.filter(r=>r.bid===topB);
-  const aCount={},cCount={};let withABC=0;
-  tRecs.forEach(r=>{if(r.a.length||r.c.length)withABC++;r.a.forEach(x=>aCount[x]=(aCount[x]||0)+1);r.c.forEach(x=>cCount[x]=(cCount[x]||0)+1);});
-  const topA=Object.keys(aCount).sort((a,b)=>aCount[b]-aCount[a])[0];
-  const topC=Object.keys(cCount).sort((a,b)=>cCount[b]-cCount[a])[0];
-  let hyp='';
-  if(topA&&topC){
-    const aPct=Math.round(aCount[topA]/tRecs.length*100);const cPct=Math.round(cCount[topC]/tRecs.length*100);
-    const fn=FUNC_MAP[topC]||'추가 관찰 필요';
-    hyp=`<div class="card hyp"><h3>가설 — ${tb.name}</h3><p class="csub">최근 7일 ${tRecs.length}건 분석</p>
-      <div class="flow"><span class="fbox">${topA}</span><span class="arr">→</span><span class="fbox">${tb.name}</span><span class="arr">→</span><span class="fbox">${topC}</span></div>
-      <div class="verdict">선행에 <b>${topA}</b>가 ${aPct}%, 후속에 <b>${topC}</b>가 ${cPct}%로 반복됩니다. <b>${fn} 기능</b>으로 추정 — 처벌보다 적절한 대체행동(예: 휴식·도움 요청) 지도를 검토해 보세요.</div></div>`;
-  }else{
-    hyp=`<div class="card hyp"><h3>가설 — ${tb.name}</h3><p class="csub">최근 7일 ${tRecs.length}건</p><div class="verdict">가장 자주 기록된 행동입니다. ABC를 더 채우면 기능 가설을 자동으로 세워 드릴게요.</div></div>`;
+  if(mine.length<3){
+    body.innerHTML=renderHypothesisCard(state.sid)+(measurementHtml||'<div class="empty" style="margin-top:30px">분석할 기록이 아직 적어요.<br>기록이 쌓이면 산점도와 그래프가 나타납니다.</div>');
+    return;
   }
+  // hypothesis: saved draft + automatic candidate
+  const byB={};mine.forEach(r=>byB[r.bid]=(byB[r.bid]||0)+1);
+  const hyp=renderHypothesisCard(state.sid);
   // scatter
   const now=new Date();const cols=[];
   for(let i=6;i>=0;i--){const d=new Date(now);d.setDate(now.getDate()-i);cols.push(d);}
@@ -3354,13 +3719,13 @@ async function delEditor(){
 function refreshAll(){paintStudent();renderSwitcher();renderGrid();renderSettings();if(state.tab==='review')renderTimeline();if(state.tab==='analysis')renderAnalysis();updateNoteBadge();updateSyncUI();if(isDesktop()&&db){renderStudioSidebar();switchStTab(stTab);updateStudioSync();}}
 
 // ============ 관찰 노트 ============
-function getNotes(sid){return (db.notes||[]).filter(n=>n.sid===sid);}
+function getNotes(sid){return (db.notes||[]).filter(n=>n.sid===sid&&!isHypothesisDoc(n));}
 function getLatestMas(sid){const all=(db.masScores||[]).filter(s=>s.sid===sid);return all.sort((a,b)=>new Date(b.ts)-new Date(a.ts))[0]||null;}
 function getLatestIv(sid){const all=(db.interviews||[]).filter(i=>i.sid===sid);return all.sort((a,b)=>new Date(b.ts)-new Date(a.ts))[0]||null;}
 
 function updateNoteBadge(){
   const sid=state.sid;
-  const n=(db.notes||[]).filter(x=>x.sid===sid).length;
+  const n=getNotes(sid).length;
   const hasMas=!!getLatestMas(sid);
   const hasIv=!!getLatestIv(sid);
   const badge=$('#noteBadge');
@@ -3648,36 +4013,7 @@ function _printReport(){
   const abcPct=mine.length?Math.round((mine.length-incomplete)/mine.length*100):0;
 
   // 기능 가설 계산
-  const topBid=sortedBids[0];
-  const tb=topBid?bMap[topBid]:null;
-  let hypHtml='';
-  if(tb&&mine.length>=3){
-    const tRecs=mine.filter(r=>r.bid===topBid);
-    const aCount={},cCount={};
-    tRecs.forEach(r=>{r.a.forEach(x=>aCount[x]=(aCount[x]||0)+1);r.c.forEach(x=>cCount[x]=(cCount[x]||0)+1);});
-    const topA=Object.keys(aCount).sort((a,b)=>aCount[b]-aCount[a])[0];
-    const topC=Object.keys(cCount).sort((a,b)=>cCount[b]-cCount[a])[0];
-    const FMAP={'과제 제거':'회피·도피','타임아웃':'회피·도피','교사 관심':'관심 획득','또래 반응':'관심 획득','또래 관심':'관심 획득','원하는 것 제공':'원하는 것 획득'};
-    if(topA&&topC){
-      const aPct=Math.round(aCount[topA]/tRecs.length*100);
-      const cPct=Math.round(cCount[topC]/tRecs.length*100);
-      const fn=FMAP[topC]||'추가 관찰 필요';
-      hypHtml=`
-        <div class="hyp-flow">
-          <span class="fbox a">${topA}</span>
-          <span class="arr">→</span>
-          <span class="fbox b" style="border-color:${tb.color};background:${tb.color}18;color:${tb.color}">${tb.name}</span>
-          <span class="arr">→</span>
-          <span class="fbox c">${topC}</span>
-        </div>
-        <p class="verdict">선행에 <strong>${topA}</strong>가 ${aPct}%, 후속에 <strong>${topC}</strong>가 ${cPct}%로 반복됩니다.<br>
-        추정 기능: <strong style="color:${tb.color}">${fn}</strong> — 처벌보다 적절한 대체행동(예: 휴식·도움 요청) 지도를 검토해 보세요.</p>`;
-    } else {
-      hypHtml=`<p class="verdict">가장 자주 기록된 행동은 <strong>${tb.name}</strong>(${tRecs.length}건)입니다. ABC 데이터를 더 채우면 기능 가설을 자동으로 세워 드릴게요.</p>`;
-    }
-  } else {
-    hypHtml=`<p class="verdict" style="color:#9aa">분석할 기록이 아직 적어요. 기록이 쌓이면 기능 가설이 나타납니다.</p>`;
-  }
+  const hypHtml=renderHypothesisReport(s.id);
 
   // 빈도 막대
   const maxV=sortedBids.length?Math.max(...sortedBids.map(id=>byB[id])):1;
@@ -3819,6 +4155,12 @@ function _printReport(){
   .fbox.a{border-color:#3E86C0;background:#eaf1f9;color:#3E86C0;}
   .fbox.b{border-color:#0F6E6C;background:#eef6f5;color:#0F6E6C;}
   .fbox.c{border-color:#C77A1E;background:#fdf3e7;color:#C77A1E;}
+  .hyp-elements{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;}
+  .hyp-el{background:#fff;border:1px solid #dbe9e6;border-radius:8px;padding:8px 10px;}
+  .hyp-el span{display:block;font-size:9.5px;font-weight:800;color:#7a8788;margin-bottom:3px;}
+  .hyp-el b{display:block;font-size:11.5px;line-height:1.35;color:#1e1e1e;}
+  .report-evidence{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;}
+  .report-pill{font-size:10px;font-weight:700;color:#5b6668;background:#fff;border:1px solid #dbe9e6;border-radius:999px;padding:3px 7px;}
   .arr{font-size:16px;color:#aaa;}
   .verdict{font-size:11.5px;color:#444;line-height:1.6;}
 
@@ -4199,31 +4541,7 @@ function renderStAnalysis(){
   }).join('');
 
   // 가설
-  let hypHtml='<p style="color:var(--sub);font-size:13px">기록이 더 쌓이면 가설이 나타나요</p>';
-  if(mine.length>=3){
-    const topBid=sortedBids[0]; const tb=bMap[topBid];
-    if(tb){
-      const tRecs=mine.filter(r=>r.bid===topBid);
-      const aCount={},cCount={};
-      tRecs.forEach(r=>{r.a.forEach(x=>aCount[x]=(aCount[x]||0)+1);r.c.forEach(x=>cCount[x]=(cCount[x]||0)+1);});
-      const topA=Object.keys(aCount).sort((a,b)=>aCount[b]-aCount[a])[0];
-      const topC=Object.keys(cCount).sort((a,b)=>cCount[b]-cCount[a])[0];
-      const FMAP={'과제 제거':'회피·도피','타임아웃':'회피·도피','교사 관심':'관심 획득','또래 반응':'관심 획득','원하는 것 제공':'원하는 것 획득'};
-      if(topA&&topC){
-        const fn=FMAP[topC]||'추가 관찰 필요';
-        hypHtml=`<div class="hyp-card">
-          <div class="hyp-flow">
-            <span class="hyp-box a">${topA}</span>
-            <span style="color:#aaa;font-size:18px">→</span>
-            <span class="hyp-box b">${tb.name}</span>
-            <span style="color:#aaa;font-size:18px">→</span>
-            <span class="hyp-box c">${topC}</span>
-          </div>
-          <div class="hyp-verdict">추정 기능: <strong style="color:var(--primary)">${fn}</strong> — 처벌보다 적절한 대체행동 지도를 검토해 보세요.</div>
-        </div>`;
-      }
-    }
-  }
+  let hypHtml=renderHypothesisCard(s.id,{desktop:true});
 
   // 산점도
   const days7=[];const now=new Date();
@@ -4275,7 +4593,7 @@ function renderStNotes(){
   if(!s){body.innerHTML='<p style="color:var(--sub)">학생을 선택해 주세요</p>';return;}
   const sub=$('#stSub'); if(sub) sub.textContent=s.name;
 
-  const memos=(db.notes||[]).filter(n=>n.sid===s.id).sort((a,b)=>new Date(b.ts)-new Date(a.ts));
+  const memos=getNotes(s.id).sort((a,b)=>new Date(b.ts)-new Date(a.ts));
   const masData=getLatestMas(s.id);
   const ivData=getLatestIv(s.id);
 
@@ -4988,6 +5306,9 @@ document.addEventListener('click',e=>{
   const editIvq=t.closest('[data-edit-ivq]'); if(editIvq){openIvEditor(editIvq.dataset.editIvq);return;}
   const ivMode=t.closest('[data-iv-mode]'); if(ivMode){setIntervalMode(ivMode.dataset.ivMode);return;}
   const ivMark=t.closest('[data-iv-mark]'); if(ivMark){markInterval(ivMark.dataset.ivMark);return;}
+  const hypEdit=t.closest('[data-hyp-edit]'); if(hypEdit){openHypothesisEditor(hypEdit.dataset.hypEdit);return;}
+  const hypStatus=t.closest('[data-hyp-status]'); if(hypStatus){setHypStatus(hypStatus.dataset.hypStatus);return;}
+  const hypFunc=t.closest('[data-hyp-func]'); if(hypFunc){setHypFunction(hypFunc.dataset.hypFunc);return;}
   const act=t.closest('[data-action]'); if(act){const a=act.dataset.action;
     if(a==='toggle-switcher')$('#switcher').classList.toggle('open');
     else if(a==='dismiss-sheet')saveSheet();
@@ -5004,6 +5325,10 @@ document.addEventListener('click',e=>{
     else if(a==='open-note')openNoteSheet();
     else if(a==='close-note')closeNoteSheet();
     else if(a==='add-memo')addMemo();
+    else if(a==='close-hypothesis')closeHypothesisEditor();
+    else if(a==='save-hypothesis')saveHypothesis();
+    else if(a==='reset-hypothesis-auto')resetHypothesisAuto();
+    else if(a==='build-hypothesis-summary')buildHypothesisSummaryFromForm();
     else if(a==='save-interview')saveInterview();
     else if(a==='save-mas')saveMas();
     else if(a==='open-mas-manager')openMasManager();
