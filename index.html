@@ -63,7 +63,7 @@
   .sect-label{display:flex; align-items:baseline; justify-content:space-between; padding:22px 22px 4px; font-size:12.5px; color:var(--sub); font-weight:700;}
   .sect-label em{font-style:normal; font-weight:500; font-size:11.5px; color:#9aa6aa;}
   .grid{display:grid; grid-template-columns:repeat(3,1fr); gap:13px; padding:12px 20px 10px;}
-  .btn{position:relative; aspect-ratio:1/1.06; border-radius:22px; border:1px solid var(--line); cursor:pointer; background:#fff; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:9px; transition:transform .08s, box-shadow .2s; padding:6px;}
+  .btn{position:relative; aspect-ratio:1/1.06; border-radius:22px; border:1px solid var(--line); cursor:pointer; background:#fff; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:9px; transition:transform .08s, box-shadow .2s; padding:6px; user-select:none; -webkit-user-select:none; touch-action:manipulation;}
   .btn:active{transform:scale(.94);}
   .btn .disc{width:54px; height:54px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; position:relative; transition:box-shadow .2s;}
   .btn .disc svg{width:27px;height:27px;}
@@ -73,6 +73,7 @@
   .count.show{transform:scale(1);}
   .btn.dur .disc::after{content:"▷"; position:absolute; right:-3px; bottom:-3px; width:19px;height:19px; background:#fff; color:var(--ink); border-radius:50%; font-size:9px; display:flex;align-items:center;justify-content:center; border:1px solid var(--line); padding-left:1px;}
   .btn.running{box-shadow:0 0 0 3px var(--rec);}
+  .btn.holding{box-shadow:0 0 0 3px rgba(15,110,108,.18), 0 10px 26px -18px rgba(14,40,45,.5);}
   .btn.running .disc{box-shadow:0 0 0 4px rgba(226,96,63,.25);}
   .btn.running .disc::after{content:"❚❚"; font-size:7px; letter-spacing:-1px; color:var(--rec); padding-left:0;}
   .btn .timer{position:absolute; bottom:9px; left:50%; transform:translateX(-50%); font-size:11px; font-weight:800; color:var(--rec); font-variant-numeric:tabular-nums; display:none;}
@@ -1955,6 +1956,7 @@ function removeStudentLocal(sid){
     const next = db.students.find(s=>s.id===state.sid) || db.students[0];
     if(next) applyCaseToDb(next);
   }
+  rememberLastStudent(state.sid);
   reindex();
 }
 
@@ -2677,8 +2679,7 @@ async function initApp(){
     await persistNow();
   }
 
-  if(!db.students.some(s => s.id === state.sid))
-    state.sid = db.students[0]?.id || '';
+  restoreLastStudent();
   applyCaseToDb(activeCase());
   reindex();
   paintStudent();
@@ -2707,6 +2708,33 @@ function reindex(){ bMap=Object.fromEntries(db.behaviors.map(b=>[b.id,b])); sMap
 function activeRecords(){ return (db.records||[]).filter(r=>!r.deleted); }
 const $=s=>document.querySelector(s);
 const cur=()=>sMap[state.sid]||db.students[0];
+function lastStudentKey(uid=fbUser?.uid){
+  return uid ? 'fba_last_student_' + uid : null;
+}
+function readLastStudentId(uid=fbUser?.uid){
+  const key=lastStudentKey(uid);
+  if(!key) return '';
+  try{return localStorage.getItem(key)||'';}
+  catch(_){return '';}
+}
+function rememberLastStudent(sid=state.sid, uid=fbUser?.uid){
+  const key=lastStudentKey(uid);
+  if(!key || !sid) return;
+  try{localStorage.setItem(key, sid);}
+  catch(_){}
+}
+function restoreLastStudent(){
+  const lastSid=readLastStudentId();
+  if(lastSid && db?.students?.some(s=>s.id===lastSid)){
+    state.sid=lastSid;
+    return true;
+  }
+  if(!db?.students?.some(s=>s.id===state.sid)){
+    state.sid=db?.students?.[0]?.id || '';
+  }
+  rememberLastStudent(state.sid);
+  return false;
+}
 // ============ P0: ULID 생성기 (다기기 충돌 방지) ============
 // Monotonic ULID — 타임스탬프+랜덤 26자, 정렬 가능, 전역 고유
 const ENCODING='0123456789ABCDEFGHJKMNPQRSTVWXYZ';
@@ -2846,7 +2874,10 @@ function renderGrid(){
 }
 
 // ============ record tap ============
-function tapBehavior(bid,btn,e){
+function tapBehavior(bid,btn,e,opts={}){
+  const openDetails=!!opts.openDetails;
+  const eventMs=opts.eventTime||Date.now();
+  const eventIso=new Date(eventMs).toISOString();
   const b=bMap[bid]; if(!b)return;
   const rip=document.createElement('span');rip.className='ripple';
   const rect=btn.getBoundingClientRect();const sz=Math.max(rect.width,rect.height);
@@ -2856,28 +2887,32 @@ function tapBehavior(bid,btn,e){
 
   if(b.type==='dur'){
     if(state.timer&&state.timer.bid===bid){
-      const sec=Math.round((Date.now()-state.timer.start)/1000);
+      const sec=Math.max(0,Math.round((eventMs-state.timer.start)/1000));
       clearInterval(state.timer.iv);state.timer=null;
       const now=new Date().toISOString();
-      let rec={id:ulid(),sid:state.sid,bid,ts:new Date().toISOString(),dur:sec,a:[],c:[],note:'',
+      let rec={id:ulid(),sid:state.sid,bid,ts:eventIso,dur:sec,a:[],c:[],note:'',
         observerId:fbUser?.uid||OBSERVER_ID,createdByUid:fbUser?.uid||OBSERVER_ID,createdByName:fbUser?.displayName||fbUser?.email||'관찰자',deviceId:DEVICE_ID,env:state.currentEnv,
         updatedAt:now,deleted:false,dirty:true};
       rec=captureLatency(rec); // 지연시간 자동 첨부
-      Repository.putRecord(rec);renderGrid();paintStudent();openSheet(rec.id);
+      Repository.putRecord(rec);renderGrid();paintStudent();
+      if(openDetails) openSheet(rec.id);
+      else toast(`<b>${b.name}</b> 저장됨 · ABC는 검토에서 채울 수 있어요`);
     }else{
       if(state.timer){clearInterval(state.timer.iv);}
-      state.timer={bid,start:Date.now(),iv:null};
+      state.timer={bid,start:eventMs,iv:null};
       state.timer.iv=setInterval(()=>{const el=$('#tm-'+bid);if(el)el.textContent=fmtClock(Math.round((Date.now()-state.timer.start)/1000));},500);
       renderGrid();toast(`<b>${b.name}</b> 측정 시작 — 끝나면 다시 누르세요`);
     }
     return;
   }
-  const now2=new Date().toISOString();
+  const now2=eventIso;
   let rec={id:ulid(),sid:state.sid,bid,ts:now2,dur:null,a:[],c:[],note:'',
     observerId:fbUser?.uid||OBSERVER_ID,createdByUid:fbUser?.uid||OBSERVER_ID,createdByName:fbUser?.displayName||fbUser?.email||'관찰자',deviceId:DEVICE_ID,env:state.currentEnv,
     updatedAt:now2,deleted:false,dirty:true};
   rec=captureLatency(rec); // 지연시간 자동 첨부
-  Repository.putRecord(rec);renderGrid();paintStudent();openSheet(rec.id);
+  Repository.putRecord(rec);renderGrid();paintStudent();
+  if(openDetails) openSheet(rec.id);
+  else toast(`<b>${b.name}</b> 기록됨 · ABC는 검토에서 채울 수 있어요`);
 }
 
 // ============ ABC sheet ============
@@ -3680,7 +3715,7 @@ async function saveEditor(){
   if(ed.kind==='student'){
     if(!ed.name.trim()){toast('이름을 입력하세요');return;}
     if(ed.id){const s=sMap[ed.id];if(s.ownerUid&&s.ownerUid!==fbUser?.uid){toast('공유받은 학생 정보는 만든 계정에서만 수정할 수 있어요');return;}s.name=ed.name.trim();s.color=ed.color;s.sub=ed.sub;}
-    else{syncActiveCaseFromDb();const s={id:ulid(),name:ed.name.trim(),color:ed.color,sub:ed.sub,ownerUid:fbUser?.uid||null,memberUids:fbUser?[fbUser.uid]:[],members:fbUser?[fbUser.uid]:[],shareCode:null,shareCodeExpiresAt:null,...caseDefaults()};db.students.push(s);state.sid=s.id;applyCaseToDb(s);}
+    else{syncActiveCaseFromDb();const s={id:ulid(),name:ed.name.trim(),color:ed.color,sub:ed.sub,ownerUid:fbUser?.uid||null,memberUids:fbUser?[fbUser.uid]:[],members:fbUser?[fbUser.uid]:[],shareCode:null,shareCodeExpiresAt:null,...caseDefaults()};db.students.push(s);state.sid=s.id;rememberLastStudent(s.id);applyCaseToDb(s);}
   }else if(ed.kind==='behavior'){
     if(!ed.name.trim()){toast('행동 이름을 입력하세요');return;}
     if(ed.id){const b=bMap[ed.id];b.name=ed.name.trim();b.color=ed.color;b.icon=ed.icon;b.type=ed.type;}
@@ -4774,6 +4809,7 @@ document.addEventListener('click', e=>{
     syncActiveCaseFromDb();
     stSid=ss.dataset.stsid;
     state.sid=stSid;
+    rememberLastStudent(stSid);
     applyCaseToDb(activeCase());
     reindex();
     renderStudioSidebar();
@@ -5259,6 +5295,47 @@ function saveOrder(){
   toast('행동 순서가 저장됐어요');
 }
 
+// ============ behavior long press ============
+const BEHAVIOR_LONG_PRESS_MS = 2000;
+let behaviorPress = null;
+let suppressBehaviorClickUntil = 0;
+function clearBehaviorPress(){
+  if(!behaviorPress) return;
+  clearTimeout(behaviorPress.timer);
+  if(behaviorPress.btn) behaviorPress.btn.classList.remove('holding');
+  behaviorPress = null;
+}
+document.addEventListener('pointerdown', e=>{
+  const btn=e.target.closest('[data-bh]');
+  if(!btn || e.button>0) return;
+  const bid=btn.dataset.bh;
+  btn.classList.add('holding');
+  behaviorPress={
+    btn,
+    bid,
+    pointerId:e.pointerId,
+    x:e.clientX,
+    y:e.clientY,
+    downAt:Date.now(),
+    timer:setTimeout(()=>{
+      if(!behaviorPress || behaviorPress.bid!==bid) return;
+      suppressBehaviorClickUntil=Date.now()+900;
+      if(navigator.vibrate) navigator.vibrate([35,35,35]);
+      tapBehavior(bid, btn, {clientX:behaviorPress.x, clientY:behaviorPress.y}, {openDetails:true,eventTime:behaviorPress.downAt});
+      clearBehaviorPress();
+    }, BEHAVIOR_LONG_PRESS_MS)
+  };
+}, {passive:true});
+document.addEventListener('pointerup', clearBehaviorPress, {passive:true});
+document.addEventListener('pointercancel', clearBehaviorPress, {passive:true});
+document.addEventListener('pointermove', e=>{
+  if(!behaviorPress || e.pointerId!==behaviorPress.pointerId) return;
+  if(Math.abs(e.clientX-behaviorPress.x)>14 || Math.abs(e.clientY-behaviorPress.y)>14) clearBehaviorPress();
+}, {passive:true});
+document.addEventListener('contextmenu', e=>{
+  if(e.target.closest('[data-bh]')) e.preventDefault();
+});
+
 // ============ tabs ============
 function switchTab(t){
   if(!db) return;
@@ -5277,8 +5354,8 @@ function switchTab(t){
 document.addEventListener('click',e=>{
   const t=e.target;
   const tab=t.closest('[data-tab]'); if(tab){switchTab(tab.dataset.tab);return;}
-  const bh=t.closest('[data-bh]'); if(bh){tapBehavior(bh.dataset.bh,bh,e);return;}
-  const pick=t.closest('[data-pick]'); if(pick){syncActiveCaseFromDb();state.sid=pick.dataset.pick;applyCaseToDb(activeCase());reindex();state.date=null;$('#switcher').classList.remove('open');renderSwitcher();paintStudent();renderGrid();updateNoteBadge();toast(`<b>${cur().name}</b> 로 전환`);return;}
+  const bh=t.closest('[data-bh]'); if(bh){if(Date.now()<suppressBehaviorClickUntil)return;tapBehavior(bh.dataset.bh,bh,e,{openDetails:false});return;}
+  const pick=t.closest('[data-pick]'); if(pick){syncActiveCaseFromDb();state.sid=pick.dataset.pick;rememberLastStudent(state.sid);applyCaseToDb(activeCase());reindex();state.date=null;$('#switcher').classList.remove('open');renderSwitcher();paintStudent();renderGrid();updateNoteBadge();toast(`<b>${cur().name}</b> 로 전환`);return;}
   const editTime=t.closest('[data-edit-time]');
   if(editTime){ openTimeEdit(editTime.dataset.editTime); return; }
   const orderUp=t.closest('[data-order-up]');
