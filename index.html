@@ -5483,7 +5483,8 @@ function renderIoaSessionList(){
         ${mine?`<button class="ioa-mini-btn ${s.participants?.[ioaUid()]?.ready?'warn':'primary'}" data-ioa-ready="${s.id}">${s.participants?.[ioaUid()]?.ready?(appLang==='en'?'Ready ✓':'준비됨 ✓'):(appLang==='en'?'Ready':'준비 완료')}</button>`:`<button class="ioa-mini-btn primary" data-ioa-join="${s.id}">${appLang==='en'?'Join':'참가'}</button>`}
         ${ioaCanStart(s)?`<button class="ioa-mini-btn primary" data-ioa-start="${s.id}">${appLang==='en'?'Start':'시작'}</button>`:''}
         <button class="ioa-mini-btn" data-ioa-open="${s.id}">${appLang==='en'?'Open':'열기'}</button>
-        ${s.createdByUid===ioaUid()&&s.status==='waiting'?`<button class="ioa-mini-btn warn" data-ioa-cancel="${s.id}">${appLang==='en'?'Cancel':'취소'}</button>`:''}
+        ${s.createdByUid===ioaUid()&&s.status!=='complete'?`<button class="ioa-mini-btn warn" data-ioa-cancel="${s.id}">${appLang==='en'?'Cancel session':'세션 취소'}</button>`:''}
+        ${mine&&s.createdByUid!==ioaUid()&&s.status==='waiting'?`<button class="ioa-mini-btn warn" data-ioa-leave="${s.id}">${appLang==='en'?'Leave':'나가기'}</button>`:''}
       </div>
     </div>`;
   }).join('');
@@ -5545,7 +5546,29 @@ async function startIoaSession(id){
 async function cancelIoaSession(id){
   const s=(db.ioaSessions||[]).find(x=>x.id===id)||(ioaState.activeId===id?ioaState.session:null);
   if(!s||s.createdByUid!==ioaUid()) return;
-  await FS.ioaSession(s.sid,id).set({status:'cancelled',updatedAt:new Date().toISOString()},{merge:true});
+  const ok=confirm(appLang==='en'?'Cancel this IOA session? It will disappear from active sessions.':'이 IOA 세션을 취소할까요? 진행 중인 세션 목록에서 사라집니다.');
+  if(!ok) return;
+  await FS.ioaSession(s.sid,id).set({status:'cancelled',cancelledAt:new Date().toISOString(),cancelledByUid:ioaUid(),updatedAt:new Date().toISOString()},{merge:true});
+  if(ioaState.activeId===id) closeIoaOverlay();
+  renderIoaSessionList();
+}
+
+async function leaveIoaSession(id){
+  const s=(db.ioaSessions||[]).find(x=>x.id===id)||(ioaState.activeId===id?ioaState.session:null);
+  if(!s||!ioaIsParticipant(s)||s.createdByUid===ioaUid()) return;
+  if(s.status!=='waiting'){
+    toast(appLang==='en'?'A running session cannot be left. Ask the creator to cancel it.':'진행 중인 세션은 나갈 수 없어요. 만든 사람에게 세션 취소를 요청하세요.');
+    return;
+  }
+  const ok=confirm(appLang==='en'?'Leave this IOA session?':'이 IOA 세션에서 나갈까요?');
+  if(!ok) return;
+  const uid0=ioaUid();
+  await FS.ioaSession(s.sid,id).update({
+    [`participants.${uid0}`]:firebase.firestore.FieldValue.delete(),
+    participantOrder:firebase.firestore.FieldValue.arrayRemove(uid0),
+    updatedAt:new Date().toISOString()
+  });
+  if(ioaState.activeId===id) closeIoaOverlay();
   renderIoaSessionList();
 }
 function listenIoaSession(sid,id,show=false){
@@ -5554,6 +5577,11 @@ function listenIoaSession(sid,id,show=false){
   ioaState.unsub=FS.ioaSession(sid,id).onSnapshot(doc=>{
     if(!doc.exists) return;
     ioaState.session={id:doc.id,...doc.data(),sid:doc.data().sid||sid};
+    if(ioaState.session.status==='cancelled'){
+      closeIoaOverlay();
+      if($('#ioaSetupSheet')?.classList.contains('open')) renderIoaSessionList();
+      return;
+    }
     renderIoaOverlay();
     if($('#ioaSetupSheet')?.classList.contains('open')) renderIoaSessionList();
   },e=>console.warn('IOA 세션 리스너 오류:',e.code||e.message||e));
@@ -5584,7 +5612,7 @@ function renderIoaOverlay(){
   if(s.status==='waiting'){
     timer.textContent='--';
     prompt.textContent=appLang==='en'?'Have at least two observers join and mark ready.':'두 명 이상의 관찰자가 참가한 뒤 준비 완료를 눌러야 시작할 수 있어요.';
-    controls.innerHTML=`<button class="ioa-live-btn primary" data-ioa-ready="${s.id}">${s.participants?.[ioaUid()]?.ready?(appLang==='en'?'Ready ✓':'준비됨 ✓'):(appLang==='en'?'Ready':'준비 완료')}</button>${ioaCanStart(s)?`<button class="ioa-live-btn warn" data-ioa-start="${s.id}">${appLang==='en'?'Start':'시작'}</button>`:''}`;
+    controls.innerHTML=`<button class="ioa-live-btn primary" data-ioa-ready="${s.id}">${s.participants?.[ioaUid()]?.ready?(appLang==='en'?'Ready ✓':'준비됨 ✓'):(appLang==='en'?'Ready':'준비 완료')}</button>${ioaCanStart(s)?`<button class="ioa-live-btn warn" data-ioa-start="${s.id}">${appLang==='en'?'Start':'시작'}</button>`:''}${s.createdByUid===ioaUid()?`<button class="ioa-live-btn danger" data-ioa-cancel="${s.id}">${appLang==='en'?'Cancel session':'세션 취소'}</button>`:`<button class="ioa-live-btn danger" data-ioa-leave="${s.id}">${appLang==='en'?'Leave':'나가기'}</button>`}`;
     return;
   }
   if(s.status==='complete'){
@@ -5602,6 +5630,7 @@ function renderIoaOverlay(){
       prompt.textContent=wait>0
         ? (appLang==='en'?'Starting together...':'곧 동시에 시작합니다...')
         : `${appLang==='en'?'Observe interval':'관찰 간격'} ${idx+1}/${s.totalIntervals}`;
+      controls.innerHTML=s.createdByUid===ioaUid()?`<button class="ioa-live-btn danger" data-ioa-cancel="${s.id}">${appLang==='en'?'Cancel session':'세션 취소'}</button>`:'';
       return;
     }
     if(s.phase==='marking'){
@@ -5610,7 +5639,7 @@ function renderIoaOverlay(){
       prompt.textContent=marked
         ? (appLang==='en'?'Response saved. Waiting for other observers.':'응답을 저장했어요. 다른 관찰자의 응답을 기다리는 중입니다.')
         : (appLang==='en'?'Did the target behavior occur during this interval?':'이번 간격 동안 목표 행동이 발생했나요?');
-      controls.innerHTML=marked?'':`<button class="ioa-live-btn primary" data-ioa-mark="O">O</button><button class="ioa-live-btn danger" data-ioa-mark="X">X</button>`;
+      controls.innerHTML=(marked?'':`<button class="ioa-live-btn primary" data-ioa-mark="O">O</button><button class="ioa-live-btn danger" data-ioa-mark="X">X</button>`)+(s.createdByUid===ioaUid()?`<button class="ioa-live-btn danger" data-ioa-cancel="${s.id}">${appLang==='en'?'Cancel session':'세션 취소'}</button>`:'');
       return;
     }
   }
@@ -5619,7 +5648,7 @@ function renderIoaOverlay(){
     timer.textContent=ioaTimeText(wait>0?wait:remain);
     const count=Number(s.counts?.[ioaUid()]||0);
     prompt.innerHTML=wait>0?(appLang==='en'?'Starting together...':'곧 동시에 시작합니다...'):`<div class="ioa-live-count">${count}</div>${appLang==='en'?'Tap when the target behavior occurs.':'목표 행동이 발생할 때마다 누르세요.'}`;
-    controls.innerHTML=wait>0?'':`<button class="ioa-live-btn primary" data-action="ioa-count">${appLang==='en'?'Count +1':'빈도 +1'}</button>`;
+    controls.innerHTML=wait>0?(s.createdByUid===ioaUid()?`<button class="ioa-live-btn danger" data-ioa-cancel="${s.id}">${appLang==='en'?'Cancel session':'세션 취소'}</button>`:''):`<button class="ioa-live-btn primary" data-action="ioa-count">${appLang==='en'?'Count +1':'빈도 +1'}</button>${s.createdByUid===ioaUid()?`<button class="ioa-live-btn danger" data-ioa-cancel="${s.id}">${appLang==='en'?'Cancel session':'세션 취소'}</button>`:''}`;
     return;
   }
   if(s.type==='duration'){
@@ -5627,7 +5656,7 @@ function renderIoaOverlay(){
     timer.textContent=ioaTimeText(wait>0?wait:remain);
     const running=!!ioaState.durStartMs;
     prompt.textContent=wait>0?(appLang==='en'?'Starting together...':'곧 동시에 시작합니다...'):(running?(appLang==='en'?'Behavior duration is being recorded.':'행동 지속시간 기록 중입니다.'):(appLang==='en'?'Start when the behavior begins, stop when it ends.':'행동이 시작되면 시작, 끝나면 종료를 누르세요.'));
-    controls.innerHTML=wait>0?'':`<button class="ioa-live-btn ${running?'danger':'primary'}" data-action="ioa-duration-toggle">${running?(appLang==='en'?'Stop':'종료'):(appLang==='en'?'Start':'시작')}</button>`;
+    controls.innerHTML=wait>0?(s.createdByUid===ioaUid()?`<button class="ioa-live-btn danger" data-ioa-cancel="${s.id}">${appLang==='en'?'Cancel session':'세션 취소'}</button>`:''):`<button class="ioa-live-btn ${running?'danger':'primary'}" data-action="ioa-duration-toggle">${running?(appLang==='en'?'Stop':'종료'):(appLang==='en'?'Start':'시작')}</button>${s.createdByUid===ioaUid()?`<button class="ioa-live-btn danger" data-ioa-cancel="${s.id}">${appLang==='en'?'Cancel session':'세션 취소'}</button>`:''}`;
   }
 }
 function tickIoaSession(){
@@ -6144,6 +6173,7 @@ document.addEventListener('click',e=>{
   const ioaStart=t.closest('[data-ioa-start]'); if(ioaStart){startIoaSession(ioaStart.dataset.ioaStart);return;}
   const ioaOpen=t.closest('[data-ioa-open]'); if(ioaOpen){const s=(db.ioaSessions||[]).find(x=>x.id===ioaOpen.dataset.ioaOpen);if(s)listenIoaSession(s.sid,s.id,true);return;}
   const ioaCancel=t.closest('[data-ioa-cancel]'); if(ioaCancel){cancelIoaSession(ioaCancel.dataset.ioaCancel);return;}
+  const ioaLeave=t.closest('[data-ioa-leave]'); if(ioaLeave){leaveIoaSession(ioaLeave.dataset.ioaLeave);return;}
   const ioaMark=t.closest('[data-ioa-mark]'); if(ioaMark){submitIoaMark(ioaMark.dataset.ioaMark);return;}
   const act=t.closest('[data-action]'); if(act){const a=act.dataset.action;
     if(a==='toggle-switcher')$('#switcher').classList.toggle('open');
