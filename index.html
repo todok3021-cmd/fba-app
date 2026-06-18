@@ -239,11 +239,11 @@
   .sw-toggle.on::after{left:21px;}
 
   /* tabbar */
-  .tabbar{position:absolute; left:0; right:0; bottom:0; height:auto; min-height:64px; z-index:42; background:rgba(251,250,246,.96); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); border-top:1px solid var(--line); display:flex; padding:8px 12px calc(14px + env(safe-area-inset-bottom, 0px));}
-  .tab{flex:1; background:none; border:none; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:4px; color:#9aa6aa; padding-top:6px;}
+  .tabbar{position:absolute; left:0; right:0; bottom:0; height:auto; min-height:64px; z-index:42; background:var(--paper); border-top:1px solid var(--line); display:flex; padding:8px 12px calc(14px + env(safe-area-inset-bottom, 0px)); box-shadow:0 -8px 24px rgba(28,42,46,.08);}
+  .tab{flex:1; background:none; border:none; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:4px; color:#7d8a8e; padding-top:6px;}
   .tab svg{width:23px;height:23px;}
   .tab span{font-size:10.5px; font-weight:700;}
-  .tab.on{color:var(--primary);}
+  .tab.on{color:var(--primary); font-weight:800;}
 
   .toast{position:fixed; bottom:calc(88px + env(safe-area-inset-bottom, 0px)); left:50%; transform:translateX(-50%) translateY(20px); background:var(--ink); color:#fff; font-size:13px; font-weight:600; padding:11px 18px; border-radius:13px; z-index:55; opacity:0; pointer-events:none; transition:.3s; white-space:nowrap; box-shadow:0 12px 30px -8px rgba(0,0,0,.4); max-width:80%;}
   .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
