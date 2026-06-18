@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
 <meta charset="UTF-8" />
   <!-- 캐시 무효화 — 항상 최신 버전 로드 -->
@@ -7,7 +7,7 @@
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>FBA Record & Analysis</title>
+<title>FBA 기록·분석</title>
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
 <style>
   :root{
@@ -384,6 +384,9 @@
   .auth-submit:hover{background:var(--primary-press);}
   .auth-submit:disabled{opacity:.6;cursor:not-allowed;}
   .auth-loading{text-align:center;padding:20px;color:var(--sub);font-size:14px;}
+  .auth-lang{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#f8f6ef;border:1px solid var(--line);border-radius:12px;padding:9px 11px;margin:-8px 0 18px;}
+  .auth-lang label{font-size:12px;font-weight:800;color:var(--sub);}
+  .auth-lang select{border:none;background:transparent;color:var(--ink);font-size:13px;font-weight:800;font-family:inherit;outline:none;cursor:pointer;}
 
 /* ═══════════════════════════════════════
    데스크톱 작업실 (≥ 1024px)
@@ -840,26 +843,33 @@
       <div class="auth-logo">
         <svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
       </div>
-      <div class="auth-title">FBA Record & Analysis</div>
-      <div class="auth-sub">Functional assessment for special education teams</div>
+      <div class="auth-title" data-i18n="appTitle">FBA 기록·분석</div>
+      <div class="auth-sub" data-i18n="appSub">특수교육 현장용 기능평가 앱</div>
+      <div class="auth-lang">
+        <label for="langSelect" data-i18n="language">언어</label>
+        <select id="langSelect" onchange="setAppLang(this.value)">
+          <option value="ko">한국어</option>
+          <option value="en">English</option>
+        </select>
+      </div>
       <div class="auth-tabs">
-        <button class="auth-tab on" id="tabLogin" onclick="showAuthTab('login')">Log in</button>
-        <button class="auth-tab" id="tabSignup" onclick="showAuthTab('signup')">Sign up</button>
+        <button class="auth-tab on" id="tabLogin" onclick="showAuthTab('login')" data-i18n="loginTab">로그인</button>
+        <button class="auth-tab" id="tabSignup" onclick="showAuthTab('signup')" data-i18n="signupTab">회원가입</button>
       </div>
       <!-- 로그인 -->
       <div id="formLogin">
-        <div class="auth-field"><label>Email</label><input id="liEmail" type="email" placeholder="teacher@school.edu" autocomplete="email"></div>
-        <div class="auth-field"><label>Password</label><input id="liPw" type="password" placeholder="Enter password" autocomplete="current-password"></div>
+        <div class="auth-field"><label data-i18n="email">이메일</label><input id="liEmail" type="email" placeholder="teacher@school.kr" data-i18n-placeholder="emailPlaceholder" autocomplete="email"></div>
+        <div class="auth-field"><label data-i18n="password">비밀번호</label><input id="liPw" type="password" placeholder="비밀번호 입력" data-i18n-placeholder="passwordPlaceholder" autocomplete="current-password"></div>
         <div class="auth-err" id="liErr"></div>
-        <button class="auth-submit" id="liBtn" onclick="doLogin()">Log in</button>
+        <button class="auth-submit" id="liBtn" onclick="doLogin()" data-i18n="loginSubmit">로그인</button>
       </div>
       <!-- 회원가입 -->
       <div id="formSignup" style="display:none">
-        <div class="auth-field"><label>Name</label><input id="suName" type="text" placeholder="Your name" maxlength="20"></div>
-        <div class="auth-field"><label>Email</label><input id="suEmail" type="email" placeholder="teacher@school.edu" autocomplete="email"></div>
-        <div class="auth-field"><label>Password (6+ characters)</label><input id="suPw" type="password" placeholder="Enter password" autocomplete="new-password"></div>
+        <div class="auth-field"><label data-i18n="name">이름</label><input id="suName" type="text" placeholder="홍길동" data-i18n-placeholder="namePlaceholder" maxlength="20"></div>
+        <div class="auth-field"><label data-i18n="email">이메일</label><input id="suEmail" type="email" placeholder="teacher@school.kr" data-i18n-placeholder="emailPlaceholder" autocomplete="email"></div>
+        <div class="auth-field"><label data-i18n="signupPassword">비밀번호 (6자 이상)</label><input id="suPw" type="password" placeholder="비밀번호 입력" data-i18n-placeholder="passwordPlaceholder" autocomplete="new-password"></div>
         <div class="auth-err" id="suErr"></div>
-        <button class="auth-submit" id="suBtn" onclick="doSignup()">Create account</button>
+        <button class="auth-submit" id="suBtn" onclick="doSignup()" data-i18n="signupSubmit">가입하기</button>
       </div>
     </div>
   </div>
@@ -873,36 +883,36 @@
         <div class="st-logo-icon">
           <svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
         </div>
-        <div class="st-logo-text">FBA Studio<span>Desktop analysis workspace</span></div>
+        <div class="st-logo-text" data-i18n-html="studioLogo">FBA 작업실<span>데스크톱 분석 환경</span></div>
       </div>
 
-      <div class="st-section-label">Students</div>
+      <div class="st-section-label" data-i18n="students">학생</div>
       <div class="st-student-list" id="stStudentList"></div>
 
       <div class="st-bottom">
         <div class="st-menu-item on" data-stab="dashboard">
           <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-          Dashboard
+          <span data-i18n="dashboard">대시보드</span>
         </div>
         <div class="st-menu-item" data-stab="analysis">
           <svg viewBox="0 0 24 24"><line x1="4" y1="20" x2="4" y2="11"/><line x1="10" y1="20" x2="10" y2="4"/><line x1="16" y1="20" x2="16" y2="14"/><line x1="22" y1="20" x2="22" y2="8"/></svg>
-          Analysis
+          <span data-i18n="analysis">분석</span>
         </div>
         <div class="st-menu-item" data-stab="notes">
           <svg viewBox="0 0 24 24"><path d="M14 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-9"/><path d="M14 3l5 5"/><path d="M9 13h6M9 17h4"/></svg>
-          Notes
+          <span data-i18n="notesShort">관찰 노트</span>
         </div>
         <div class="st-menu-item" data-stab="pdf">
           <svg viewBox="0 0 24 24"><path d="M14 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V10z"/><polyline points="14 3 14 10 21 10"/></svg>
-          PDF Report
+          <span data-i18n="pdfReport">PDF 리포트</span>
         </div>
         <div class="st-menu-item" data-stab="settings">
           <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-          Settings
+          <span data-i18n="settings">설정</span>
         </div>
         <div class="st-menu-item" style="color:rgba(255,255,255,.35);margin-top:8px" data-action="do-signout">
           <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-          <span id="stUserName">Sign out</span>
+          <span id="stUserName" data-i18n="signout">로그아웃</span>
         </div>
       </div>
     </div>
@@ -912,15 +922,15 @@
       <div class="st-header">
         <div class="st-header-left">
           <div>
-            <div class="st-student-title" id="stTitle">Dashboard</div>
+            <div class="st-student-title" id="stTitle">대시보드</div>
             <div class="st-student-sub" id="stSub"></div>
           </div>
         </div>
         <div class="st-header-right">
-          <div class="st-sync"><div class="dot" id="stDot"></div><span id="stSync">Synced</span></div>
+          <div class="st-sync"><div class="dot" id="stDot"></div><span id="stSync" data-i18n="synced">동기화됨</span></div>
           <button class="st-pdf-btn" id="stPdfBtn" onclick="exportPdf()" style="display:none">
             <svg viewBox="0 0 24 24"><path d="M14 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V10z"/><polyline points="14 3 14 10 21 10"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="12" y2="17"/></svg>
-            Save PDF
+            <span data-i18n="savePdf">PDF 저장</span>
           </button>
         </div>
       </div>
@@ -939,7 +949,7 @@
       <!-- RECORD -->
       <div class="screen active" id="s-record">
         <div class="hero" id="hero">
-          <div class="eyebrow">Recording</div>
+          <div class="eyebrow" data-i18n="recording">기록 중</div>
           <div class="student-pick" data-action="toggle-switcher">
             <div class="avatar" id="heroAv">민</div>
             <div class="student-meta">
@@ -951,25 +961,25 @@
           </div>
           <div class="switcher" id="switcher"></div>
           <div class="hero-stats">
-            <div class="stat"><b id="stToday">0</b><span>Today</span></div>
-            <div class="stat warn"><b id="stIncomp">0</b><span>ABC incomplete</span></div>
-            <div class="stat"><b id="stWeek">0</b><span>This week</span></div>
+            <div class="stat"><b id="stToday">0</b><span data-i18n="todayRecords">오늘 기록</span></div>
+            <div class="stat warn"><b id="stIncomp">0</b><span data-i18n="abcIncomplete">ABC 미완성</span></div>
+            <div class="stat"><b id="stWeek">0</b><span data-i18n="thisWeek">이번 주 합계</span></div>
           </div>
           <div id="syncBadge"><div class="sb-dot" id="sbDot"></div><span id="sbText"></span></div>
         <div class="note-fab" data-action="open-note">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-9"/><path d="M14 3l5 5"/><path d="M9 13h6M9 17h4"/></svg>
-            <div><div>Observation Notes</div><div class="nf-sub">Interview · Scale · Memo</div></div>
-            <span class="nf-badge" id="noteBadge">Open</span>
+            <div><div data-i18n="observationNotes">관찰 노트</div><div class="nf-sub" data-i18n="noteSub">면담 · 척도 · 메모</div></div>
+            <span class="nf-badge" id="noteBadge">열기</span>
           </div>
         </div>
 
         <!-- 지연형 진행 띠 -->
         <div id="latencyBar">
           <div>
-            <div style="font-size:11px;opacity:.75;margin-bottom:2px">Latency timer running - tap a behavior to stop</div>
+            <div style="font-size:11px;opacity:.75;margin-bottom:2px" data-i18n="latencyRunning">지연시간 측정 중 — 행동 버튼을 눌러 종료</div>
             <div class="lb-timer" id="latencyTimer">00:00</div>
           </div>
-          <button class="lb-cancel" data-action="cancel-latency">Cancel</button>
+          <button class="lb-cancel" data-action="cancel-latency" data-i18n="cancel">취소</button>
         </div>
 
         <!-- 간격 기록 진행 오버레이 -->
@@ -981,31 +991,31 @@
             </svg>
             <div class="iv-center">
               <div class="iv-timer" id="ivTimer">00</div>
-              <div class="iv-interval-num" id="ivIntervalNum">Interval 1</div>
+              <div class="iv-interval-num" id="ivIntervalNum">간격 1</div>
             </div>
           </div>
-          <div class="iv-status" id="ivStatus">Observing - mark O/X at the end of each interval</div>
+          <div class="iv-status" id="ivStatus" data-i18n="intervalObservingOx">관찰 중 — 간격 종료 시 O/X 입력</div>
           <div class="iv-ox-row" id="ivOXRow" style="display:none">
             <button class="iv-ox-btn o" data-action="iv-mark-o">O</button>
             <button class="iv-ox-btn x" data-action="iv-mark-x">X</button>
           </div>
           <div class="iv-result-row" id="ivResultRow">
-            <div class="iv-stat"><b id="ivOCount">0</b><span>With behavior</span></div>
-            <div class="iv-stat"><b id="ivXCount">0</b><span>Without</span></div>
-            <div class="iv-stat"><b id="ivPct">0%</b><span>Occurrence</span></div>
+            <div class="iv-stat"><b id="ivOCount">0</b><span data-i18n="withBehavior">발생 간격</span></div>
+            <div class="iv-stat"><b id="ivXCount">0</b><span data-i18n="withoutBehavior">미발생 간격</span></div>
+            <div class="iv-stat"><b id="ivPct">0%</b><span data-i18n="occurrence">발생률</span></div>
           </div>
-          <button class="iv-stop-btn" data-action="stop-interval">End Observation</button>
+          <button class="iv-stop-btn" data-action="stop-interval" data-i18n="endObservation">관찰 종료</button>
         </div>
 
-        <div class="sect-label">Behavior Recording <em>Interval · Latency · Behavior</em></div>
+        <div class="sect-label" data-i18n-html="behaviorRecording">행동 기록 <em>간격 · 지연 · 행동</em></div>
         <div class="measure-row">
           <button class="meas-btn" id="btnInterval" data-action="open-interval-setup">
             <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18"/></svg>
-            <div><div>Interval Recording</div><div class="mb-sub">Interval</div></div>
+            <div><div data-i18n="intervalRecording">간격 기록</div><div class="mb-sub">Interval</div></div>
           </button>
           <button class="meas-btn" id="btnLatency" data-action="start-latency">
             <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 8 14"/></svg>
-            <div><div>Start Antecedent</div><div class="mb-sub">Latency</div></div>
+            <div><div data-i18n="startAntecedent">선행 시작</div><div class="mb-sub">Latency</div></div>
           </button>
         </div>
         <div class="grid" id="behaviorGrid"></div>
@@ -1013,7 +1023,7 @@
 
       <!-- REVIEW -->
       <div class="screen" id="s-review">
-        <div class="pagehead"><div><h1>Review</h1><p id="reviewSub"></p></div></div>
+        <div class="pagehead"><div><h1 data-i18n="review">검토</h1><p id="reviewSub"></p></div></div>
         <div class="daystrip" id="daystrip"></div>
         <div class="timeline" id="timeline"></div>
       </div>
@@ -1021,10 +1031,10 @@
       <!-- ANALYSIS -->
       <div class="screen" id="s-analysis">
         <div class="pagehead">
-          <div><h1>Analysis</h1><p>Recent 7-day patterns and function hypothesis.</p></div>
+          <div><h1 data-i18n="analysis">분석</h1><p data-i18n="analysisSub">최근 7일 패턴과 기능 가설입니다.</p></div>
           <button class="btn-prim" id="btnPdf" data-action="export-pdf" style="flex:none;font-size:13px;padding:10px 16px;border-radius:13px;display:flex;align-items:center;gap:7px">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V10z"/><polyline points="14 3 14 10 21 10"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="12" y2="17"/></svg>
-            PDF Report
+            <span data-i18n="pdfReport">PDF 리포트</span>
           </button>
         </div>
         <div id="analysisBody"></div>
@@ -1032,7 +1042,7 @@
 
       <!-- SETTINGS -->
       <div class="screen" id="s-settings">
-        <div class="pagehead"><div><h1>Settings</h1><p>Set up items in advance so field recording stays quick.</p></div></div>
+        <div class="pagehead"><div><h1 data-i18n="settings">설정</h1><p data-i18n="settingsSub">미리 정의해 두면 현장에선 누르기만 하면 됩니다.</p></div></div>
         <div class="setgrp">
           <div class="gh"><span>학생 명단</span></div>
           <div id="setStudents"></div>
@@ -1331,42 +1341,42 @@
     <div class="sheet" id="intervalSetupSheet">
       <div class="grab"></div>
       <div class="sheet-head">
-        <div class="stit"><b>Interval Recording Setup</b><span>Interval Recording</span></div>
-        <button class="ghostbtn" data-action="close-interval-setup">Cancel</button>
+        <div class="stit"><b data-i18n="intervalSetup">간격 기록 설정</b><span>Interval Recording</span></div>
+        <button class="ghostbtn" data-action="close-interval-setup" data-i18n="cancel">취소</button>
       </div>
       <div class="interval-setup-scroll">
         <div class="interval-setup-field">
-          <label>Recording method</label>
+          <label data-i18n="recordingMethod">기록 방식</label>
           <div class="seg iv-mode-row">
-            <button type="button" class="on" data-iv-mode="ox">O/X single<span class="sd">One target behavior</span></button>
-            <button type="button" data-iv-mode="sample">Time sampling<span class="sd">Multiple behavior codes</span></button>
+            <button type="button" class="on" data-iv-mode="ox" data-i18n-html="oxSingle">O/X 단일<span class="sd">한 행동 발생 여부</span></button>
+            <button type="button" data-iv-mode="sample" data-i18n-html="timeSampling">시간표집<span class="sd">여러 행동 코드</span></button>
           </div>
           <input type="hidden" id="ivMode" value="ox">
         </div>
         <div class="interval-setup-field">
-          <label>Target behavior</label>
+          <label data-i18n="targetBehavior">관찰 대상 행동</label>
           <select class="behavior-select" id="ivBehavior"></select>
         </div>
         <div class="interval-setup-field" id="ivCodeField" style="display:none">
-          <label>Time sampling codes</label>
+          <label data-i18n="timeSamplingCodes">시간표집 코드</label>
           <div class="iv-code-list" id="ivCodeList"></div>
-          <div class="iv-help">Only checked behaviors appear as buttons at the end of each interval. Tap a code field to edit labels such as T, D, or S.</div>
+          <div class="iv-help" data-i18n="timeSamplingHelp">체크한 행동만 간격 종료 시 버튼으로 나타납니다. 코드 칸을 눌러 T, D, S처럼 바꿀 수 있어요.</div>
         </div>
         <div class="interval-setup-field">
-          <label>Interval length</label>
+          <label data-i18n="intervalLength">간격 시간</label>
           <div class="num-row">
             <input type="number" id="ivIntervalSec" value="10" min="5" max="600">
-            <span class="num-unit" id="ivUnitLabel">seconds per O/X mark</span>
+            <span class="num-unit" id="ivUnitLabel">초마다 O/X 입력</span>
           </div>
         </div>
         <div class="interval-setup-field">
-          <label>Total observation time</label>
+          <label data-i18n="totalObservationTime">총 관찰 시간</label>
           <div class="num-row">
             <input type="number" id="ivTotalMin" value="30" min="1" max="180">
-            <span class="num-unit">minutes</span>
+            <span class="num-unit" data-i18n="minutes">분</span>
           </div>
         </div>
-        <button class="btn-prim" style="width:100%;margin-top:8px;padding:13px;font-size:15px;border-radius:14px;margin-bottom:20px" data-action="start-interval">Start observation</button>
+        <button class="btn-prim" style="width:100%;margin-top:8px;padding:13px;font-size:15px;border-radius:14px;margin-bottom:20px" data-action="start-interval" data-i18n="startObservation">관찰 시작</button>
       </div>
     </div>
 
@@ -1391,20 +1401,20 @@
       <div class="grab"></div>
       <div class="sheet-head">
         <div class="sdisc" id="shDisc"></div>
-        <div class="stit"><b id="shTitle">Behavior</b><span id="shTime"></span></div>
-        <button class="ghostbtn danger" data-action="del-record">Delete</button>
+        <div class="stit"><b id="shTitle">행동</b><span id="shTime"></span></div>
+        <button class="ghostbtn danger" data-action="del-record" data-i18n="delete">삭제</button>
       </div>
       <div class="sheet-body">
-        <div class="grp-tit"><span class="badge" style="background:#7a8a3a">A</span> Antecedent <em>What happened right before?</em></div>
+        <div class="grp-tit" data-i18n-html="abcA"><span class="badge" style="background:#7a8a3a">A</span> 선행사건 <em>행동 직전 무슨 일이?</em></div>
         <div class="chips" id="chipsA"></div>
-        <div class="grp-tit"><span class="badge" style="background:#b4502f">C</span> Consequence <em>What happened right after?</em></div>
+        <div class="grp-tit" data-i18n-html="abcC"><span class="badge" style="background:#b4502f">C</span> 후속결과 <em>행동 직후 어떻게 됐나?</em></div>
         <div class="chips" id="chipsC"></div>
-        <div class="grp-tit">Note <em>Optional</em></div>
-        <textarea class="notebox" id="note" rows="2" placeholder="Example: occurred right after math worksheet was presented"></textarea>
+        <div class="grp-tit" data-i18n-html="noteOptional">메모 <em>선택</em></div>
+        <textarea class="notebox" id="note" rows="2" placeholder="예: 수학 학습지 제시 직후 발생" data-i18n-placeholder="recordNotePlaceholder"></textarea>
       </div>
       <div class="sheet-foot">
-        <button class="btn-ghost" data-action="dismiss-sheet">Later</button>
-        <button class="btn-prim" data-action="save-sheet">Save and close</button>
+        <button class="btn-ghost" data-action="dismiss-sheet" data-i18n="later">나중에</button>
+        <button class="btn-prim" data-action="save-sheet" data-i18n="saveAndClose">저장하고 닫기</button>
       </div>
     </div>
 
@@ -1427,10 +1437,10 @@
 
     <div class="tabbar">
       <div class="tabbar-bg" aria-hidden="true"></div>
-      <button class="tab on" data-tab="record"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.2" fill="currentColor" stroke="none"/></svg><span>Record</span></button>
-      <button class="tab" data-tab="review"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="9" y1="6" x2="20" y2="6"/><line x1="9" y1="12" x2="20" y2="12"/><line x1="9" y1="18" x2="20" y2="18"/><circle cx="4.5" cy="6" r="1.3" fill="currentColor" stroke="none"/><circle cx="4.5" cy="12" r="1.3" fill="currentColor" stroke="none"/><circle cx="4.5" cy="18" r="1.3" fill="currentColor" stroke="none"/></svg><span>Review</span></button>
-      <button class="tab" data-tab="analysis"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="20" x2="4" y2="11"/><line x1="10" y1="20" x2="10" y2="4"/><line x1="16" y1="20" x2="16" y2="14"/><line x1="22" y1="20" x2="22" y2="8"/></svg><span>Analysis</span></button>
-      <button class="tab" data-tab="settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span>Settings</span></button>
+      <button class="tab on" data-tab="record"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.2" fill="currentColor" stroke="none"/></svg><span data-i18n="record">기록</span></button>
+      <button class="tab" data-tab="review"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="9" y1="6" x2="20" y2="6"/><line x1="9" y1="12" x2="20" y2="12"/><line x1="9" y1="18" x2="20" y2="18"/><circle cx="4.5" cy="6" r="1.3" fill="currentColor" stroke="none"/><circle cx="4.5" cy="12" r="1.3" fill="currentColor" stroke="none"/><circle cx="4.5" cy="18" r="1.3" fill="currentColor" stroke="none"/></svg><span data-i18n="review">검토</span></button>
+      <button class="tab" data-tab="analysis"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="20" x2="4" y2="11"/><line x1="10" y1="20" x2="10" y2="4"/><line x1="16" y1="20" x2="16" y2="14"/><line x1="22" y1="20" x2="22" y2="8"/></svg><span data-i18n="analysis">분석</span></button>
+      <button class="tab" data-tab="settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span data-i18n="settings">설정</span></button>
     </div>
   </div>
 </div>
@@ -1481,7 +1491,7 @@ const FUNC_BG={escape:'#eaf1f9', attention:'#fdf3e7', tangible:'#eef6ec', sensor
 
 // ============ defaults ============
 function defaults(){
-  return {
+  const localized=appLang==='en'?{
     students:[
       {id:'s1',name:'Student A',color:'#0F6E6C',sub:'Grade 3 · escape behavior observation'},
       {id:'s2',name:'Student B',color:'#7A5BB0',sub:'Grade 2 · attention behavior observation'},
@@ -1505,6 +1515,36 @@ function defaults(){
       {id:'c3',text:'Peer response',fav:false},{id:'c4',text:'Access provided',fav:false},
       {id:'c5',text:'Ignored',fav:false},{id:'c6',text:'Timeout',fav:false},
     ],
+  }:{
+    students:[
+      {id:'s1',name:'김민준',color:'#0F6E6C',sub:'3학년 · 회피 행동 관찰 4주차'},
+      {id:'s2',name:'이서연',color:'#7A5BB0',sub:'2학년 · 관심 끌기 관찰 2주차'},
+      {id:'s3',name:'박지호',color:'#C77A1E',sub:'5학년 · 감각 자극 관찰 1주차'},
+    ],
+    behaviors:[
+      {id:'b1',name:'자리 이탈',color:'#2A9D8F',icon:'run',type:'dur'},
+      {id:'b2',name:'때리기',color:'#E2603F',icon:'hit',type:'freq'},
+      {id:'b3',name:'소리지르기',color:'#E0972F',icon:'shout',type:'freq'},
+      {id:'b4',name:'물건 던지기',color:'#7A5BB0',icon:'throw',type:'freq'},
+      {id:'b5',name:'울음',color:'#3E86C0',icon:'cry',type:'dur'},
+      {id:'b6',name:'자기자극',color:'#5E9A57',icon:'stim',type:'dur'},
+    ],
+    aChips:[
+      {id:'a1',text:'과제 제시',fav:true},{id:'a2',text:'전이 상황',fav:true},
+      {id:'a3',text:'또래 접근',fav:false},{id:'a4',text:'관심 줄어듦',fav:false},
+      {id:'a5',text:'원하는 것 거부됨',fav:false},{id:'a6',text:'시끄러운 환경',fav:false},
+    ],
+    cChips:[
+      {id:'c1',text:'과제 제거',fav:true},{id:'c2',text:'교사 관심',fav:false},
+      {id:'c3',text:'또래 반응',fav:false},{id:'c4',text:'원하는 것 제공',fav:false},
+      {id:'c5',text:'무시함',fav:false},{id:'c6',text:'타임아웃',fav:false},
+    ],
+  };
+  return {
+    students: localized.students.map(x=>({...x})),
+    behaviors: localized.behaviors.map(x=>({...x})),
+    aChips: localized.aChips.map(x=>({...x})),
+    cChips: localized.cChips.map(x=>({...x})),
     masItems: MAS_DEFAULTS.map(m=>({...m})),
     ivQuestions:[
       {id:'iq1',q:'이 행동이 처음 나타난 것은 언제인가요?'},
@@ -1564,6 +1604,127 @@ const fbStore = firebase.firestore();
 
 let db=null, fbUser=null, saveT=null, unsubSync=null;
 
+// ============ UI language ============
+const I18N={
+  ko:{
+    appTitle:'FBA 기록·분석', appSub:'특수교육 현장용 기능평가 앱', language:'언어',
+    loginTab:'로그인', signupTab:'회원가입', email:'이메일', password:'비밀번호', signupPassword:'비밀번호 (6자 이상)',
+    name:'이름', loginSubmit:'로그인', signupSubmit:'가입하기', emailPlaceholder:'teacher@school.kr', passwordPlaceholder:'비밀번호 입력', namePlaceholder:'홍길동',
+    pleaseWait:'잠시만요…', errUserNotFound:'등록되지 않은 이메일이에요', errWrongPassword:'비밀번호가 틀렸어요', errInvalidCredential:'이메일 또는 비밀번호가 올바르지 않아요',
+    errEmailInUse:'이미 사용 중인 이메일이에요', errWeakPassword:'비밀번호는 6자 이상이어야 해요', errInvalidEmail:'이메일 형식이 올바르지 않아요', errTooMany:'잠시 후 다시 시도해 주세요',
+    errGeneric:'오류가 발생했어요 ({code})', enterName:'이름을 입력해 주세요',
+    studioLogo:'FBA 작업실<span>데스크톱 분석 환경</span>', students:'학생', dashboard:'대시보드', analysis:'분석', notesShort:'관찰 노트', pdfReport:'PDF 리포트',
+    settings:'설정', signout:'로그아웃', user:'사용자', synced:'동기화됨', savePdf:'PDF 저장',
+    recording:'기록 중', todayRecords:'오늘 기록', abcIncomplete:'ABC 미완성', thisWeek:'이번 주 합계',
+    observationNotes:'관찰 노트', noteSub:'면담 · 척도 · 메모', open:'열기', memoCount:'메모 {n}', scaleDone:'척도 ✓', interviewDone:'면담 ✓',
+    latencyRunning:'지연시간 측정 중 — 행동 버튼을 눌러 종료', cancel:'취소',
+    intervalObservingOx:'관찰 중 — 간격 종료 시 O/X 입력', intervalObservingSample:'관찰 중 — 간격 종료 시 코드 입력',
+    withBehavior:'발생 간격', withoutBehavior:'미발생 간격', occurrence:'발생률', endObservation:'관찰 종료',
+    behaviorRecording:'행동 기록 <em>간격 · 지연 · 행동</em>', intervalRecording:'간격 기록', startAntecedent:'선행 시작',
+    review:'검토', analysisSub:'최근 7일 패턴과 기능 가설입니다.', settingsSub:'미리 정의해 두면 현장에선 누르기만 하면 됩니다.',
+    record:'기록', addStudent:'+ 학생', noStudent:'설정 탭에서 학생을 먼저 추가해 주세요', count:'빈도', duration:'시간', addBehavior:'행동 추가',
+    observer:'관찰자', savedQuick:'<b>{name}</b> 저장됨 · ABC는 검토에서 채울 수 있어요', timerStarted:'<b>{name}</b> 측정 시작 — 끝나면 다시 누르세요',
+    recordedQuick:'<b>{name}</b> 기록됨 · ABC는 검토에서 채울 수 있어요',
+    saveFailed:'저장 실패', offline:'오프라인', recordsToUpload:'올릴 기록 {n}건', savedJustNow:'방금 저장', savedSeconds:'{n}초 전 저장', savedMinutes:'{n}분 전 저장',
+    intervalSetup:'간격 기록 설정', recordingMethod:'기록 방식', oxSingle:'O/X 단일<span class="sd">한 행동 발생 여부</span>', timeSampling:'시간표집<span class="sd">여러 행동 코드</span>',
+    targetBehavior:'관찰 대상 행동', timeSamplingCodes:'시간표집 코드', timeSamplingHelp:'체크한 행동만 간격 종료 시 버튼으로 나타납니다. 코드 칸을 눌러 T, D, S처럼 바꿀 수 있어요.',
+    intervalLength:'간격 시간', totalObservationTime:'총 관찰 시간', minutes:'분', startObservation:'관찰 시작',
+    secPerOx:'초마다 O/X 입력', secPerCode:'초마다 코드 입력', none:'없음', codeDuplicate:'코드가 겹쳐요. 각 행동의 코드를 다르게 적어 주세요.',
+    selectBehavior:'관찰 행동을 선택해 주세요', checkInterval:'간격 시간과 관찰 시간을 확인해 주세요', intervalDivide:'총 관찰 시간은 간격 시간으로 나누어떨어져야 해요',
+    selectCode:'시간표집에 사용할 행동 코드를 1개 이상 선택해 주세요', tooManyIntervals:'간격 수가 너무 많아요. 간격 시간을 늘리거나 관찰 시간을 줄여 주세요',
+    intervalStartedSample:'시간표집 시작 — {sec}초마다 코드 입력', intervalStartedOx:'간격 기록 시작 — {sec}초마다 O/X 입력',
+    intervalPromptSample:'간격 {n} — 해당 코드를 선택해 주세요', intervalPromptOx:'간격 {n} — 이 간격에 행동이 있었나요?', intervalNum:'간격 {now} / {total}',
+    markCurrentInterval:'현재 간격을 먼저 표시해 주세요', noIntervalsSaved:'기록된 간격이 없어 저장하지 않았어요',
+    intervalsWithBehavior:'{on}/{total}간격 발생', timeSamplingNote:'시간표집: {summary} ({pct}%) — {sec}초 간격',
+    intervalNote:'간격기록: {summary} ({pct}%) — {sec}초 간격', timeSamplingDone:'시간표집 완료 — 코드 기록 {pct}%', intervalDone:'간격 기록 완료 — {name} {pct}% 발생',
+    latencyAlready:'이미 지연 측정 중이에요. 행동 버튼을 눌러 종료하세요.', timing:'측정 중…', latencyStarted:'선행사건 발생 — 행동 버튼을 눌러 지연시간 기록',
+    latencyNote:'지연시간 {sec}초', latencyAppend:' [지연 {sec}초]', latencyRecorded:'지연시간 <b>{sec}초</b> 기록됐어요',
+    abcA:'<span class="badge" style="background:#7a8a3a">A</span> 선행사건 <em>행동 직전 무슨 일이?</em>',
+    abcC:'<span class="badge" style="background:#b4502f">C</span> 후속결과 <em>행동 직후 어떻게 됐나?</em>', noteOptional:'메모 <em>선택</em>',
+    recordNotePlaceholder:'예: 수학 학습지 제시 직후 발생', delete:'삭제', later:'나중에', saveAndClose:'저장하고 닫기',
+    addAntecedentChips:'설정에서 선행사건 칩을 추가하세요', addConsequenceChips:'설정에서 후속결과 칩을 추가하세요',
+    abcComplete:'<b>ABC 완성</b> · 저장됐어요', recordSavedReview:'기록 저장됨 · A·C는 검토에서 채울 수 있어요', recordDeleted:'기록을 삭제했어요'
+  },
+  en:{
+    appTitle:'FBA Record & Analysis', appSub:'Functional assessment for special education teams', language:'Language',
+    loginTab:'Log in', signupTab:'Sign up', email:'Email', password:'Password', signupPassword:'Password (6+ characters)',
+    name:'Name', loginSubmit:'Log in', signupSubmit:'Create account', emailPlaceholder:'teacher@school.edu', passwordPlaceholder:'Enter password', namePlaceholder:'Your name',
+    pleaseWait:'Please wait...', errUserNotFound:'No account was found for this email.', errWrongPassword:'The password is incorrect.', errInvalidCredential:'The email or password is incorrect.',
+    errEmailInUse:'This email is already in use.', errWeakPassword:'Use a password with at least 6 characters.', errInvalidEmail:'Enter a valid email address.', errTooMany:'Too many attempts. Please try again later.',
+    errGeneric:'An error occurred ({code})', enterName:'Enter your name.',
+    studioLogo:'FBA Studio<span>Desktop analysis workspace</span>', students:'Students', dashboard:'Dashboard', analysis:'Analysis', notesShort:'Notes', pdfReport:'PDF Report',
+    settings:'Settings', signout:'Sign out', user:'User', synced:'Synced', savePdf:'Save PDF',
+    recording:'Recording', todayRecords:'Today', abcIncomplete:'ABC incomplete', thisWeek:'This week',
+    observationNotes:'Observation Notes', noteSub:'Interview · Scale · Memo', open:'Open', memoCount:'Memo {n}', scaleDone:'Scale ✓', interviewDone:'Interview ✓',
+    latencyRunning:'Latency timer running - tap a behavior to stop', cancel:'Cancel',
+    intervalObservingOx:'Observing - mark O/X at the end of each interval', intervalObservingSample:'Observing - choose a code at the end of each interval',
+    withBehavior:'With behavior', withoutBehavior:'Without', occurrence:'Occurrence', endObservation:'End Observation',
+    behaviorRecording:'Behavior Recording <em>Interval · Latency · Behavior</em>', intervalRecording:'Interval Recording', startAntecedent:'Start Antecedent',
+    review:'Review', analysisSub:'Recent 7-day patterns and function hypothesis.', settingsSub:'Set up items in advance so field recording stays quick.',
+    record:'Record', addStudent:'+ Student', noStudent:'Add a student in Settings first.', count:'Count', duration:'Duration', addBehavior:'Add behavior',
+    observer:'Observer', savedQuick:'<b>{name}</b> saved · Add ABC details in Review', timerStarted:'<b>{name}</b> timer started - tap again to stop',
+    recordedQuick:'<b>{name}</b> recorded · Add ABC details in Review',
+    saveFailed:'Save failed', offline:'Offline', recordsToUpload:'{n} record{plural} to upload', savedJustNow:'Saved just now', savedSeconds:'Saved {n}s ago', savedMinutes:'Saved {n}m ago',
+    intervalSetup:'Interval Recording Setup', recordingMethod:'Recording method', oxSingle:'O/X single<span class="sd">One target behavior</span>', timeSampling:'Time sampling<span class="sd">Multiple behavior codes</span>',
+    targetBehavior:'Target behavior', timeSamplingCodes:'Time sampling codes', timeSamplingHelp:'Only checked behaviors appear as buttons at the end of each interval. Tap a code field to edit labels such as T, D, or S.',
+    intervalLength:'Interval length', totalObservationTime:'Total observation time', minutes:'minutes', startObservation:'Start observation',
+    secPerOx:'seconds per O/X mark', secPerCode:'seconds per code mark', none:'None', codeDuplicate:'Codes must be unique for each behavior.',
+    selectBehavior:'Select a behavior to observe.', checkInterval:'Check the interval length and total observation time.', intervalDivide:'Total observation time must divide evenly by the interval length.',
+    selectCode:'Select at least one behavior code for time sampling.', tooManyIntervals:'Too many intervals. Increase the interval length or reduce observation time.',
+    intervalStartedSample:'Time sampling started - choose a code every {sec}s', intervalStartedOx:'Interval recording started - mark O/X every {sec}s',
+    intervalPromptSample:'Interval {n} - choose the matching code', intervalPromptOx:'Interval {n} - did the behavior occur?', intervalNum:'Interval {now} / {total}',
+    markCurrentInterval:'Mark the current interval first.', noIntervalsSaved:'No intervals were recorded, so nothing was saved.',
+    intervalsWithBehavior:'{on}/{total} intervals with behavior', timeSamplingNote:'Time sampling: {summary} ({pct}%) - {sec}s interval',
+    intervalNote:'Interval recording: {summary} ({pct}%) - {sec}s interval', timeSamplingDone:'Time sampling complete - code occurrence {pct}%', intervalDone:'Interval recording complete - {name} occurred {pct}%',
+    latencyAlready:'Latency timer is already running. Tap a behavior to stop it.', timing:'Timing...', latencyStarted:'Antecedent started - tap the behavior to record latency',
+    latencyNote:'Latency {sec}s', latencyAppend:' [Latency {sec}s]', latencyRecorded:'Latency <b>{sec}s</b> recorded',
+    abcA:'<span class="badge" style="background:#7a8a3a">A</span> Antecedent <em>What happened right before?</em>',
+    abcC:'<span class="badge" style="background:#b4502f">C</span> Consequence <em>What happened right after?</em>', noteOptional:'Note <em>Optional</em>',
+    recordNotePlaceholder:'Example: occurred right after math worksheet was presented', delete:'Delete', later:'Later', saveAndClose:'Save and close',
+    addAntecedentChips:'Add antecedent chips in Settings.', addConsequenceChips:'Add consequence chips in Settings.',
+    abcComplete:'<b>ABC complete</b> · Saved', recordSavedReview:'Record saved · Add A/C details in Review', recordDeleted:'Record deleted'
+  }
+};
+function readAppLang(){
+  try{return localStorage.getItem('fba_ui_lang')==='en'?'en':'ko';}
+  catch(_){return 'ko';}
+}
+let appLang=readAppLang();
+function msg(key, vars={}){
+  const pack=I18N[appLang]||I18N.ko;
+  const raw=pack[key] ?? I18N.ko[key] ?? key;
+  return String(raw).replace(/\{(\w+)\}/g,(_,k)=>vars[k]??'');
+}
+function applyStaticI18n(){
+  document.documentElement.lang=appLang;
+  document.title=msg('appTitle');
+  const sel=document.getElementById('langSelect');
+  if(sel) sel.value=appLang;
+  document.querySelectorAll('[data-i18n]').forEach(el=>{el.textContent=msg(el.dataset.i18n);});
+  document.querySelectorAll('[data-i18n-html]').forEach(el=>{el.innerHTML=msg(el.dataset.i18nHtml);});
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el=>{el.placeholder=msg(el.dataset.i18nPlaceholder);});
+  const unit=document.getElementById('ivUnitLabel');
+  const mode=document.getElementById('ivMode')?.value==='sample'?'sample':'ox';
+  if(unit) unit.textContent=msg(mode==='sample'?'secPerCode':'secPerOx');
+}
+function refreshLanguageSensitiveUi(){
+  applyStaticI18n();
+  if(!db) return;
+  try{
+    paintStudent(); renderSwitcher(); renderGrid(); updateNoteBadge(); updateSyncUI();
+    if(state.tab==='review') renderTimeline();
+    if(state.tab==='analysis') renderAnalysis();
+    if(state.tab==='settings') renderSettings();
+    if(typeof isDesktop==='function'&&isDesktop()){ renderStudioSidebar(); switchStTab(typeof stTab!=='undefined'?stTab:'dashboard'); updateStudioSync(); }
+  }catch(e){ console.warn('language refresh skipped:', e); }
+}
+function setAppLang(lang){
+  appLang=lang==='en'?'en':'ko';
+  try{localStorage.setItem('fba_ui_lang', appLang);}catch(_){}
+  refreshLanguageSensitiveUi();
+}
+applyStaticI18n();
+
 // ── 인증 UI 헬퍼 ──
 function showAuthTab(tab){
   document.getElementById('tabLogin').classList.toggle('on', tab==='login');
@@ -1573,27 +1734,27 @@ function showAuthTab(tab){
 }
 function authErr(id,msg){document.getElementById(id).textContent=msg;}
 function authBtnState(id,loading,text){
-  const b=document.getElementById(id); b.disabled=loading; b.textContent=loading?'Please wait...':text;
+  const b=document.getElementById(id); b.disabled=loading; b.textContent=loading?msg('pleaseWait'):text;
 }
 function errMsg(code){
   return {
-    'auth/user-not-found':'No account was found for this email.',
-    'auth/wrong-password':'The password is incorrect.',
-    'auth/invalid-credential':'The email or password is incorrect.',
-    'auth/email-already-in-use':'This email is already in use.',
-    'auth/weak-password':'Use a password with at least 6 characters.',
-    'auth/invalid-email':'Enter a valid email address.',
-    'auth/too-many-requests':'Too many attempts. Please try again later.',
-  }[code]||'An error occurred ('+code+')';
+    'auth/user-not-found':msg('errUserNotFound'),
+    'auth/wrong-password':msg('errWrongPassword'),
+    'auth/invalid-credential':msg('errInvalidCredential'),
+    'auth/email-already-in-use':msg('errEmailInUse'),
+    'auth/weak-password':msg('errWeakPassword'),
+    'auth/invalid-email':msg('errInvalidEmail'),
+    'auth/too-many-requests':msg('errTooMany'),
+  }[code]||msg('errGeneric',{code});
 }
 
 // ── 로그인 ──
 async function doLogin(){
   const email=document.getElementById('liEmail').value.trim();
   const pw=document.getElementById('liPw').value;
-  authErr('liErr',''); authBtnState('liBtn',true,'Log in');
+  authErr('liErr',''); authBtnState('liBtn',true,msg('loginSubmit'));
   try{ await fbAuth.signInWithEmailAndPassword(email,pw); }
-  catch(e){ authErr('liErr',errMsg(e.code)); authBtnState('liBtn',false,'Log in'); }
+  catch(e){ authErr('liErr',errMsg(e.code)); authBtnState('liBtn',false,msg('loginSubmit')); }
 }
 
 // ── 회원가입 ──
@@ -1601,13 +1762,13 @@ async function doSignup(){
   const name=document.getElementById('suName').value.trim();
   const email=document.getElementById('suEmail').value.trim();
   const pw=document.getElementById('suPw').value;
-  if(!name){authErr('suErr','Enter your name.');return;}
-  authErr('suErr',''); authBtnState('suBtn',true,'Create account');
+  if(!name){authErr('suErr',msg('enterName'));return;}
+  authErr('suErr',''); authBtnState('suBtn',true,msg('signupSubmit'));
   try{
     const cred=await fbAuth.createUserWithEmailAndPassword(email,pw);
     await cred.user.updateProfile({displayName:name});
     await fbStore.collection('users').doc(cred.user.uid).set({name,email,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
-  }catch(e){ authErr('suErr',errMsg(e.code)); authBtnState('suBtn',false,'Create account'); }
+  }catch(e){ authErr('suErr',errMsg(e.code)); authBtnState('suBtn',false,msg('signupSubmit')); }
 }
 
 // ── 로그아웃 ──
@@ -2076,7 +2237,7 @@ async function resetAllData(){
     await resetCloudDataForCurrentUser();
     db=defaults();
     const base=caseDefaults(), sid=ulid();
-    db.students=[{id:sid,name:'학생 1',color:'#0F6E6C',sub:'',ownerUid:fbUser.uid,memberUids:[fbUser.uid],members:[fbUser.uid],shareCode:null,shareCodeExpiresAt:null,...base}];
+    db.students=[{id:sid,name:appLang==='en'?'Student 1':'학생 1',color:'#0F6E6C',sub:'',ownerUid:fbUser.uid,memberUids:[fbUser.uid],members:[fbUser.uid],shareCode:null,shareCodeExpiresAt:null,...base}];
     db.records=[];db.notes=[];db.interviews=[];db.masScores=[];
     state.sid=sid;state.date=null;applyCaseToDb(db.students[0]);reindex();refreshAll();switchTab('record');
     await saveStudent(db.students[0]);
@@ -2625,8 +2786,8 @@ fbAuth.onAuthStateChanged(async user => {
     clearClientSession();
     fbUser = null;
     if(wall) wall.classList.remove('hidden');
-    authBtnState('liBtn', false, 'Log in');
-    authBtnState('suBtn', false, 'Create account');
+    authBtnState('liBtn', false, msg('loginSubmit'));
+    authBtnState('suBtn', false, msg('signupSubmit'));
     return;
   }
   clearClientSession();
@@ -2671,7 +2832,7 @@ async function initApp(){
     db.masScores  = [];
     const base = caseDefaults();
     db.students   = [{
-      id: ulid(), name: 'Student 1', color: '#0F6E6C', sub: '',
+      id: ulid(), name: appLang==='en'?'Student 1':'학생 1', color: '#0F6E6C', sub: '',
       ownerUid: fbUser.uid, memberUids: [fbUser.uid], members: [fbUser.uid],
       shareCode: null, shareCodeExpiresAt: null,
       ...base
@@ -2690,7 +2851,7 @@ async function initApp(){
   // 사용자 정보
   const un = document.getElementById('settingUserName');
   const ue = document.getElementById('settingUserEmail');
-  if(un) un.textContent = (fbUser?.displayName || fbUser?.email || '사용자') + ' · 로그아웃';
+  if(un) un.textContent = (fbUser?.displayName || fbUser?.email || msg('user')) + ' · ' + msg('signout');
   if(ue) ue.textContent = fbUser?.email || '';
   if(isDesktop()) initStudio();
   resumeSharedListeners();
@@ -2832,7 +2993,7 @@ function renderSwitcher(){
   $('#switcher').innerHTML=db.students.map(s=>`
     <div class="spill ${s.id===state.sid?'on':''}" data-pick="${s.id}">
       <span class="sav" style="background:${s.color}">${s.name[0]}</span>${s.name}</div>`).join('')
-    +`<div class="spill addst" data-action="add-student">+ Student</div>`;
+    +`<div class="spill addst" data-action="add-student">${msg('addStudent')}</div>`;
 }
 
 // ============ behavior grid ============
@@ -2854,7 +3015,7 @@ function saveBehaviorOrder(sid, orderIds){
 }
 
 function renderGrid(){
-  if(!cur()){$('#behaviorGrid').innerHTML='<div style="color:rgba(255,255,255,.6);font-size:13px;padding:20px;text-align:center">Add a student in Settings first.</div>';return;}
+  if(!cur()){$('#behaviorGrid').innerHTML=`<div style="color:rgba(255,255,255,.6);font-size:13px;padding:20px;text-align:center">${msg('noStudent')}</div>`;return;}
   const today=dkey(new Date());
   const mine=activeRecords().filter(r=>r.sid===state.sid&&dkey(new Date(r.ts))===today);
   const sorted=getBehaviorOrder(state.sid);
@@ -2863,14 +3024,14 @@ function renderGrid(){
     const c=mine.filter(r=>r.bid===b.id).length;
     const running=state.timer&&state.timer.bid===b.id;
     return `<button class="btn ${b.type==='dur'?'dur':''} ${running?'running':''}" data-bh="${b.id}">
-      <span class="type">${b.type==='freq'?'Count':'Duration'}</span>
+      <span class="type">${b.type==='freq'?msg('count'):msg('duration')}</span>
       <span class="count ${c>0?'show':''}">${c}</span>
       <span class="disc" style="background:${b.color}">${svg(b.icon)}</span>
       <span class="lab">${b.name}</span>
       <span class="timer" id="tm-${b.id}">00:00</span>
     </button>`;
   }).join('')+`<button class="btn add" data-action="add-behavior">
-      <span class="disc">${svg('add')}</span><span class="lab" style="color:var(--sub)">Add behavior</span></button>`;
+      <span class="disc">${svg('add')}</span><span class="lab" style="color:var(--sub)">${msg('addBehavior')}</span></button>`;
 }
 
 // ============ record tap ============
@@ -2891,28 +3052,28 @@ function tapBehavior(bid,btn,e,opts={}){
       clearInterval(state.timer.iv);state.timer=null;
       const now=new Date().toISOString();
       let rec={id:ulid(),sid:state.sid,bid,ts:eventIso,dur:sec,a:[],c:[],note:'',
-        observerId:fbUser?.uid||OBSERVER_ID,createdByUid:fbUser?.uid||OBSERVER_ID,createdByName:fbUser?.displayName||fbUser?.email||'Observer',deviceId:DEVICE_ID,env:state.currentEnv,
+        observerId:fbUser?.uid||OBSERVER_ID,createdByUid:fbUser?.uid||OBSERVER_ID,createdByName:fbUser?.displayName||fbUser?.email||msg('observer'),deviceId:DEVICE_ID,env:state.currentEnv,
         updatedAt:now,deleted:false,dirty:true};
       rec=captureLatency(rec); // 지연시간 자동 첨부
       Repository.putRecord(rec);renderGrid();paintStudent();
       if(openDetails) openSheet(rec.id);
-      else toast(`<b>${b.name}</b> saved · Add ABC details in Review`);
+      else toast(msg('savedQuick',{name:b.name}));
     }else{
       if(state.timer){clearInterval(state.timer.iv);}
       state.timer={bid,start:eventMs,iv:null};
       state.timer.iv=setInterval(()=>{const el=$('#tm-'+bid);if(el)el.textContent=fmtClock(Math.round((Date.now()-state.timer.start)/1000));},500);
-      renderGrid();toast(`<b>${b.name}</b> timer started - tap again to stop`);
+      renderGrid();toast(msg('timerStarted',{name:b.name}));
     }
     return;
   }
   const now2=eventIso;
   let rec={id:ulid(),sid:state.sid,bid,ts:now2,dur:null,a:[],c:[],note:'',
-    observerId:fbUser?.uid||OBSERVER_ID,createdByUid:fbUser?.uid||OBSERVER_ID,createdByName:fbUser?.displayName||fbUser?.email||'Observer',deviceId:DEVICE_ID,env:state.currentEnv,
+    observerId:fbUser?.uid||OBSERVER_ID,createdByUid:fbUser?.uid||OBSERVER_ID,createdByName:fbUser?.displayName||fbUser?.email||msg('observer'),deviceId:DEVICE_ID,env:state.currentEnv,
     updatedAt:now2,deleted:false,dirty:true};
   rec=captureLatency(rec); // 지연시간 자동 첨부
   Repository.putRecord(rec);renderGrid();paintStudent();
   if(openDetails) openSheet(rec.id);
-  else toast(`<b>${b.name}</b> recorded · Add ABC details in Review`);
+  else toast(msg('recordedQuick',{name:b.name}));
 }
 
 // ============ ABC sheet ============
@@ -2929,19 +3090,19 @@ function openSheet(id){
   $('#scrim').classList.add('show');$('#sheet').classList.add('open');
 }
 function renderChips(){
-  $('#chipsA').innerHTML=sortedChips(db.aChips).map(c=>`<button class="chip ${c.fav?'sug':''} ${state.sel.a.has(c.text)?'on':''}" data-chip="a" data-v="${c.text}">${c.fav?'<span class="star">★</span>':''}${c.text}</button>`).join('')||'<span style="font-size:12.5px;color:#9aa6aa">Add antecedent chips in Settings.</span>';
-  $('#chipsC').innerHTML=sortedChips(db.cChips).map(c=>`<button class="chip cc ${c.fav?'sug':''} ${state.sel.c.has(c.text)?'on':''}" data-chip="c" data-v="${c.text}">${c.fav?'<span class="star">★</span>':''}${c.text}</button>`).join('')||'<span style="font-size:12.5px;color:#9aa6aa">Add consequence chips in Settings.</span>';
+  $('#chipsA').innerHTML=sortedChips(db.aChips).map(c=>`<button class="chip ${c.fav?'sug':''} ${state.sel.a.has(c.text)?'on':''}" data-chip="a" data-v="${c.text}">${c.fav?'<span class="star">★</span>':''}${c.text}</button>`).join('')||`<span style="font-size:12.5px;color:#9aa6aa">${msg('addAntecedentChips')}</span>`;
+  $('#chipsC').innerHTML=sortedChips(db.cChips).map(c=>`<button class="chip cc ${c.fav?'sug':''} ${state.sel.c.has(c.text)?'on':''}" data-chip="c" data-v="${c.text}">${c.fav?'<span class="star">★</span>':''}${c.text}</button>`).join('')||`<span style="font-size:12.5px;color:#9aa6aa">${msg('addConsequenceChips')}</span>`;
 }
 function closeSheet(){$('#scrim').classList.remove('show');$('#sheet').classList.remove('open');state.sheetId=null;}
 function saveSheet(){
   const rec=db.records.find(r=>r.id===state.sheetId);if(!rec)return;
   rec.a=[...state.sel.a];rec.c=[...state.sel.c];rec.note=$('#note').value;rec.updatedAt=new Date().toISOString();rec.dirty=true;saveRecord(rec).catch(e=>console.warn('saveSheet 기록 저장 오류:',e));persist();
   closeSheet();paintStudent();if(state.tab==='review')renderTimeline();
-  toast(rec.a.length&&rec.c.length?'<b>ABC complete</b> · Saved':'Record saved · Add A/C details in Review');
+  toast(rec.a.length&&rec.c.length?msg('abcComplete'):msg('recordSavedReview'));
 }
 function delRecord(){
   Repository.removeRecord(state.sheetId); // tombstone (deleted:true)
-  closeSheet();renderGrid();paintStudent();renderTimeline();toast('Record deleted');
+  closeSheet();renderGrid();paintStudent();renderTimeline();toast(msg('recordDeleted'));
 }
 
 // ============ review ============
@@ -3765,10 +3926,10 @@ function updateNoteBadge(){
   const badge=$('#noteBadge');
   if(!badge)return;
   const parts=[];
-  if(n>0)parts.push('Memo '+n);
-  if(hasMas)parts.push('Scale ✓');
-  if(hasIv)parts.push('Interview ✓');
-  badge.textContent=parts.length?parts.join(' · '):'Open';
+  if(n>0)parts.push(msg('memoCount',{n}));
+  if(hasMas)parts.push(msg('scaleDone'));
+  if(hasIv)parts.push(msg('interviewDone'));
+  badge.textContent=parts.length?parts.join(' · '):msg('open');
 }
 
 function openNoteSheet(){
@@ -4370,27 +4531,27 @@ function updateSyncUI(status){
   const dot=$('#sbDot'), txt=$('#sbText');
   if(!dot||!txt) return;
   if(status==='err'){
-    dot.className='sb-dot err'; txt.textContent='Save failed'; return;
+    dot.className='sb-dot err'; txt.textContent=msg('saveFailed'); return;
   }
-  if(!fbUser){ dot.className='sb-dot off'; txt.textContent='Offline'; return; }
+  if(!fbUser){ dot.className='sb-dot off'; txt.textContent=msg('offline'); return; }
   lastSavedAt=Date.now();
   const dirty=(db?.records||[]).filter(r=>r.dirty&&!r.deleted).length;
   if(dirty>0){
     dot.className='sb-dot pending';
-    txt.textContent=`${dirty} record${dirty===1?'':'s'} to upload`;
+    txt.textContent=msg('recordsToUpload',{n:dirty,plural:dirty===1?'':'s'});
   } else {
-    dot.className='sb-dot'; txt.textContent='Synced';
-    setTimeout(()=>{ if(txt&&txt.textContent==='Synced') txt.textContent=relTime(lastSavedAt); },3000);
+    dot.className='sb-dot'; txt.textContent=msg('synced');
+    setTimeout(()=>{ if(txt&&txt.textContent===msg('synced')) txt.textContent=relTime(lastSavedAt); },3000);
   }
 }
 function relTime(ts){
   if(!ts) return '';
   const s=Math.round((Date.now()-ts)/1000);
-  if(s<10) return 'Saved just now';
-  if(s<60) return `Saved ${s}s ago`;
-  return `Saved ${Math.round(s/60)}m ago`;
+  if(s<10) return msg('savedJustNow');
+  if(s<60) return msg('savedSeconds',{n:s});
+  return msg('savedMinutes',{n:Math.round(s/60)});
 }
-setInterval(()=>{ if(lastSavedAt&&$('#sbText')?.textContent?.startsWith('Saved ')) $('#sbText').textContent=relTime(lastSavedAt); },30000);
+setInterval(()=>{ if(lastSavedAt&&($('#sbText')?.textContent?.includes('저장')||$('#sbText')?.textContent?.startsWith('Saved '))) $('#sbText').textContent=relTime(lastSavedAt); },30000);
 
 
 // ============ 시간 수정 (검토 탭) ============
@@ -4476,7 +4637,7 @@ function initStudio(){
   updateStudioSync();
   // 사용자 이름
   const un=$('#stUserName');
-  if(un) un.textContent=(fbUser?.displayName||fbUser?.email||'')+'  (로그아웃)';
+  if(un) un.textContent=(fbUser?.displayName||fbUser?.email||'')+'  ('+msg('signout')+')';
 }
 
 // 사이드바 학생 목록
@@ -4798,8 +4959,8 @@ function updateStudioSync(){
   const dot=$('#stDot'), txt=$('#stSync');
   if(!dot||!txt) return;
   const dirty=(db?.records||[]).filter(r=>r.dirty&&!r.deleted).length;
-  if(dirty>0){ dot.style.background='#E0972F'; txt.textContent=`${dirty} record${dirty===1?'':'s'} to upload`; }
-  else{ dot.style.background='#7fd9c4'; txt.textContent='Synced'; }
+  if(dirty>0){ dot.style.background='#E0972F'; txt.textContent=msg('recordsToUpload',{n:dirty,plural:dirty===1?'':'s'}); }
+  else{ dot.style.background='#7fd9c4'; txt.textContent=msg('synced'); }
 }
 
 // ── 이벤트: 사이드바 학생 클릭 / 탭 클릭 ──
@@ -5047,7 +5208,7 @@ function setIntervalMode(mode){
   const input=$('#ivMode'); if(input) input.value=next;
   document.querySelectorAll('[data-iv-mode]').forEach(b=>b.classList.toggle('on',b.dataset.ivMode===next));
   const field=$('#ivCodeField'); if(field) field.style.display=next==='sample'?'':'none';
-  const unit=$('#ivUnitLabel'); if(unit) unit.textContent=next==='sample'?'seconds per code mark':'seconds per O/X mark';
+  const unit=$('#ivUnitLabel'); if(unit) unit.textContent=msg(next==='sample'?'secPerCode':'secPerOx');
 }
 function readSamplingCodes(){
   const checked=[...document.querySelectorAll('[data-iv-code-check]:checked')];
@@ -5059,7 +5220,7 @@ function readSamplingCodes(){
     const inp=document.querySelector(`[data-iv-code-input="${box.value}"]`);
     const code=String(inp?.value||sampleCodeForBehavior(b,codes.length)).trim().toUpperCase().replace(/\s+/g,'').slice(0,2);
     if(!code || code==='-' || code==='X') continue;
-    if(seen.has(code)) return {error:'Codes must be unique for each behavior.'};
+    if(seen.has(code)) return {error:msg('codeDuplicate')};
     seen.add(code);
     codes.push({code,bid:b.id,name:b.name,color:b.color});
   }
@@ -5073,7 +5234,7 @@ function renderIvMarkButtons(){
       <button class="iv-code-btn" style="background:${c.color}" data-iv-mark="${c.code}">
         <b>${escHtml(c.code)}</b><span>${escHtml(c.name)}</span>
       </button>`).join('')+
-      `<button class="iv-code-btn none" data-iv-mark="-"><b>-</b><span>None</span></button>`;
+      `<button class="iv-code-btn none" data-iv-mark="-"><b>-</b><span>${msg('none')}</span></button>`;
   }else{
     row.classList.remove('sample');
     row.innerHTML=`<button class="iv-ox-btn o" data-action="iv-mark-o">O</button><button class="iv-ox-btn x" data-action="iv-mark-x">X</button>`;
@@ -5083,7 +5244,7 @@ function renderIvMarkButtons(){
 function openIntervalSetup(){
   // 행동 선택 드롭다운 채우기
   const sel=$('#ivBehavior'); if(!sel) return;
-  sel.innerHTML=db.behaviors.map(b=>`<option value="${b.id}">${b.name} (${b.type==='freq'?'Count':'Duration'})</option>`).join('');
+  sel.innerHTML=db.behaviors.map(b=>`<option value="${b.id}">${b.name} (${b.type==='freq'?msg('count'):msg('duration')})</option>`).join('');
   renderIvCodeList();
   setIntervalMode('ox');
   $('#intervalSetupScrim').classList.add('show');
@@ -5098,17 +5259,17 @@ function startInterval(){
   const intervalSec=parseInt($('#ivIntervalSec').value)||10;
   const totalMin=parseInt($('#ivTotalMin').value)||30;
   const mode=($('#ivMode')||{}).value==='sample'?'sample':'ox';
-  if(!bid){toast('Select a behavior to observe.');return;}
-  if(intervalSec<5||totalMin<1){toast('Check the interval length and total observation time.');return;}
-  if((totalMin*60)%intervalSec!==0){toast('Total observation time must divide evenly by the interval length.');return;}
+  if(!bid){toast(msg('selectBehavior'));return;}
+  if(intervalSec<5||totalMin<1){toast(msg('checkInterval'));return;}
+  if((totalMin*60)%intervalSec!==0){toast(msg('intervalDivide'));return;}
   let codes=[];
   if(mode==='sample'){
     const read=readSamplingCodes();
     if(read.error){toast(read.error);return;}
     codes=read.codes||[];
-    if(!codes.length){toast('Select at least one behavior code for time sampling.');return;}
+    if(!codes.length){toast(msg('selectCode'));return;}
   }
-  if(Math.ceil(totalMin*60/intervalSec)>240){toast('Too many intervals. Increase the interval length or reduce observation time.');return;}
+  if(Math.ceil(totalMin*60/intervalSec)>240){toast(msg('tooManyIntervals'));return;}
   closeIntervalSetup();
   iv.bid=bid; iv.intervalSec=intervalSec; iv.totalSec=totalMin*60;
   iv.elapsed=0; iv.intervalElapsed=0; iv.currentInterval=0;
@@ -5120,7 +5281,7 @@ function startInterval(){
   renderIvMarkButtons();
   updateIvUI();
   iv.timerId=setInterval(tickInterval, 1000);
-  toast(mode==='sample'?`Time sampling started - choose a code every ${intervalSec}s`:`Interval recording started - mark O/X every ${intervalSec}s`);
+  toast(mode==='sample'?msg('intervalStartedSample',{sec:intervalSec}):msg('intervalStartedOx',{sec:intervalSec}));
 }
 function tickInterval(){
   if(iv.waitingMark) return; // O/X 대기 중엔 멈춤
@@ -5142,8 +5303,8 @@ function showIvMark(){
   const status=$('#ivStatus'), oxRow=$('#ivOXRow');
   renderIvMarkButtons();
   if(status) status.textContent=iv.mode==='sample'
-    ? `Interval ${iv.currentInterval} - choose the matching code`
-    : `Interval ${iv.currentInterval} - did the behavior occur?`;
+    ? msg('intervalPromptSample',{n:iv.currentInterval})
+    : msg('intervalPromptOx',{n:iv.currentInterval});
   if(oxRow) oxRow.style.display='flex';
   // 링 색상 변경
   const fill=$('#ivRingFill');
@@ -5155,7 +5316,7 @@ function markInterval(mark){
   iv.waitingMark=false;
   const status=$('#ivStatus'), oxRow=$('#ivOXRow');
   if(oxRow) oxRow.style.display='none';
-  if(status) status.textContent=iv.mode==='sample'?'Observing - choose a code at the end of each interval':'Observing - mark O/X at the end of each interval';
+  if(status) status.textContent=msg(iv.mode==='sample'?'intervalObservingSample':'intervalObservingOx');
   const fill=$('#ivRingFill');
   if(fill) fill.style.stroke='#7fd9c4';
   updateIvUI();
@@ -5167,7 +5328,7 @@ function updateIvUI(){
   const timer=$('#ivTimer');
   if(timer) timer.textContent=String(remaining).padStart(2,'0');
   const intervalNum=$('#ivIntervalNum');
-  if(intervalNum) intervalNum.textContent=`Interval ${iv.currentInterval+1} / ${Math.ceil(iv.totalSec/iv.intervalSec)}`;
+  if(intervalNum) intervalNum.textContent=msg('intervalNum',{now:iv.currentInterval+1,total:Math.ceil(iv.totalSec/iv.intervalSec)});
   // 링 진행
   const fill=$('#ivRingFill');
   if(fill){
@@ -5185,13 +5346,13 @@ function updateIvUI(){
   if(pc) pc.textContent=pct+'%';
 }
 function stopInterval(){
-  if(iv.waitingMark){toast('Mark the current interval first.');return;}
+  if(iv.waitingMark){toast(msg('markCurrentInterval'));return;}
   clearInterval(iv.timerId); iv.timerId=null;
   if(!iv.marks.length){
     const overlay=$('#intervalOverlay');
     if(overlay) overlay.classList.remove('show');
     const btn=$('#btnInterval'); if(btn) btn.classList.remove('active');
-    toast('No intervals were recorded, so nothing was saved.');
+    toast(msg('noIntervalsSaved'));
     return;
   }
   // 결과를 기록으로 저장
@@ -5200,14 +5361,14 @@ function stopInterval(){
   const now=new Date().toISOString();
   const labelSummary=iv.mode==='sample'
     ? iv.codes.map(c=>`${c.code} ${iv.marks.filter(m=>m===c.code).length}`).join(', ')
-    : `${oCount}/${iv.marks.length} intervals with behavior`;
+    : msg('intervalsWithBehavior',{on:oCount,total:iv.marks.length});
   const rec={
     id:ulid(), sid:state.sid, bid:iv.mode==='sample'?(iv.codes[0]?.bid||iv.bid):iv.bid,
     ts:now, dur:iv.elapsed,
     a:[], c:[], note:iv.mode==='sample'
-      ? `Time sampling: ${labelSummary} (${pct}%) - ${iv.intervalSec}s interval`
-      : `Interval recording: ${labelSummary} (${pct}%) - ${iv.intervalSec}s interval`,
-    observerId:fbUser?.uid||OBSERVER_ID, createdByUid:fbUser?.uid||OBSERVER_ID, createdByName:fbUser?.displayName||fbUser?.email||'Observer', deviceId:DEVICE_ID, env:state.currentEnv,
+      ? msg('timeSamplingNote',{summary:labelSummary,pct,sec:iv.intervalSec})
+      : msg('intervalNote',{summary:labelSummary,pct,sec:iv.intervalSec}),
+    observerId:fbUser?.uid||OBSERVER_ID, createdByUid:fbUser?.uid||OBSERVER_ID, createdByName:fbUser?.displayName||fbUser?.email||msg('observer'), deviceId:DEVICE_ID, env:state.currentEnv,
     updatedAt:now, deleted:false, dirty:true,
     intervalData:{ mode:iv.mode, intervalSec:iv.intervalSec, totalSec:iv.totalSec, observedSec:iv.elapsed, marks:[...iv.marks], pct, codes:[...iv.codes], startedAt:iv.startedAt }
   };
@@ -5218,7 +5379,7 @@ function stopInterval(){
   const btn=$('#btnInterval'); if(btn) btn.classList.remove('active');
   paintStudent(); renderGrid();
   const b=bMap[iv.bid]||{name:'?'};
-  toast(iv.mode==='sample'?`Time sampling complete - code occurrence ${pct}%`:`Interval recording complete - ${b.name} occurred ${pct}%`);
+  toast(iv.mode==='sample'?msg('timeSamplingDone',{pct}):msg('intervalDone',{name:b.name,pct}));
 }
 
 // ═══════════════════════════════════════
@@ -5227,7 +5388,7 @@ function stopInterval(){
 const lat = { start: null, timerId: null };
 
 function startLatency(){
-  if(lat.start){toast('Latency timer is already running. Tap a behavior to stop it.');return;}
+  if(lat.start){toast(msg('latencyAlready'));return;}
   lat.start=Date.now();
   lat.timerId=setInterval(()=>{
     const el=$('#latencyTimer'); if(!el) return;
@@ -5235,23 +5396,23 @@ function startLatency(){
     el.textContent=`${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;
   },500);
   const bar=$('#latencyBar'); if(bar) bar.classList.add('show');
-  const btn=$('#btnLatency'); if(btn){btn.classList.add('active');btn.querySelector('div>div').textContent='Timing...';}
-  toast('Antecedent started - tap the behavior to record latency');
+  const btn=$('#btnLatency'); if(btn){btn.classList.add('active');btn.querySelector('div>div').textContent=msg('timing');}
+  toast(msg('latencyStarted'));
 }
 function cancelLatency(){
   clearInterval(lat.timerId); lat.timerId=null; lat.start=null;
   const bar=$('#latencyBar'); if(bar) bar.classList.remove('show');
   const btn=$('#btnLatency');
-  if(btn){btn.classList.remove('active');btn.querySelector('div>div').textContent='Start Antecedent';}
+  if(btn){btn.classList.remove('active');btn.querySelector('div>div').textContent=msg('startAntecedent');}
 }
 // 행동 기록 시 지연시간 자동 첨부
 function captureLatency(rec){
   if(!lat.start) return rec;
   const latSec=Math.round((Date.now()-lat.start)/1000);
   rec.latency=latSec;
-  rec.note=rec.note?rec.note+` [Latency ${latSec}s]`:`Latency ${latSec}s`;
+  rec.note=rec.note?rec.note+msg('latencyAppend',{sec:latSec}):msg('latencyNote',{sec:latSec});
   cancelLatency();
-  toast(`Latency <b>${latSec}s</b> recorded`);
+  toast(msg('latencyRecorded',{sec:latSec}));
   return rec;
 }
 
