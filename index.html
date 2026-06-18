@@ -1055,8 +1055,6 @@
             <div class="rmeta"><b>후속결과 편집</b><span id="consequenceManagerSub">후속결과 0개</span></div>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9aa6aa" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
           </div>
-          <button class="addbtn" style="margin-top:6px;border-color:#c8e0dc;color:#0F6E6C" data-action="open-order">↕ 현재 학생 행동 순서 편집</button>
-
           <div class="gh" style="padding-top:22px"><span>행동평정척도 (MAS)</span></div>
           <div class="row" style="cursor:pointer" data-action="open-mas-manager">
             <div class="rdisc" style="background:#3E86C0">
@@ -2800,6 +2798,7 @@ function paintStudent(){
   $('#stIncomp').textContent=mine.filter(r=>!r.a.length&&!r.c.length).length;
   const weekAgo=Date.now()-7*864e5;
   $('#stWeek').textContent=mine.filter(r=>new Date(r.ts).getTime()>weekAgo).length;
+  updateNoteBadge();
 }
 function renderSwitcher(){
   $('#switcher').innerHTML=db.students.map(s=>`
@@ -5279,7 +5278,7 @@ document.addEventListener('click',e=>{
   const t=e.target;
   const tab=t.closest('[data-tab]'); if(tab){switchTab(tab.dataset.tab);return;}
   const bh=t.closest('[data-bh]'); if(bh){tapBehavior(bh.dataset.bh,bh,e);return;}
-  const pick=t.closest('[data-pick]'); if(pick){syncActiveCaseFromDb();state.sid=pick.dataset.pick;applyCaseToDb(activeCase());reindex();state.date=null;$('#switcher').classList.remove('open');renderSwitcher();paintStudent();renderGrid();toast(`<b>${cur().name}</b> 로 전환`);return;}
+  const pick=t.closest('[data-pick]'); if(pick){syncActiveCaseFromDb();state.sid=pick.dataset.pick;applyCaseToDb(activeCase());reindex();state.date=null;$('#switcher').classList.remove('open');renderSwitcher();paintStudent();renderGrid();updateNoteBadge();toast(`<b>${cur().name}</b> 로 전환`);return;}
   const editTime=t.closest('[data-edit-time]');
   if(editTime){ openTimeEdit(editTime.dataset.editTime); return; }
   const orderUp=t.closest('[data-order-up]');
