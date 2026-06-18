@@ -755,6 +755,41 @@
   .ioa-legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;}
   .ioa-leg-item{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--sub);}
   .ioa-leg-dot{width:10px;height:10px;border-radius:3px;flex:none;}
+  .ioa-setup-list{display:grid;gap:10px;margin:4px 0 18px;}
+  .ioa-session-row{border:1px solid var(--line);border-radius:14px;background:#fff;padding:13px 14px;}
+  .ioa-session-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:8px;}
+  .ioa-session-title{font-size:13.5px;font-weight:900;color:var(--ink);}
+  .ioa-session-meta{font-size:11.5px;color:var(--sub);line-height:1.45;margin-top:2px;}
+  .ioa-session-actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px;}
+  .ioa-mini-btn{border:1px solid var(--line);background:#fff;color:var(--sub);border-radius:10px;padding:7px 10px;font-size:11.5px;font-weight:900;font-family:inherit;cursor:pointer;}
+  .ioa-mini-btn.primary{background:var(--primary);border-color:var(--primary);color:#fff;}
+  .ioa-mini-btn.warn{border-color:#efd2a4;color:#C77A1E;background:#fff8ed;}
+  .ioa-empty{font-size:12.5px;color:var(--sub);line-height:1.55;background:#fff;border:1px dashed var(--line);border-radius:14px;padding:14px;}
+  .ioa-form-grid{display:grid;gap:14px;}
+  .ioa-type-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+  .ioa-type-row button{border:1.5px solid var(--line);background:#fff;color:var(--ink);border-radius:12px;padding:10px 8px;font-size:12px;font-weight:900;font-family:inherit;cursor:pointer;}
+  .ioa-type-row button.on{border-color:var(--primary);background:#eef6f5;color:var(--primary);}
+  .ioa-field label{display:block;font-size:12px;font-weight:900;color:var(--sub);margin-bottom:6px;}
+  .ioa-field input,.ioa-field select{width:100%;border:1.5px solid var(--line);border-radius:12px;padding:11px 12px;font-size:14px;font-family:inherit;color:var(--ink);background:#fff;outline:none;}
+  .ioa-field input:focus,.ioa-field select:focus{border-color:var(--primary);}
+  .ioa-form-two{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  #ioaOverlay{position:absolute;inset:0;z-index:10001;background:linear-gradient(160deg,#163c3a 0%,#0b2524 100%);color:#fff;display:none;flex-direction:column;padding:28px 24px calc(24px + env(safe-area-inset-bottom,0px));}
+  #ioaOverlay.show{display:flex;}
+  .ioa-live-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:18px;}
+  .ioa-live-kicker{font-size:11px;font-weight:900;letter-spacing:.02em;opacity:.65;margin-bottom:5px;}
+  .ioa-live-title{font-size:22px;font-weight:900;line-height:1.25;}
+  .ioa-live-meta{font-size:12.5px;opacity:.72;line-height:1.45;margin-top:6px;}
+  .ioa-live-close{border:1px solid rgba(255,255,255,.24);background:rgba(255,255,255,.1);color:#fff;border-radius:12px;padding:9px 12px;font-size:12px;font-weight:900;font-family:inherit;cursor:pointer;}
+  .ioa-live-main{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:0;}
+  .ioa-live-timer{font-size:60px;font-weight:900;font-variant-numeric:tabular-nums;letter-spacing:-.04em;margin-bottom:8px;}
+  .ioa-live-prompt{font-size:15px;font-weight:800;line-height:1.55;opacity:.86;max-width:320px;margin:0 auto 22px;}
+  .ioa-live-controls{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;width:100%;}
+  .ioa-live-btn{min-width:112px;min-height:72px;border:none;border-radius:20px;background:rgba(255,255,255,.14);color:#fff;font-size:22px;font-weight:900;font-family:inherit;cursor:pointer;}
+  .ioa-live-btn.primary{background:#7fd9c4;color:#0d4a48;}
+  .ioa-live-btn.warn{background:#E0972F;color:#fff;}
+  .ioa-live-btn.danger{background:#E2603F;color:#fff;}
+  .ioa-live-count{font-size:68px;font-weight:900;line-height:1;margin-bottom:18px;}
+  .ioa-live-result{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.16);border-radius:18px;padding:16px 18px;max-width:340px;width:100%;font-size:13px;line-height:1.6;text-align:left;}
 
   /* 데스크톱 작업실에서도 모바일 시트를 전역 모달로 사용 */
   @media(min-width:1024px){
@@ -1016,6 +1051,10 @@
           <button class="meas-btn" id="btnLatency" data-action="start-latency">
             <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 8 14"/></svg>
             <div><div data-i18n="startAntecedent">선행 시작</div><div class="mb-sub">Latency</div></div>
+          </button>
+          <button class="meas-btn" id="btnIoa" data-action="open-ioa-setup" style="grid-column:1/-1">
+            <svg viewBox="0 0 24 24"><circle cx="8" cy="8" r="3"/><circle cx="16" cy="8" r="3"/><path d="M4 20c.7-3 2.2-5 4-5s3.3 2 4 5M12 20c.7-3 2.2-5 4-5s3.3 2 4 5"/></svg>
+            <div><div>IOA 공동관찰</div><div class="mb-sub">Interobserver Agreement</div></div>
           </button>
         </div>
         <div class="grid" id="behaviorGrid"></div>
@@ -1388,6 +1427,63 @@
       </div>
     </div>
 
+    <!-- IOA 공동 관찰 세션 -->
+    <div id="ioaOverlay">
+      <div class="ioa-live-top">
+        <div>
+          <div class="ioa-live-kicker" id="ioaLiveKicker">IOA</div>
+          <div class="ioa-live-title" id="ioaLiveTitle">공동 관찰</div>
+          <div class="ioa-live-meta" id="ioaLiveMeta"></div>
+        </div>
+        <button class="ioa-live-close" data-action="close-ioa-overlay">닫기</button>
+      </div>
+      <div class="ioa-live-main">
+        <div class="ioa-live-timer" id="ioaLiveTimer">--</div>
+        <div class="ioa-live-prompt" id="ioaLivePrompt"></div>
+        <div class="ioa-live-controls" id="ioaLiveControls"></div>
+      </div>
+    </div>
+
+    <div class="scrim" id="ioaSetupScrim" data-action="close-ioa-setup"></div>
+    <div class="sheet" id="ioaSetupSheet" style="max-height:92%">
+      <div class="grab"></div>
+      <div class="sheet-head">
+        <div class="stit"><b>IOA 공동관찰</b><span>공식 관찰자간 일치도 세션</span></div>
+        <button class="ghostbtn" data-action="close-ioa-setup">닫기</button>
+      </div>
+      <div class="interval-setup-scroll">
+        <div class="grp-tit" style="margin-top:0">진행 중인 세션</div>
+        <div class="ioa-setup-list" id="ioaSessionList"></div>
+        <div class="grp-tit">새 IOA 세션 만들기</div>
+        <div class="ioa-form-grid">
+          <div class="ioa-field">
+            <label>기록 방식</label>
+            <div class="ioa-type-row">
+              <button type="button" class="on" data-ioa-type="interval">간격</button>
+              <button type="button" data-ioa-type="frequency">빈도</button>
+              <button type="button" data-ioa-type="duration">지속시간</button>
+            </div>
+            <input type="hidden" id="ioaType" value="interval">
+          </div>
+          <div class="ioa-field">
+            <label>목표 행동</label>
+            <select id="ioaBehavior"></select>
+          </div>
+          <div class="ioa-form-two">
+            <div class="ioa-field" id="ioaIntervalField">
+              <label>간격 길이(초)</label>
+              <input type="number" id="ioaIntervalSec" value="10" min="5" max="600">
+            </div>
+            <div class="ioa-field">
+              <label>전체 관찰시간(분)</label>
+              <input type="number" id="ioaTotalMin" value="10" min="1" max="180">
+            </div>
+          </div>
+          <button class="btn-prim" style="width:100%;padding:13px;font-size:15px;border-radius:14px" data-action="create-ioa-session">세션 만들기</button>
+        </div>
+      </div>
+    </div>
+
     <!-- 행동 순서 편집 시트 -->
     <div class="scrim" id="orderScrim" data-action="close-order"></div>
     <div class="sheet" id="orderSheet" style="max-height:85%">
@@ -1558,6 +1654,7 @@ function defaults(){
     notes:[],        // {id,sid,ts,tag,text}
     interviews:[],   // {id,sid,ts,respondent,answers:{[qid]:text}}
     masScores:[],    // {id,sid,ts,scores:{[itemId]:number}}
+    ioaSessions:[],  // 공식 공동 관찰 IOA 세션
     records:[],
   };
 }
@@ -1707,6 +1804,10 @@ const STATIC_EN={
   '행동정의 편집':'Edit Behavior Definitions','＋ 행동 추가':'+ Add Behavior','현재 학생 행동 순서 편집':'Edit Current Student Behavior Order',
   '선행사건 추가':'Add Antecedent','＋ 선행사건 추가':'+ Add Antecedent','후속결과 추가':'Add Consequence','＋ 후속결과 추가':'+ Add Consequence',
   '닫기':'Close','편집':'Edit','삭제':'Delete','취소':'Cancel','저장':'Save','저장하고 닫기':'Save and Close','나중에':'Later',
+  'IOA 공동관찰':'IOA Joint Observation','공식 관찰자간 일치도 세션':'Official interobserver agreement session','진행 중인 세션':'Active Sessions','새 IOA 세션 만들기':'Create New IOA Session',
+  '기록 방식':'Recording Method','간격':'Interval','빈도':'Frequency','지속시간':'Duration','목표 행동':'Target Behavior','간격 길이(초)':'Interval Length (sec)','전체 관찰시간(분)':'Total Observation Time (min)','세션 만들기':'Create Session',
+  '공동 관찰':'Joint Observation','준비 완료':'Ready','준비됨 ✓':'Ready ✓','시작':'Start','열기':'Open','참가':'Join','대기 중':'Waiting','관찰 중':'Observing','완료':'Complete','취소됨':'Cancelled',
+  '관찰자간 일치도 (IOA)':'Interobserver Agreement (IOA)','일치도':'Agreement','간격 기록':'Interval Recording','빈도 기록':'Frequency Recording','지속시간 기록':'Duration Recording',
   '관찰 노트':'Observation Notes','메모':'Memo','면담':'Interview','행동척도':'Behavior Scale','관찰 메모를 입력하세요':'Enter an observation memo',
   '관찰 전':'Before observation','관찰 중':'During observation','추가':'Add','면담 대상 (예: 보호자, 담임교사)':'Interviewee (e.g., caregiver, homeroom teacher)',
   '동기평가척도 (MAS)':'Motivation Assessment Scale (MAS)','각 항목에 0–6점을 선택하세요':'Select a 0-6 score for each item',
@@ -1957,6 +2058,7 @@ let recordRetryTimers = {}; // sid → retry timer
 let noteListeners     = {}; // sid → unsubscribe (관찰 메모 리스너)
 let interviewListeners= {}; // sid → unsubscribe (면담 리스너)
 let masScoreListeners = {}; // sid → unsubscribe (MAS 점수 리스너)
+let ioaSessionListeners = {}; // sid → unsubscribe (공동 IOA 세션 리스너)
 let extraRetryTimers  = {}; // sid → retry timer for notes/interviews/MAS
 let settingsListener  = null;
 
@@ -1971,6 +2073,8 @@ const FS = {
   interview:  (sid,iid) => fbStore.collection('cases').doc(sid).collection('interviews').doc(iid),
   masScores: sid => fbStore.collection('cases').doc(sid).collection('masScores'),
   masScore:  (sid,mid) => fbStore.collection('cases').doc(sid).collection('masScores').doc(mid),
+  ioaSessions: sid => fbStore.collection('cases').doc(sid).collection('ioaSessions'),
+  ioaSession:  (sid,iid) => fbStore.collection('cases').doc(sid).collection('ioaSessions').doc(iid),
   member:   (sid,uid) => fbStore.collection('cases').doc(sid).collection('members').doc(uid),
   code:     code => fbStore.collection('invites').doc(code),
 };
@@ -2112,19 +2216,21 @@ function mergeByStableId(...groups){
 
 async function loadCaseExtras(sid){
   try{
-    const [noteSnap, ivSnap, masSnap] = await Promise.all([
+    const [noteSnap, ivSnap, masSnap, ioaSnap] = await Promise.all([
       FS.notes(sid).get(),
       FS.interviews(sid).get(),
       FS.masScores(sid).get(),
+      FS.ioaSessions(sid).get(),
     ]);
     return {
       notes: noteSnap.docs.map(d=>({...d.data(), id:d.id, sid:d.data().sid || sid})),
       interviews: ivSnap.docs.map(d=>({...d.data(), id:d.id, sid:d.data().sid || sid})),
       masScores: masSnap.docs.map(d=>({...d.data(), id:d.id, sid:d.data().sid || sid})),
+      ioaSessions: ioaSnap.docs.map(d=>({...d.data(), id:d.id, sid:d.data().sid || sid})),
     };
   }catch(e){
     console.warn('관찰노트 공유 데이터 읽기 실패:', e.code || e.message || e, {caseId:sid});
-    return {notes:[], interviews:[], masScores:[]};
+    return {notes:[], interviews:[], masScores:[], ioaSessions:[]};
   }
 }
 
@@ -2257,6 +2363,7 @@ function stopCaseRealtime(sid){
   if(noteListeners[sid]){ noteListeners[sid](); delete noteListeners[sid]; }
   if(interviewListeners[sid]){ interviewListeners[sid](); delete interviewListeners[sid]; }
   if(masScoreListeners[sid]){ masScoreListeners[sid](); delete masScoreListeners[sid]; }
+  if(ioaSessionListeners[sid]){ ioaSessionListeners[sid](); delete ioaSessionListeners[sid]; }
   if(recordRetryTimers[sid]){ clearTimeout(recordRetryTimers[sid]); delete recordRetryTimers[sid]; }
   if(extraRetryTimers[sid]){ clearTimeout(extraRetryTimers[sid]); delete extraRetryTimers[sid]; }
 }
@@ -2268,6 +2375,7 @@ function removeStudentLocal(sid){
   db.notes = (db.notes || []).filter(n => n.sid !== sid);
   db.interviews = (db.interviews || []).filter(n => n.sid !== sid);
   db.masScores = (db.masScores || []).filter(n => n.sid !== sid);
+  db.ioaSessions = (db.ioaSessions || []).filter(n => n.sid !== sid);
   if(state.sid === sid) state.sid = db.students[0]?.id || '';
   if(state.sid){
     const next = db.students.find(s=>s.id===state.sid) || db.students[0];
@@ -2286,6 +2394,7 @@ function clearClientSession(){
   Object.values(noteListeners).forEach(u => u());
   Object.values(interviewListeners).forEach(u => u());
   Object.values(masScoreListeners).forEach(u => u());
+  Object.values(ioaSessionListeners).forEach(u => u());
   Object.values(extraRetryTimers).forEach(t => clearTimeout(t));
   if(settingsListener){ settingsListener(); settingsListener = null; }
   studentListeners = {};
@@ -2294,6 +2403,7 @@ function clearClientSession(){
   noteListeners = {};
   interviewListeners = {};
   masScoreListeners = {};
+  ioaSessionListeners = {};
   extraRetryTimers = {};
   sharedStudentIds = [];
   db = null;
@@ -2321,6 +2431,7 @@ async function deleteStudentCase(sid){
   await deleteCollectionDocs(FS.notes(sid));
   await deleteCollectionDocs(FS.interviews(sid));
   await deleteCollectionDocs(FS.masScores(sid));
+  await deleteCollectionDocs(FS.ioaSessions(sid));
   await deleteCollectionDocs(FS.student(sid).collection('members'));
   if(s.shareCode) await FS.code(s.shareCode).delete().catch(()=>{});
   await FS.student(sid).delete();
@@ -2339,6 +2450,7 @@ async function resetCloudDataForCurrentUser(){
   Object.values(noteListeners).forEach(u => u());
   Object.values(interviewListeners).forEach(u => u());
   Object.values(masScoreListeners).forEach(u => u());
+  Object.values(ioaSessionListeners).forEach(u => u());
   Object.values(extraRetryTimers).forEach(t => clearTimeout(t));
   if(settingsListener){ settingsListener(); settingsListener = null; }
   studentListeners = {};
@@ -2347,6 +2459,7 @@ async function resetCloudDataForCurrentUser(){
   noteListeners = {};
   interviewListeners = {};
   masScoreListeners = {};
+  ioaSessionListeners = {};
   extraRetryTimers = {};
 
   // prototype7 cases 구조 정리
@@ -2427,6 +2540,7 @@ async function loadData(){
     const notes = [];
     const interviews = [];
     const masScores = [];
+    const ioaSessions = [];
 
     for(const doc of snap.docs){
       const raw = doc.data();
@@ -2440,6 +2554,7 @@ async function loadData(){
       notes.push(...mergeByStableId(s.notes || [], extras.notes));
       interviews.push(...mergeByStableId(s.interviews || [], extras.interviews));
       masScores.push(...mergeByStableId(s.masScores || [], extras.masScores));
+      ioaSessions.push(...mergeByStableId(extras.ioaSessions));
       const recSnap = await FS.records(s.id).get();
       recSnap.docs.forEach(r => allRecords.push({...r.data(), id: r.id, sid: r.data().sid || s.id}));
     }
@@ -2456,6 +2571,7 @@ async function loadData(){
       notes,
       interviews,
       masScores,
+      ioaSessions,
     };
   }catch(e){
     console.warn('loadData 오류:', e);
@@ -2639,6 +2755,7 @@ function startSync(){
   Object.values(noteListeners).forEach(u => u());
   Object.values(interviewListeners).forEach(u => u());
   Object.values(masScoreListeners).forEach(u => u());
+  Object.values(ioaSessionListeners).forEach(u => u());
   Object.values(extraRetryTimers).forEach(t => clearTimeout(t));
   studentListeners = {};
   recordListeners  = {};
@@ -2646,6 +2763,7 @@ function startSync(){
   noteListeners = {};
   interviewListeners = {};
   masScoreListeners = {};
+  ioaSessionListeners = {};
   extraRetryTimers = {};
   if(settingsListener){ settingsListener(); settingsListener = null; }
   if(unsubSync){ unsubSync(); unsubSync = null; }
@@ -2732,6 +2850,7 @@ function stopExtraRealtime(sid){
   if(noteListeners[sid]){ noteListeners[sid](); delete noteListeners[sid]; }
   if(interviewListeners[sid]){ interviewListeners[sid](); delete interviewListeners[sid]; }
   if(masScoreListeners[sid]){ masScoreListeners[sid](); delete masScoreListeners[sid]; }
+  if(ioaSessionListeners[sid]){ ioaSessionListeners[sid](); delete ioaSessionListeners[sid]; }
   if(extraRetryTimers[sid]){ clearTimeout(extraRetryTimers[sid]); delete extraRetryTimers[sid]; }
 }
 
@@ -2750,6 +2869,7 @@ function applySharedDocSnapshot(key, sid, snap){
   });
   if(state.sid === sid) syncActiveCaseFromDb();
   refreshAll();
+  if(key==='ioaSessions'&&$('#ioaSetupSheet')?.classList.contains('open')) renderIoaSessionList();
 }
 
 function startExtraListeners(sid, attempt=0){
@@ -2774,6 +2894,7 @@ function startExtraListeners(sid, attempt=0){
   noteListeners[sid] = FS.notes(sid).onSnapshot(snap=>applySharedDocSnapshot('notes', sid, snap), onErr);
   interviewListeners[sid] = FS.interviews(sid).onSnapshot(snap=>applySharedDocSnapshot('interviews', sid, snap), onErr);
   masScoreListeners[sid] = FS.masScores(sid).onSnapshot(snap=>applySharedDocSnapshot('masScores', sid, snap), onErr);
+  ioaSessionListeners[sid] = FS.ioaSessions(sid).onSnapshot(snap=>applySharedDocSnapshot('ioaSessions', sid, snap), onErr);
 }
 
 // ── 공유 코드 생성 (제한시간 24시간 + 랜덤) ──
@@ -2962,6 +3083,7 @@ async function initApp(){
     if(!db.notes)       db.notes       = [];
     if(!db.interviews)  db.interviews  = [];
     if(!db.masScores)   db.masScores   = [];
+    if(!db.ioaSessions) db.ioaSessions = [];
     if(!db.masItems)    db.masItems    = MAS_DEFAULTS.map(m=>({...m}));
     if(!db.ivQuestions) db.ivQuestions = defaultIvQuestions();
     if(!db.records)     db.records     = [];
@@ -2986,6 +3108,7 @@ async function initApp(){
     db.notes      = [];
     db.interviews = [];
     db.masScores  = [];
+    db.ioaSessions = [];
     const base = caseDefaults();
     db.students   = [{
       id: ulid(), name: appLang==='en'?'Student 1':'학생 1', color: '#0F6E6C', sub: '',
@@ -3919,9 +4042,9 @@ function renderAnalysis(){
   const max=Math.max(...Object.values(byB));
   const bars=Object.keys(byB).sort((a,b)=>byB[b]-byB[a]).map(id=>{const b=bMap[id]||{name:'?',color:'#9aa6aa'};return `<div class="barrow"><div class="bl">${escHtml(localText(b.name))}</div><div class="bt"><div class="bf" style="width:${byB[id]/max*100}%;background:${b.color}"></div></div><div class="bn">${byB[id]}</div></div>`;}).join('');
 
-  // IOA 섹션 — 공유 학생이면 표시
+  // IOA 섹션 — 완료된 공식 공동 관찰 세션 결과만 표시
   const curStudent=cur();
-  const ioaHtml=curStudent?.shareCode ? renderIOASection(curStudent.id) : '';
+  const ioaHtml=curStudent ? renderIOASection(curStudent.id) : '';
 
   body.innerHTML=ioaHtml+hyp+measurementHtml
     +(appLang==='en'
@@ -5291,70 +5414,356 @@ async function doJoin(){
   if(ok){ closeJoinSheet(); renderSettings(); }
 }
 
-// ============ IOA 분석 ============
-function calcIOA(sid, intervalSec=10){
-  // sharedRecords에서 두 관찰자 이상의 기록 비교
-  const allRecs=activeRecords().filter(r=>r.sid===sid);
-  const observers=[...new Set(allRecs.map(r=>r.observerId||'unknown'))];
-  if(observers.length<2) return null;
-
-  const [obsA, obsB]=observers;
-  const recsA=allRecs.filter(r=>(r.observerId||'unknown')===obsA);
-  const recsB=allRecs.filter(r=>(r.observerId||'unknown')===obsB);
-
-  // 겹치는 시간 구간 찾기
-  if(!recsA.length||!recsB.length) return null;
-  const startA=Math.min(...recsA.map(r=>new Date(r.ts).getTime()));
-  const endA=Math.max(...recsA.map(r=>new Date(r.ts).getTime()));
-  const startB=Math.min(...recsB.map(r=>new Date(r.ts).getTime()));
-  const endB=Math.max(...recsB.map(r=>new Date(r.ts).getTime()));
-  const overlapStart=Math.max(startA,startB);
-  const overlapEnd=Math.min(endA,endB);
-  if(overlapEnd<=overlapStart) return null;
-
-  // 간격별 발생 여부
-  const intervals=[];
-  for(let t=overlapStart; t<overlapEnd; t+=intervalSec*1000){
-    const te=t+intervalSec*1000;
-    const inA=recsA.some(r=>{const rt=new Date(r.ts).getTime();return rt>=t&&rt<te;});
-    const inB=recsB.some(r=>{const rt=new Date(r.ts).getTime();return rt>=t&&rt<te;});
-    intervals.push({inA,inB});
-  }
-  if(!intervals.length) return null;
-
-  const match=intervals.filter(i=>i.inA===i.inB).length;
-  const rate=Math.round(match/intervals.length*100);
-  return {rate,intervals,obsA,obsB,total:intervals.length,match};
+// ============ 공식 IOA 공동 관찰 세션 ============
+const ioaState={activeId:null,sid:null,session:null,unsub:null,timer:null,durStartMs:null,advancing:false,completing:false};
+function ioaUid(){return fbUser?.uid||OBSERVER_ID;}
+function ioaName(){return fbUser?.displayName||fbUser?.email||msg('observer');}
+function ioaTypeLabel(type){
+  const ko={interval:'간격 기록',frequency:'빈도 기록',duration:'지속시간 기록'};
+  const en={interval:'Interval recording',frequency:'Frequency recording',duration:'Duration recording'};
+  return (appLang==='en'?en:ko)[type]||type;
 }
-
-function renderIOASection(sid){
-  const result=calcIOA(sid);
-  if(!result) return `<div class="ioa-card">
-    <div class="ioa-title">관찰자간 일치도 (IOA)</div>
-    <div style="font-size:13px;color:var(--sub)">두 관찰자 이상의 기록이 겹치는 시간대가 있어야 계산할 수 있어요.</div>
-  </div>`;
-
-  const rateClass=result.rate>=80?'good':result.rate>=60?'warn':'bad';
-  const segWidth=Math.max(4, Math.min(20, Math.floor(280/result.total)));
-  const segs=result.intervals.map(i=>{
-    const cls=i.inA&&i.inB?'match':!i.inA&&!i.inB?'match':i.inA?'only-a':'only-b';
-    return `<div class="ioa-seg ${cls}" style="width:${segWidth}px"></div>`;
+function ioaStatusLabel(status){
+  const ko={waiting:'대기 중',running:'관찰 중',complete:'완료',cancelled:'취소됨'};
+  const en={waiting:'Waiting',running:'Running',complete:'Complete',cancelled:'Cancelled'};
+  return (appLang==='en'?en:ko)[status]||status;
+}
+function ioaBehaviorLabel(s){return escHtml(localText(s.behaviorName||bMap[s.behaviorId]?.name||'행동'));}
+function ioaParticipantIds(s){
+  const ids=[...(s.participantOrder||[])];
+  Object.keys(s.participants||{}).forEach(id=>{if(!ids.includes(id))ids.push(id);});
+  return ids.filter(id=>s.participants?.[id]);
+}
+function ioaReadyIds(s){return ioaParticipantIds(s).filter(id=>s.participants?.[id]?.ready);}
+function ioaIsParticipant(s){return !!s?.participants?.[ioaUid()];}
+function ioaCanStart(s){return (s?.status==='waiting')&&ioaReadyIds(s).length>=2;}
+function ioaSessionsForStudent(sid){
+  return (db?.ioaSessions||[])
+    .filter(s=>s.sid===sid&&s.status!=='cancelled')
+    .sort((a,b)=>new Date(b.updatedAt||b.createdAt||0)-new Date(a.updatedAt||a.createdAt||0));
+}
+function openIoaSetup(){
+  if(!cur()){toast(localText('학생을 먼저 선택해 주세요'));return;}
+  const sel=$('#ioaBehavior'); if(sel) sel.innerHTML=getBehaviorOrder(state.sid).map(b=>`<option value="${b.id}">${escHtml(localText(b.name))} (${b.type==='freq'?msg('count'):msg('duration')})</option>`).join('');
+  setIoaType($('#ioaType')?.value||'interval');
+  renderIoaSessionList();
+  $('#ioaSetupScrim').classList.add('show');
+  $('#ioaSetupSheet').classList.add('open');
+  translateStaticDom($('#ioaSetupSheet'));
+}
+function closeIoaSetup(){
+  $('#ioaSetupScrim').classList.remove('show');
+  $('#ioaSetupSheet').classList.remove('open');
+}
+function setIoaType(type){
+  const t=['interval','frequency','duration'].includes(type)?type:'interval';
+  const inp=$('#ioaType'); if(inp) inp.value=t;
+  document.querySelectorAll('[data-ioa-type]').forEach(b=>b.classList.toggle('on',b.dataset.ioaType===t));
+  const f=$('#ioaIntervalField'); if(f) f.style.display=t==='interval'?'block':'none';
+}
+function renderIoaSessionList(){
+  const el=$('#ioaSessionList'); if(!el) return;
+  const sessions=ioaSessionsForStudent(state.sid).filter(s=>s.status!=='complete').slice(0,6);
+  if(!sessions.length){
+    el.innerHTML=`<div class="ioa-empty">${appLang==='en'?'No active IOA sessions. Create a session, then have at least two observers join and mark ready.':'진행 중인 IOA 세션이 없어요. 세션을 만들고 두 명 이상의 관찰자가 참가해 준비 완료를 눌러야 합니다.'}</div>`;
+    return;
+  }
+  el.innerHTML=sessions.map(s=>{
+    const ready=ioaReadyIds(s).length, total=ioaParticipantIds(s).length;
+    const mine=ioaIsParticipant(s);
+    return `<div class="ioa-session-row">
+      <div class="ioa-session-head">
+        <div>
+          <div class="ioa-session-title">${ioaTypeLabel(s.type)} · ${ioaBehaviorLabel(s)}</div>
+          <div class="ioa-session-meta">${ioaStatusLabel(s.status)} · ${ready}/${Math.max(total,2)} ${appLang==='en'?'ready':'준비'} · ${Math.round((s.totalSec||0)/60)}${appLang==='en'?' min':'분'}</div>
+        </div>
+        <span class="hyp-status">${escHtml(s.createdByName||'')}</span>
+      </div>
+      <div class="ioa-session-actions">
+        ${mine?`<button class="ioa-mini-btn ${s.participants?.[ioaUid()]?.ready?'warn':'primary'}" data-ioa-ready="${s.id}">${s.participants?.[ioaUid()]?.ready?(appLang==='en'?'Ready ✓':'준비됨 ✓'):(appLang==='en'?'Ready':'준비 완료')}</button>`:`<button class="ioa-mini-btn primary" data-ioa-join="${s.id}">${appLang==='en'?'Join':'참가'}</button>`}
+        ${ioaCanStart(s)?`<button class="ioa-mini-btn primary" data-ioa-start="${s.id}">${appLang==='en'?'Start':'시작'}</button>`:''}
+        <button class="ioa-mini-btn" data-ioa-open="${s.id}">${appLang==='en'?'Open':'열기'}</button>
+        ${s.createdByUid===ioaUid()&&s.status==='waiting'?`<button class="ioa-mini-btn warn" data-ioa-cancel="${s.id}">${appLang==='en'?'Cancel':'취소'}</button>`:''}
+      </div>
+    </div>`;
   }).join('');
-
-  return `<div class="ioa-card">
-    <div class="ioa-title">관찰자간 일치도 (IOA)</div>
-    <div class="ioa-rate ${rateClass}">${result.rate}%</div>
-    <div style="font-size:12px;color:var(--sub);margin:4px 0 10px">
-      ${result.total}개 간격 중 ${result.match}개 일치
-      ${result.rate>=80?'✅ 신뢰할 수 있는 데이터':'⚠️ 추가 관찰 필요'}
-    </div>
-    <div class="ioa-bar-row">${segs}</div>
-    <div class="ioa-legend">
-      <div class="ioa-leg-item"><div class="ioa-leg-dot" style="background:#7fd9c4"></div>둘 다 일치</div>
-      <div class="ioa-leg-item"><div class="ioa-leg-dot" style="background:#3E86C0"></div>A만 기록</div>
-      <div class="ioa-leg-item"><div class="ioa-leg-dot" style="background:#E0972F"></div>B만 기록</div>
-    </div>
-  </div>`;
+  translateStaticDom(el);
+}
+async function createIoaSession(){
+  if(!fbUser||!cur()) return;
+  const type=$('#ioaType')?.value||'interval';
+  const bid=$('#ioaBehavior')?.value;
+  const b=bMap[bid];
+  const intervalSec=Math.max(5,parseInt($('#ioaIntervalSec')?.value)||10);
+  const totalMin=Math.max(1,parseInt($('#ioaTotalMin')?.value)||10);
+  if(!bid||!b){toast(appLang==='en'?'Select a target behavior.':'목표 행동을 선택해 주세요.');return;}
+  if(type==='interval'&&(totalMin*60)%intervalSec!==0){toast(msg('intervalDivide'));return;}
+  const id=uid('ioa');
+  const uid0=ioaUid();
+  const session={
+    id,sid:state.sid,type,behaviorId:bid,behaviorName:b.name,behaviorType:b.type,
+    intervalSec:type==='interval'?intervalSec:null,totalSec:totalMin*60,totalIntervals:type==='interval'?Math.floor(totalMin*60/intervalSec):null,
+    status:'waiting',phase:'waiting',currentIndex:0,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString(),
+    createdByUid:uid0,createdByName:ioaName(),
+    participants:{[uid0]:{uid:uid0,name:ioaName(),ready:true,joinedAt:new Date().toISOString()}},
+    participantOrder:[uid0],responses:{},counts:{[uid0]:0},durationEvents:{[uid0]:[]},result:null
+  };
+  await FS.ioaSession(state.sid,id).set(session,{merge:true});
+  closeIoaSetup();
+  listenIoaSession(state.sid,id,true);
+  toast(appLang==='en'?'IOA session created. Ask another observer to join and mark ready.':'IOA 세션을 만들었어요. 다른 관찰자가 참가하고 준비 완료를 누르면 시작할 수 있어요.');
+}
+async function joinIoaSession(id){
+  const s=(db.ioaSessions||[]).find(x=>x.id===id)||(ioaState.activeId===id?ioaState.session:null);
+  if(!s||!fbUser) return;
+  const uid0=ioaUid();
+  await FS.ioaSession(s.sid,id).set({
+    participantOrder:firebase.firestore.FieldValue.arrayUnion(uid0),
+    participants:{[uid0]:{uid:uid0,name:ioaName(),ready:false,joinedAt:new Date().toISOString()}},
+    updatedAt:new Date().toISOString()
+  },{merge:true});
+  listenIoaSession(s.sid,id,true);
+}
+async function toggleIoaReady(id){
+  const s=(db.ioaSessions||[]).find(x=>x.id===id)||(ioaState.activeId===id?ioaState.session:null);
+  if(!s||s.status!=='waiting') return;
+  if(!ioaIsParticipant(s)){await joinIoaSession(id);return;}
+  const uid0=ioaUid();
+  const ready=!s.participants?.[uid0]?.ready;
+  await FS.ioaSession(s.sid,id).update({[`participants.${uid0}.ready`]:ready,updatedAt:new Date().toISOString()});
+}
+async function startIoaSession(id){
+  const s=(db.ioaSessions||[]).find(x=>x.id===id)||(ioaState.activeId===id?ioaState.session:null);
+  if(!s||!ioaCanStart(s)){toast(appLang==='en'?'At least two observers must be ready.':'두 명 이상의 관찰자가 준비 완료 상태여야 합니다.');return;}
+  const startAt=Date.now()+2200;
+  const payload={status:'running',startedAt:new Date(startAt).toISOString(),startedAtMs:startAt,updatedAt:new Date().toISOString()};
+  if(s.type==='interval') Object.assign(payload,{phase:'observing',currentIndex:0,roundStartMs:startAt,roundEndMs:startAt+(s.intervalSec||10)*1000});
+  else Object.assign(payload,{phase:'recording',endAtMs:startAt+(s.totalSec||600)*1000});
+  await FS.ioaSession(s.sid,s.id).set(payload,{merge:true});
+  listenIoaSession(s.sid,s.id,true);
+}
+async function cancelIoaSession(id){
+  const s=(db.ioaSessions||[]).find(x=>x.id===id)||(ioaState.activeId===id?ioaState.session:null);
+  if(!s||s.createdByUid!==ioaUid()) return;
+  await FS.ioaSession(s.sid,id).set({status:'cancelled',updatedAt:new Date().toISOString()},{merge:true});
+  renderIoaSessionList();
+}
+function listenIoaSession(sid,id,show=false){
+  if(ioaState.unsub){ioaState.unsub();ioaState.unsub=null;}
+  ioaState.activeId=id; ioaState.sid=sid; ioaState.durStartMs=null; ioaState.advancing=false; ioaState.completing=false;
+  ioaState.unsub=FS.ioaSession(sid,id).onSnapshot(doc=>{
+    if(!doc.exists) return;
+    ioaState.session={id:doc.id,...doc.data(),sid:doc.data().sid||sid};
+    renderIoaOverlay();
+    if($('#ioaSetupSheet')?.classList.contains('open')) renderIoaSessionList();
+  },e=>console.warn('IOA 세션 리스너 오류:',e.code||e.message||e));
+  if(show) $('#ioaOverlay').classList.add('show');
+  startIoaTick();
+}
+function closeIoaOverlay(){
+  $('#ioaOverlay').classList.remove('show');
+}
+function startIoaTick(){
+  clearInterval(ioaState.timer);
+  ioaState.timer=setInterval(()=>{tickIoaSession();renderIoaOverlay();},500);
+}
+function ioaTimeText(ms){
+  if(!isFinite(ms)) return '--';
+  const sec=Math.max(0,Math.ceil(ms/1000));
+  return `${String(Math.floor(sec/60)).padStart(2,'0')}:${String(sec%60).padStart(2,'0')}`;
+}
+function renderIoaOverlay(){
+  const s=ioaState.session; if(!s) return;
+  const title=$('#ioaLiveTitle'), meta=$('#ioaLiveMeta'), timer=$('#ioaLiveTimer'), prompt=$('#ioaLivePrompt'), controls=$('#ioaLiveControls');
+  if(!title||!meta||!timer||!prompt||!controls) return;
+  title.textContent=`${ioaTypeLabel(s.type)} · ${localText(s.behaviorName||'행동')}`;
+  const ids=ioaParticipantIds(s);
+  meta.textContent=`${ioaStatusLabel(s.status)} · ${ids.length} ${appLang==='en'?'observers':'관찰자'} · ${Math.round((s.totalSec||0)/60)}${appLang==='en'?' min':'분'}`;
+  controls.innerHTML='';
+  const now=Date.now();
+  if(s.status==='waiting'){
+    timer.textContent='--';
+    prompt.textContent=appLang==='en'?'Have at least two observers join and mark ready.':'두 명 이상의 관찰자가 참가한 뒤 준비 완료를 눌러야 시작할 수 있어요.';
+    controls.innerHTML=`<button class="ioa-live-btn primary" data-ioa-ready="${s.id}">${s.participants?.[ioaUid()]?.ready?(appLang==='en'?'Ready ✓':'준비됨 ✓'):(appLang==='en'?'Ready':'준비 완료')}</button>${ioaCanStart(s)?`<button class="ioa-live-btn warn" data-ioa-start="${s.id}">${appLang==='en'?'Start':'시작'}</button>`:''}`;
+    return;
+  }
+  if(s.status==='complete'){
+    timer.textContent=`${Math.round(s.result?.rate||0)}%`;
+    prompt.textContent=appLang==='en'?'IOA session complete.':'IOA 세션이 완료됐어요.';
+    controls.innerHTML=`<div class="ioa-live-result">${renderIoaResultText(s)}</div>`;
+    return;
+  }
+  if(s.type==='interval'){
+    const idx=s.currentIndex||0;
+    if(s.phase==='observing'){
+      const wait=(s.roundStartMs||now)-now;
+      const remain=(s.roundEndMs||now)-now;
+      timer.textContent=ioaTimeText(wait>0?wait:remain);
+      prompt.textContent=wait>0
+        ? (appLang==='en'?'Starting together...':'곧 동시에 시작합니다...')
+        : `${appLang==='en'?'Observe interval':'관찰 간격'} ${idx+1}/${s.totalIntervals}`;
+      return;
+    }
+    if(s.phase==='marking'){
+      timer.textContent='O / X';
+      const marked=s.responses?.[ioaUid()]?.[idx]!=null;
+      prompt.textContent=marked
+        ? (appLang==='en'?'Response saved. Waiting for other observers.':'응답을 저장했어요. 다른 관찰자의 응답을 기다리는 중입니다.')
+        : (appLang==='en'?'Did the target behavior occur during this interval?':'이번 간격 동안 목표 행동이 발생했나요?');
+      controls.innerHTML=marked?'':`<button class="ioa-live-btn primary" data-ioa-mark="O">O</button><button class="ioa-live-btn danger" data-ioa-mark="X">X</button>`;
+      return;
+    }
+  }
+  if(s.type==='frequency'){
+    const wait=(s.startedAtMs||now)-now, remain=(s.endAtMs||now)-now;
+    timer.textContent=ioaTimeText(wait>0?wait:remain);
+    const count=Number(s.counts?.[ioaUid()]||0);
+    prompt.innerHTML=wait>0?(appLang==='en'?'Starting together...':'곧 동시에 시작합니다...'):`<div class="ioa-live-count">${count}</div>${appLang==='en'?'Tap when the target behavior occurs.':'목표 행동이 발생할 때마다 누르세요.'}`;
+    controls.innerHTML=wait>0?'':`<button class="ioa-live-btn primary" data-action="ioa-count">${appLang==='en'?'Count +1':'빈도 +1'}</button>`;
+    return;
+  }
+  if(s.type==='duration'){
+    const wait=(s.startedAtMs||now)-now, remain=(s.endAtMs||now)-now;
+    timer.textContent=ioaTimeText(wait>0?wait:remain);
+    const running=!!ioaState.durStartMs;
+    prompt.textContent=wait>0?(appLang==='en'?'Starting together...':'곧 동시에 시작합니다...'):(running?(appLang==='en'?'Behavior duration is being recorded.':'행동 지속시간 기록 중입니다.'):(appLang==='en'?'Start when the behavior begins, stop when it ends.':'행동이 시작되면 시작, 끝나면 종료를 누르세요.'));
+    controls.innerHTML=wait>0?'':`<button class="ioa-live-btn ${running?'danger':'primary'}" data-action="ioa-duration-toggle">${running?(appLang==='en'?'Stop':'종료'):(appLang==='en'?'Start':'시작')}</button>`;
+  }
+}
+function tickIoaSession(){
+  const s=ioaState.session; if(!s||s.status!=='running') return;
+  const now=Date.now();
+  if(s.type==='interval'){
+    if(s.phase==='observing'&&now>=(s.roundEndMs||0)) FS.ioaSession(s.sid,s.id).set({phase:'marking',updatedAt:new Date().toISOString()},{merge:true}).catch(()=>{});
+    if(s.phase==='marking') advanceIoaIntervalIfReady(s);
+  }else if(now>=(s.endAtMs||0)){
+    completeIoaSession(s);
+  }
+}
+async function submitIoaMark(mark){
+  const s=ioaState.session; if(!s||s.status!=='running'||s.type!=='interval') return;
+  const idx=s.currentIndex||0, uid0=ioaUid();
+  await FS.ioaSession(s.sid,s.id).update({[`responses.${uid0}.${idx}`]:mark,updatedAt:new Date().toISOString()});
+}
+async function advanceIoaIntervalIfReady(s){
+  if(ioaState.advancing) return;
+  const ids=ioaParticipantIds(s);
+  const idx=s.currentIndex||0;
+  if(ids.length<2||!ids.every(id=>s.responses?.[id]?.[idx]!=null)) return;
+  ioaState.advancing=true;
+  try{
+    if(idx+1>=Number(s.totalIntervals||0)){await completeIoaSession(s);return;}
+    const start=Date.now()+900;
+    await FS.ioaSession(s.sid,s.id).set({phase:'observing',currentIndex:idx+1,roundStartMs:start,roundEndMs:start+(s.intervalSec||10)*1000,updatedAt:new Date().toISOString()},{merge:true});
+  }finally{setTimeout(()=>ioaState.advancing=false,800);}
+}
+async function incrementIoaCount(){
+  const s=ioaState.session; if(!s||s.status!=='running'||s.type!=='frequency') return;
+  await FS.ioaSession(s.sid,s.id).update({[`counts.${ioaUid()}`]:firebase.firestore.FieldValue.increment(1),updatedAt:new Date().toISOString()});
+}
+async function toggleIoaDuration(){
+  const s=ioaState.session; if(!s||s.status!=='running'||s.type!=='duration') return;
+  const now=Date.now();
+  if(!ioaState.durStartMs){ioaState.durStartMs=Math.max(now,s.startedAtMs||now);return;}
+  const ev={startMs:ioaState.durStartMs,endMs:Math.min(now,s.endAtMs||now)};
+  ioaState.durStartMs=null;
+  const uid0=ioaUid();
+  await FS.ioaSession(s.sid,s.id).update({[`durationEvents.${uid0}`]:firebase.firestore.FieldValue.arrayUnion(ev),updatedAt:new Date().toISOString()});
+}
+async function completeIoaSession(s){
+  if(ioaState.completing||!s||s.status!=='running') return;
+  ioaState.completing=true;
+  try{
+    let data={...s,durationEvents:{...(s.durationEvents||{})}};
+    if(s.type==='duration'&&ioaState.durStartMs){
+      const uid0=ioaUid();
+      const ev={startMs:ioaState.durStartMs,endMs:Math.min(Date.now(),s.endAtMs||Date.now())};
+      data.durationEvents[uid0]=[...(data.durationEvents[uid0]||[]),ev];
+      ioaState.durStartMs=null;
+    }
+    const result=calcOfficialIoaResult(data);
+    await FS.ioaSession(s.sid,s.id).set({status:'complete',phase:'complete',completedAt:new Date().toISOString(),updatedAt:new Date().toISOString(),durationEvents:data.durationEvents,result},{merge:true});
+  }finally{setTimeout(()=>ioaState.completing=false,1000);}
+}
+function pairwise(ids, fn){
+  const rows=[];
+  for(let i=0;i<ids.length;i++) for(let j=i+1;j<ids.length;j++) rows.push(fn(ids[i],ids[j]));
+  const valid=rows.filter(r=>Number.isFinite(r.rate));
+  return {rows:valid,rate:valid.length?Math.round(valid.reduce((a,r)=>a+r.rate,0)/valid.length):0};
+}
+function calcOfficialIoaResult(s){
+  const ids=ioaParticipantIds(s);
+  if(s.type==='interval'){
+    const total=Number(s.totalIntervals||0);
+    const p=pairwise(ids,(a,b)=>{
+      let agree=0;
+      for(let i=0;i<total;i++) if((s.responses?.[a]?.[i]||'')===(s.responses?.[b]?.[i]||'')) agree++;
+      return {a,b,agree,total,rate:total?Math.round(agree/total*100):0};
+    });
+    return {type:'interval',formula:'interval-by-interval agreement',rate:p.rate,pairs:p.rows,totalIntervals:total};
+  }
+  if(s.type==='frequency'){
+    const p=pairwise(ids,(a,b)=>{
+      const ca=Number(s.counts?.[a]||0), cb=Number(s.counts?.[b]||0), max=Math.max(ca,cb), min=Math.min(ca,cb);
+      return {a,b,countA:ca,countB:cb,rate:max?Math.round(min/max*100):100};
+    });
+    return {type:'frequency',formula:'smaller count / larger count x 100',rate:p.rate,pairs:p.rows,counts:s.counts||{}};
+  }
+  const totals={};
+  ids.forEach(id=>totals[id]=mergedDurationMs(s.durationEvents?.[id]||[]));
+  const p=pairwise(ids,(a,b)=>{
+    const da=totals[a]||0, db=totals[b]||0, max=Math.max(da,db), min=Math.min(da,db);
+    const overlap=durationOverlapMs(s.durationEvents?.[a]||[],s.durationEvents?.[b]||[]);
+    const union=durationUnionMs([...(s.durationEvents?.[a]||[]),...(s.durationEvents?.[b]||[])]);
+    return {a,b,durationA:da,durationB:db,overlap,union,totalDurationRate:max?Math.round(min/max*100):100,overlapRate:union?Math.round(overlap/union*100):100,rate:max?Math.round(min/max*100):100};
+  });
+  return {type:'duration',formula:'shorter total duration / longer total duration x 100',rate:p.rate,pairs:p.rows,totals,overlapRate:p.rows.length?Math.round(p.rows.reduce((a,r)=>a+(r.overlapRate||0),0)/p.rows.length):0};
+}
+function normalizeDurEvents(events){
+  return (events||[]).map(e=>({startMs:Number(e.startMs),endMs:Number(e.endMs)})).filter(e=>Number.isFinite(e.startMs)&&Number.isFinite(e.endMs)&&e.endMs>e.startMs).sort((a,b)=>a.startMs-b.startMs);
+}
+function mergeDurEvents(events){
+  const sorted=normalizeDurEvents(events), merged=[];
+  sorted.forEach(e=>{
+    const last=merged[merged.length-1];
+    if(last&&e.startMs<=last.endMs) last.endMs=Math.max(last.endMs,e.endMs);
+    else merged.push({...e});
+  });
+  return merged;
+}
+function mergedDurationMs(events){return mergeDurEvents(events).reduce((sum,e)=>sum+(e.endMs-e.startMs),0);}
+function durationOverlapMs(a,b){
+  const aa=mergeDurEvents(a), bb=mergeDurEvents(b); let i=0,j=0,total=0;
+  while(i<aa.length&&j<bb.length){
+    const start=Math.max(aa[i].startMs,bb[j].startMs), end=Math.min(aa[i].endMs,bb[j].endMs);
+    if(end>start) total+=end-start;
+    if(aa[i].endMs<bb[j].endMs)i++;else j++;
+  }
+  return total;
+}
+function durationUnionMs(events){return mergedDurationMs(events);}
+function renderIoaResultText(s){
+  const r=s.result||calcOfficialIoaResult(s);
+  if(!r) return '';
+  const formula=appLang==='en'?r.formula:({interval:'간격별 일치 수 / 전체 간격 수 x 100',frequency:'작은 빈도 수 / 큰 빈도 수 x 100',duration:'짧은 총 지속시간 / 긴 총 지속시간 x 100'}[r.type]||r.formula);
+  let html=`<b>${appLang==='en'?'Agreement':'일치도'} ${Math.round(r.rate||0)}%</b><br>${escHtml(formula)}`;
+  if(r.type==='interval') html+=`<br>${appLang==='en'?'Intervals':'간격'}: ${r.totalIntervals||0}`;
+  if(r.type==='duration') html+=`<br>${appLang==='en'?'Overlap index':'겹친 시간 지표'}: ${Math.round(r.overlapRate||0)}%`;
+  return html;
+}
+function renderIOASection(sid){
+  const sessions=ioaSessionsForStudent(sid).filter(s=>s.status==='complete'&&s.result).slice(0,3);
+  if(!sessions.length) return '';
+  return sessions.map(s=>{
+    const r=s.result;
+    const rateClass=(r.rate||0)>=80?'good':(r.rate||0)>=60?'warn':'bad';
+    return `<div class="ioa-card">
+      <div class="ioa-title">관찰자간 일치도 (IOA) · ${ioaTypeLabel(s.type)}</div>
+      <div class="ioa-rate ${rateClass}">${Math.round(r.rate||0)}%</div>
+      <div style="font-size:12px;color:var(--sub);margin:4px 0 10px">${ioaBehaviorLabel(s)} · ${ioaParticipantIds(s).length}명 · ${fmtShortDate(new Date(s.completedAt||s.updatedAt||Date.now()))}</div>
+      <div style="font-size:12.5px;color:var(--sub);line-height:1.55">${renderIoaResultText(s)}</div>
+    </div>`;
+  }).join('');
 }
 
 // ═══════════════════════════════════════
@@ -5729,6 +6138,13 @@ document.addEventListener('click',e=>{
   const hypEdit=t.closest('[data-hyp-edit]'); if(hypEdit){openHypothesisEditor(hypEdit.dataset.hypEdit);return;}
   const hypStatus=t.closest('[data-hyp-status]'); if(hypStatus){setHypStatus(hypStatus.dataset.hypStatus);return;}
   const hypFunc=t.closest('[data-hyp-func]'); if(hypFunc){setHypFunction(hypFunc.dataset.hypFunc);return;}
+  const ioaType=t.closest('[data-ioa-type]'); if(ioaType){setIoaType(ioaType.dataset.ioaType);return;}
+  const ioaJoin=t.closest('[data-ioa-join]'); if(ioaJoin){joinIoaSession(ioaJoin.dataset.ioaJoin);return;}
+  const ioaReady=t.closest('[data-ioa-ready]'); if(ioaReady){toggleIoaReady(ioaReady.dataset.ioaReady);return;}
+  const ioaStart=t.closest('[data-ioa-start]'); if(ioaStart){startIoaSession(ioaStart.dataset.ioaStart);return;}
+  const ioaOpen=t.closest('[data-ioa-open]'); if(ioaOpen){const s=(db.ioaSessions||[]).find(x=>x.id===ioaOpen.dataset.ioaOpen);if(s)listenIoaSession(s.sid,s.id,true);return;}
+  const ioaCancel=t.closest('[data-ioa-cancel]'); if(ioaCancel){cancelIoaSession(ioaCancel.dataset.ioaCancel);return;}
+  const ioaMark=t.closest('[data-ioa-mark]'); if(ioaMark){submitIoaMark(ioaMark.dataset.ioaMark);return;}
   const act=t.closest('[data-action]'); if(act){const a=act.dataset.action;
     if(a==='toggle-switcher')$('#switcher').classList.toggle('open');
     else if(a==='dismiss-sheet')saveSheet();
@@ -5794,6 +6210,12 @@ document.addEventListener('click',e=>{
     else if(a==='close-interval-setup')closeIntervalSetup();
     else if(a==='start-interval')startInterval();
     else if(a==='stop-interval')stopInterval();
+    else if(a==='open-ioa-setup')openIoaSetup();
+    else if(a==='close-ioa-setup')closeIoaSetup();
+    else if(a==='create-ioa-session')createIoaSession();
+    else if(a==='close-ioa-overlay')closeIoaOverlay();
+    else if(a==='ioa-count')incrementIoaCount();
+    else if(a==='ioa-duration-toggle')toggleIoaDuration();
     else if(a==='iv-mark-o')markInterval('O');
     else if(a==='iv-mark-x')markInterval('X');
     else if(a==='start-latency')startLatency();
