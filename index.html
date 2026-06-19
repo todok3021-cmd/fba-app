@@ -556,6 +556,20 @@
   .note-memo-tag{display:inline-block;font-size:10px;font-weight:800;padding:2px 7px;border-radius:5px;margin-right:6px;}
   .note-memo-time{font-size:11px;color:var(--sub);margin-top:3px;}
 
+  /* ABC 관찰기록 표 */
+  .abc-rec-wrap{overflow-x:auto;background:#fff;border-radius:16px;border:1px solid var(--line);padding:6px;}
+  .abc-rec-table{width:100%;border-collapse:collapse;font-size:13px;}
+  .abc-rec-table th{background:#f5f2ec;color:var(--sub);font-weight:800;font-size:12px;padding:10px 12px;text-align:left;border:1px solid var(--line2);white-space:nowrap;}
+  .abc-rec-table td{padding:11px 12px;border:1px solid var(--line2);vertical-align:top;color:var(--ink);line-height:1.5;}
+  .abc-rec-table tbody tr:nth-child(even) td{background:#faf8f4;}
+  .abc-rec-no{text-align:center;font-weight:800;color:var(--sub);font-variant-numeric:tabular-nums;}
+  .abc-rec-when{font-size:12px;color:var(--sub);white-space:nowrap;font-variant-numeric:tabular-nums;}
+  .abc-rec-chip{display:inline-block;font-size:12px;font-weight:700;color:#4a4a3a;padding:2px 8px;border-radius:7px;margin-bottom:5px;}
+  .abc-rec-note{font-size:12.5px;color:var(--ink);line-height:1.5;}
+  .abc-rec-bname{font-weight:800;margin-bottom:3px;}
+  .abc-rec-remark{font-size:12.5px;color:var(--sub);}
+  .abc-rec-empty{color:#c8cdd0;}
+
   /* PDF 버튼 */
   .st-pdf-btn{
     display:inline-flex;align-items:center;gap:8px;
@@ -936,6 +950,10 @@
         <div class="st-menu-item" data-stab="notes">
           <svg viewBox="0 0 24 24"><path d="M14 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-9"/><path d="M14 3l5 5"/><path d="M9 13h6M9 17h4"/></svg>
           <span data-i18n="notesShort">관찰 노트</span>
+        </div>
+        <div class="st-menu-item" data-stab="abc">
+          <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="9" x2="9" y2="20"/><line x1="15" y1="9" x2="15" y2="20"/></svg>
+          <span data-i18n="abcRecord">ABC 관찰기록</span>
         </div>
         <div class="st-menu-item" data-stab="pdf">
           <svg viewBox="0 0 24 24"><path d="M14 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V10z"/><polyline points="14 3 14 10 21 10"/></svg>
@@ -1511,9 +1529,13 @@
       <div class="sheet-body">
         <div class="grp-tit" data-i18n-html="abcA"><span class="badge" style="background:#7a8a3a">A</span> 선행사건 <em>행동 직전 무슨 일이?</em></div>
         <div class="chips" id="chipsA"></div>
+        <textarea class="notebox" id="noteA" rows="2" style="margin-top:8px" placeholder="선행사건 세부 내용 (선택)" data-i18n-placeholder="aNotePlaceholder"></textarea>
+        <div class="grp-tit" data-i18n-html="abcB"><span class="badge" style="background:#0F6E6C">B</span> 행동 <em>구체적으로 어떻게 행동했나?</em></div>
+        <textarea class="notebox" id="noteB" rows="2" placeholder="문제행동 세부 내용 (선택)" data-i18n-placeholder="bNotePlaceholder"></textarea>
         <div class="grp-tit" data-i18n-html="abcC"><span class="badge" style="background:#b4502f">C</span> 후속결과 <em>행동 직후 어떻게 됐나?</em></div>
         <div class="chips" id="chipsC"></div>
-        <div class="grp-tit" data-i18n-html="noteOptional">메모 <em>선택</em></div>
+        <textarea class="notebox" id="noteC" rows="2" style="margin-top:8px" placeholder="후속결과 세부 내용 (선택)" data-i18n-placeholder="cNotePlaceholder"></textarea>
+        <div class="grp-tit" data-i18n-html="noteOptional">비고 <em>선택</em></div>
         <textarea class="notebox" id="note" rows="2" placeholder="예: 수학 학습지 제시 직후 발생" data-i18n-placeholder="recordNotePlaceholder"></textarea>
       </div>
       <div class="sheet-foot">
@@ -1682,6 +1704,17 @@ function seed(db){
       updatedAt:d.toISOString(), deleted:false, dirty:false
     });
   });
+  // ABC 세부 내용 예시 — 첫 두 기록에 A·B·C 세부 입력 데모
+  if(recs[0]){
+    recs[0].aNote='국어 받아쓰기 학습지를 책상에 제시함';
+    recs[0].bNote='학습지를 바닥으로 밀치며 5분간 큰 소리로 울음';
+    recs[0].cNote='교사가 다가가 진정시키고 과제를 잠시 미룸';
+  }
+  if(recs[8]){
+    recs[8].aNote='수학 학습지 풀이를 시작하라고 지시함';
+    recs[8].bNote='의자에서 일어나 교실 뒤로 이동, 7분간 자리 이탈';
+    recs[8].cNote='보조교사가 옆에서 함께 문제를 풀어줌';
+  }
   db.records=recs;
 }
 
@@ -1736,8 +1769,11 @@ const I18N={
     latencyAlready:'이미 지연 측정 중이에요. 행동 버튼을 눌러 종료하세요.', timing:'측정 중…', latencyStarted:'선행사건 발생 — 행동 버튼을 눌러 지연시간 기록',
     latencyNote:'지연시간 {sec}초', latencyAppend:' [지연 {sec}초]', latencyRecorded:'지연시간 <b>{sec}초</b> 기록됐어요',
     abcA:'<span class="badge" style="background:#7a8a3a">A</span> 선행사건 <em>행동 직전 무슨 일이?</em>',
-    abcC:'<span class="badge" style="background:#b4502f">C</span> 후속결과 <em>행동 직후 어떻게 됐나?</em>', noteOptional:'메모 <em>선택</em>',
+    abcB:'<span class="badge" style="background:#0F6E6C">B</span> 행동 <em>구체적으로 어떻게 행동했나?</em>',
+    abcC:'<span class="badge" style="background:#b4502f">C</span> 후속결과 <em>행동 직후 어떻게 됐나?</em>', noteOptional:'비고 <em>선택</em>',
+    aNotePlaceholder:'선행사건 세부 내용 (선택)', bNotePlaceholder:'문제행동 세부 내용 (선택)', cNotePlaceholder:'후속결과 세부 내용 (선택)',
     recordNotePlaceholder:'예: 수학 학습지 제시 직후 발생', delete:'삭제', later:'나중에', saveAndClose:'저장하고 닫기',
+    abcRecord:'ABC 관찰기록', abcRecordSub:'선행사건·행동·후속결과 관찰 서식', abcColNo:'번호', abcColWhen:'일시', abcColA:'선행사건 (A)', abcColB:'행동 (B)', abcColC:'후속결과 (C)', abcColNote:'비고', abcNoRecords:'기록이 없어요',
     addAntecedentChips:'설정에서 선행사건 칩을 추가하세요', addConsequenceChips:'설정에서 후속결과 칩을 추가하세요',
     abcComplete:'<b>ABC 완성</b> · 저장됐어요', recordSavedReview:'기록 저장됨 · A·C는 검토에서 채울 수 있어요', recordDeleted:'기록을 삭제했어요'
     ,reviewIncomplete:'ABC 미완성 {n}건 — 톡 눌러 채우세요', reviewReady:'기록을 누르면 ABC를 수정할 수 있어요', emptyDate:'이 날짜엔 기록이 없어요.<br>기록 탭에서 행동 버튼을 눌러보세요.',
@@ -1777,8 +1813,11 @@ const I18N={
     latencyAlready:'Latency timer is already running. Tap a behavior to stop it.', timing:'Timing...', latencyStarted:'Antecedent started - tap the behavior to record latency',
     latencyNote:'Latency {sec}s', latencyAppend:' [Latency {sec}s]', latencyRecorded:'Latency <b>{sec}s</b> recorded',
     abcA:'<span class="badge" style="background:#7a8a3a">A</span> Antecedent <em>What happened right before?</em>',
-    abcC:'<span class="badge" style="background:#b4502f">C</span> Consequence <em>What happened right after?</em>', noteOptional:'Note <em>Optional</em>',
+    abcB:'<span class="badge" style="background:#0F6E6C">B</span> Behavior <em>What exactly did the student do?</em>',
+    abcC:'<span class="badge" style="background:#b4502f">C</span> Consequence <em>What happened right after?</em>', noteOptional:'Remarks <em>Optional</em>',
+    aNotePlaceholder:'Antecedent details (optional)', bNotePlaceholder:'Behavior details (optional)', cNotePlaceholder:'Consequence details (optional)',
     recordNotePlaceholder:'Example: occurred right after math worksheet was presented', delete:'Delete', later:'Later', saveAndClose:'Save and close',
+    abcRecord:'ABC Observation Record', abcRecordSub:'Antecedent · Behavior · Consequence log', abcColNo:'No.', abcColWhen:'Date / Time', abcColA:'Antecedent (A)', abcColB:'Behavior (B)', abcColC:'Consequence (C)', abcColNote:'Remarks', abcNoRecords:'No records yet',
     addAntecedentChips:'Add antecedent chips in Settings.', addConsequenceChips:'Add consequence chips in Settings.',
     abcComplete:'<b>ABC complete</b> · Saved', recordSavedReview:'Record saved · Add A/C details in Review', recordDeleted:'Record deleted'
     ,reviewIncomplete:'ABC incomplete: {n} - tap to fill in', reviewReady:'Tap a record to edit ABC details', emptyDate:'No records for this date.<br>Tap a behavior button on the Record tab.',
@@ -3367,6 +3406,9 @@ function openSheet(id){
   const d=new Date(rec.ts);
   $('#shTime').textContent=`${to12(d)}${rec.dur?' · '+fmtDur(rec.dur):''}`;
   $('#note').value=rec.note||'';
+  $('#noteA').value=rec.aNote||'';
+  $('#noteB').value=rec.bNote||'';
+  $('#noteC').value=rec.cNote||'';
   renderChips();
   $('#scrim').classList.add('show');$('#sheet').classList.add('open');
 }
@@ -3378,7 +3420,7 @@ function renderChips(){
 function closeSheet(){$('#scrim').classList.remove('show');$('#sheet').classList.remove('open');state.sheetId=null;}
 function saveSheet(){
   const rec=db.records.find(r=>r.id===state.sheetId);if(!rec)return;
-  rec.a=[...state.sel.a];rec.c=[...state.sel.c];rec.note=$('#note').value;rec.updatedAt=new Date().toISOString();rec.dirty=true;saveRecord(rec).catch(e=>console.warn('saveSheet 기록 저장 오류:',e));persist();
+  rec.a=[...state.sel.a];rec.c=[...state.sel.c];rec.note=$('#note').value;rec.aNote=$('#noteA').value;rec.bNote=$('#noteB').value;rec.cNote=$('#noteC').value;rec.updatedAt=new Date().toISOString();rec.dirty=true;saveRecord(rec).catch(e=>console.warn('saveSheet 기록 저장 오류:',e));persist();
   closeSheet();paintStudent();if(state.tab==='review')renderTimeline();
   toast(rec.a.length&&rec.c.length?msg('abcComplete'):msg('recordSavedReview'));
 }
@@ -4610,6 +4652,28 @@ function _printReport(){
     </section>`;
   }
 
+  // ABC 관찰기록 (전체 기록 · 시간 오름차순)
+  let abcHtml='';
+  const abcRows=getAbcRows(s.id);
+  if(abcRows.length){
+    const nl=t=>escHtml(t).replace(/\n/g,'<br>');
+    const abcTr=abcRows.map(r=>`<tr>
+      <td class="ac-no">${r.num}</td>
+      <td class="ac-when">${nl(r.when)}</td>
+      <td>${r.aChips?`<span class="ac-chip a">${escHtml(r.aChips)}</span>`:''}${r.aNote?`<div class="ac-note">${nl(r.aNote)}</div>`:''}${(!r.aChips&&!r.aNote)?'<span class="ac-dash">—</span>':''}</td>
+      <td><b style="color:${r.bcolor}">${escHtml(r.bname)}</b>${r.bNote?`<div class="ac-note">${nl(r.bNote)}</div>`:''}</td>
+      <td>${r.cChips?`<span class="ac-chip c">${escHtml(r.cChips)}</span>`:''}${r.cNote?`<div class="ac-note">${nl(r.cNote)}</div>`:''}${(!r.cChips&&!r.cNote)?'<span class="ac-dash">—</span>':''}</td>
+      <td class="ac-note">${r.note?nl(r.note):'<span class="ac-dash">—</span>'}</td>
+    </tr>`).join('');
+    abcHtml=`<section class="report-section abc-section">
+      <h2>ABC 관찰기록</h2>
+      <table class="abc-table">
+        <thead><tr><th style="width:30px">번호</th><th style="width:92px">일시</th><th>선행사건 (A)</th><th style="width:130px">행동 (B)</th><th>후속결과 (C)</th><th style="width:120px">비고</th></tr></thead>
+        <tbody>${abcTr}</tbody>
+      </table>
+    </section>`;
+  }
+
   // ── HTML 조립 ──────────────────────────────
   const html=`<!DOCTYPE html>
 <html lang="ko">
@@ -4712,6 +4776,20 @@ function _printReport(){
   .memo-time{color:#9aa;flex:none;font-size:10.5px;}
   .memo-text{color:#1e1e1e;line-height:1.4;}
 
+  /* ABC 관찰기록 */
+  .abc-section{page-break-inside:auto;}
+  .abc-table{width:100%;border-collapse:collapse;font-size:10.5px;}
+  .abc-table th{background:#f5f2ec;color:#555;font-weight:800;padding:6px 7px;text-align:left;border:1px solid #e5e0d5;white-space:nowrap;}
+  .abc-table td{padding:6px 7px;border:1px solid #ece8e0;vertical-align:top;line-height:1.45;color:#1e1e1e;}
+  .abc-table tr{page-break-inside:avoid;}
+  .abc-table .ac-no{text-align:center;font-weight:800;color:#7a8a8f;}
+  .abc-table .ac-when{white-space:nowrap;color:#637277;font-size:10px;}
+  .ac-chip{display:inline-block;font-size:10px;font-weight:700;padding:1px 6px;border-radius:5px;margin-bottom:3px;}
+  .ac-chip.a{background:#eef3df;color:#5d6b2a;}
+  .ac-chip.c{background:#fbe8de;color:#a8491f;}
+  .ac-note{font-size:10.5px;color:#1e1e1e;}
+  .ac-dash{color:#c8cdd0;}
+
   /* 푸터 */
   .rpt-footer{margin:24px 28px 0;border-top:1px solid #e5e0d5;padding-top:8px;display:flex;justify-content:space-between;font-size:10px;color:#9aa;}
 
@@ -4769,6 +4847,7 @@ ${measurementReportHtml}
 ${masHtml}
 ${ivHtml}
 ${memoHtml}
+${abcHtml}
 
 <!-- 푸터 -->
 <div class="rpt-footer">
@@ -4960,7 +5039,9 @@ function switchStTab(tab){
     el.classList.toggle('on', el.dataset.stab===tab)
   );
   // 헤더 타이틀
-  const titles={dashboard:'Dashboard',analysis:'Analysis',notes:'Observation Notes',pdf:'PDF Report',settings:'Settings'};
+  const titles=appLang==='en'
+    ?{dashboard:'Dashboard',analysis:'Analysis',notes:'Observation Notes',abc:'ABC Observation Record',pdf:'PDF Report',settings:'Settings'}
+    :{dashboard:'대시보드',analysis:'분석',notes:'관찰 노트',abc:'ABC 관찰기록',pdf:'PDF 리포트',settings:'설정'};
   const titleEl=$('#stTitle'); if(titleEl) titleEl.textContent=titles[tab]||tab;
   // PDF 버튼 — pdf 탭일 때만 표시
   const pdfBtn=$('#stPdfBtn'); if(pdfBtn) pdfBtn.style.display=tab==='pdf'?'':'none';
@@ -4969,6 +5050,7 @@ function switchStTab(tab){
   if(tab==='dashboard')   renderStDashboard();
   else if(tab==='analysis')  renderStAnalysis();
   else if(tab==='notes')     renderStNotes();
+  else if(tab==='abc')       renderStAbc();
   else if(tab==='pdf')       renderStPdf();
   else if(tab==='settings')  renderStSettings();
 }
@@ -5155,6 +5237,65 @@ function renderStNotes(){
         ${ivHtml}
       </div>
     </div>`;
+  translateStaticDom(body);
+}
+
+// ── ABC 관찰기록 (데스크톱 · PDF 전용) ──
+// 학생의 모든 기록을 ABC 서식 행 데이터로 변환 (시간 오름차순)
+function getAbcRows(sid){
+  const recs=activeRecords().filter(r=>r.sid===sid).sort((a,b)=>new Date(a.ts)-new Date(b.ts));
+  const wkd=appLang==='en'?['Sun','Mon','Tue','Wed','Thu','Fri','Sat']:['일','월','화','수','목','금','토'];
+  const p2=n=>String(n).padStart(2,'0');
+  return recs.map((r,i)=>{
+    const d=new Date(r.ts);
+    const b=bMap[r.bid]||{name:appLang==='en'?'(deleted behavior)':'(삭제된 행동)',color:'#9aa6aa'};
+    const when=`${d.getFullYear()}.${p2(d.getMonth()+1)}.${p2(d.getDate())} (${wkd[d.getDay()]})\n${p2(d.getHours())}:${p2(d.getMinutes())}${r.dur?' · '+fmtDur(r.dur):''}`;
+    return {
+      num:i+1, when,
+      bname:localText(b.name), bcolor:b.color||'#0F6E6C',
+      aChips:(r.a||[]).map(localText).join(', '), aNote:r.aNote||'',
+      bNote:r.bNote||'',
+      cChips:(r.c||[]).map(localText).join(', '), cNote:r.cNote||'',
+      note:r.note||''
+    };
+  });
+}
+
+function renderStAbc(){
+  const body=$('#stBody'); if(!body) return;
+  const s=db.students.find(s=>s.id===stSid)||db.students[0];
+  if(!s){body.innerHTML=`<p style="color:var(--sub)">${appLang==='en'?'Select a student.':'학생을 선택해 주세요'}</p>`;return;}
+  const sub=$('#stSub'); if(sub) sub.textContent=localText(s.name);
+  const en=appLang==='en';
+  const rows=getAbcRows(s.id);
+  const nl=t=>escHtml(t).replace(/\n/g,'<br>');
+  const acCell=(chips,note,bg)=>{
+    let h='';
+    if(chips) h+=`<span class="abc-rec-chip" style="background:${bg}">${escHtml(chips)}</span>`;
+    if(note)  h+=`<div class="abc-rec-note">${nl(note)}</div>`;
+    return h||'<span class="abc-rec-empty">—</span>';
+  };
+  const trs=rows.map(r=>`<tr>
+    <td class="abc-rec-no">${r.num}</td>
+    <td class="abc-rec-when">${nl(r.when)}</td>
+    <td>${acCell(r.aChips,r.aNote,'#eef3df')}</td>
+    <td><div class="abc-rec-bname" style="color:${r.bcolor}">${escHtml(r.bname)}</div>${r.bNote?`<div class="abc-rec-note">${nl(r.bNote)}</div>`:''}</td>
+    <td>${acCell(r.cChips,r.cNote,'#fbe8de')}</td>
+    <td class="abc-rec-remark">${r.note?nl(r.note):'<span class="abc-rec-empty">—</span>'}</td>
+  </tr>`).join('');
+  body.innerHTML=`
+    <div class="st-section-title">${escHtml(localText(s.name))} ${en?'ABC Observation Record':'ABC 관찰기록'} <span>${en?'All records':'전체 기록'} ${rows.length}${en?'':'건'}</span></div>
+    ${rows.length?`<div class="abc-rec-wrap"><table class="abc-rec-table">
+      <thead><tr>
+        <th style="width:44px">${en?'No.':'번호'}</th>
+        <th style="width:118px">${en?'Date / Time':'일시'}</th>
+        <th>${en?'Antecedent (A)':'선행사건 (A)'}</th>
+        <th style="width:160px">${en?'Behavior (B)':'행동 (B)'}</th>
+        <th>${en?'Consequence (C)':'후속결과 (C)'}</th>
+        <th style="width:150px">${en?'Remarks':'비고'}</th>
+      </tr></thead>
+      <tbody>${trs}</tbody>
+    </table></div>`:`<div class="note-empty">${en?'No records yet.':'기록이 없어요'}</div>`}`;
   translateStaticDom(body);
 }
 
