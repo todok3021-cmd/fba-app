@@ -823,6 +823,23 @@
   .ioa-formula{font-size:11.5px;color:var(--sub);margin-bottom:8px;}
   .ioa-pair-row{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:12.5px;font-weight:700;color:var(--ink);margin-top:8px;}
   .ioa-pair-detail{font-size:11.5px;color:var(--sub);margin-top:2px;}
+  /* 간격별 발생/비발생 그리드 */
+  .ig-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:6px;margin-top:6px;}
+  .ig-grid{display:inline-block;min-width:100%;}
+  .ig-row{display:flex;gap:3px;align-items:center;margin-bottom:4px;}
+  .ig-label{flex:none;width:60px;font-size:10.5px;font-weight:800;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .ig-num{flex:none;width:18px;font-size:8.5px;color:#a8a294;text-align:center;font-weight:700;}
+  .ig-cell{flex:none;width:18px;height:18px;border-radius:4px;font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center;}
+  .ig-cell.o{background:#2A9D8F;color:#fff;}
+  .ig-cell.x{background:#ece8de;color:#b3ad9e;}
+  .ig-cell.ag{background:#e6f3ea;color:#3a7a4f;}
+  .ig-cell.dis{background:#fbe3dc;color:#c0392b;}
+  .ig-legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:8px;font-size:11px;color:var(--sub);font-weight:700;}
+  .ig-legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px;}
+  .ig-legend i.o{background:#2A9D8F;}
+  .ig-legend i.x{background:#ece8de;}
+  .sh-interval{margin-bottom:18px;padding-bottom:16px;border-bottom:1px solid var(--line2);}
+  .sh-interval .ioa-parts-label{font-size:10.5px;font-weight:800;color:var(--sub);letter-spacing:.02em;text-transform:uppercase;margin-bottom:2px;}
   .ioa-bar-row{display:flex;gap:4px;margin:10px 0;}
   .ioa-seg{height:20px;border-radius:4px;flex:none;}
   .ioa-seg.match{background:#7fd9c4;}
@@ -1663,6 +1680,7 @@
         <button class="ghostbtn danger" data-action="del-record" data-i18n="delete">삭제</button>
       </div>
       <div class="sheet-body">
+        <div id="shInterval"></div>
         <div class="grp-tit" data-i18n-html="abcA"><span class="badge" style="background:#7a8a3a">A</span> 선행사건 <em>행동 직전 무슨 일이?</em></div>
         <div class="chips" id="chipsA"></div>
         <textarea class="notebox" id="noteA" rows="2" style="margin-top:8px" placeholder="선행사건 세부 내용 (선택)" data-i18n-placeholder="aNotePlaceholder"></textarea>
@@ -3611,6 +3629,7 @@ function openSheet(id){
   $('#noteA').value=rec.aNote||'';
   $('#noteB').value=rec.bNote||'';
   $('#noteC').value=rec.cNote||'';
+  const ig=$('#shInterval'); if(ig){ ig.innerHTML=rec.intervalData?renderSoloIntervalDetail(rec,appLang==='en'):''; }
   renderChips();
   $('#scrim').classList.add('show');$('#sheet').classList.add('open');
 }
@@ -6454,12 +6473,23 @@ function calcOfficialIoaResult(s){
   const ids=ioaParticipantIds(s);
   if(s.type==='interval'){
     const total=Number(s.totalIntervals||0);
-    const p=pairwise(ids,(a,b)=>{
-      let agree=0;
-      for(let i=0;i<total;i++) if((s.responses?.[a]?.[i]||'')===(s.responses?.[b]?.[i]||'')) agree++;
-      return {a,b,agree,total,rate:total?Math.round(agree/total*100):0};
-    });
-    return {type:'interval',formula:'interval-by-interval agreement',rate:p.rate,pairs:p.rows,totalIntervals:total};
+    const rows=[];
+    for(let i=0;i<ids.length;i++) for(let j=i+1;j<ids.length;j++){
+      const a=ids[i], b=ids[j];
+      let agree=0, occAgree=0, occInt=0, nonAgree=0, nonInt=0;
+      for(let k=0;k<total;k++){
+        const va=s.responses?.[a]?.[k]||'', vb=s.responses?.[b]?.[k]||'';
+        if(va===vb) agree++;
+        const aO=va==='O', bO=vb==='O', aX=va==='X', bX=vb==='X';
+        if(aO||bO){occInt++; if(aO&&bO) occAgree++;}
+        if(aX||bX){nonInt++; if(aX&&bX) nonAgree++;}
+      }
+      rows.push({a,b,agree,total,rate:total?Math.round(agree/total*100):0,
+        occAgree,occInt,occRate:occInt?Math.round(occAgree/occInt*100):null,
+        nonAgree,nonInt,nonRate:nonInt?Math.round(nonAgree/nonInt*100):null});
+    }
+    const avg=key=>{const v=rows.map(r=>r[key]).filter(Number.isFinite);return v.length?Math.round(v.reduce((a,b)=>a+b,0)/v.length):null;};
+    return {type:'interval',formula:'interval-by-interval agreement',rate:avg('rate')||0,pairs:rows,totalIntervals:total,occRate:avg('occRate'),nonRate:avg('nonRate')};
   }
   if(s.type==='frequency'){
     const p=pairwise(ids,(a,b)=>{
@@ -6543,15 +6573,69 @@ function ioaPairFormula(s,p,en){
   const mn=Math.min(p.durationA||0,p.durationB||0), mx=Math.max(p.durationA||0,p.durationB||0);
   return `${fmtDur(Math.round(mn/1000))} / ${fmtDur(Math.round(mx/1000))} × 100 = ${pct}%`;
 }
+// 간격 셀 한 칸 (O=발생, X/공백=비발생, 그 외=시간표집 코드)
+function intervalCellHtml(v){
+  const u=String(v??'').trim().toUpperCase();
+  if(u==='O') return `<div class="ig-cell o">O</div>`;
+  if(u===''||u==='X'||u==='-') return `<div class="ig-cell x">X</div>`;
+  return `<div class="ig-cell o" title="${escHtml(u)}">${escHtml(u.slice(0,1))}</div>`;
+}
+// 간격별 발생/비발생 그리드 (rows: [{label,marks[]}], agree: 간격별 일치 여부 배열 또는 null)
+function renderIntervalGridHtml(rows,total,en,agree){
+  if(!total) return '';
+  let nums='<div class="ig-row"><div class="ig-label"></div>';
+  for(let i=0;i<total;i++) nums+=`<div class="ig-num">${(i===0||(i+1)%5===0)?(i+1):''}</div>`;
+  nums+='</div>';
+  const body=rows.map(rw=>{
+    let c=`<div class="ig-row"><div class="ig-label">${escHtml(rw.label)}</div>`;
+    for(let i=0;i<total;i++) c+=intervalCellHtml(rw.marks[i]);
+    return c+'</div>';
+  }).join('');
+  let agreeRow='';
+  if(agree){
+    agreeRow=`<div class="ig-row"><div class="ig-label">${en?'Agree':'일치'}</div>`;
+    for(let i=0;i<total;i++) agreeRow+=`<div class="ig-cell ${agree[i]?'ag':'dis'}">${agree[i]?'✓':'✗'}</div>`;
+    agreeRow+='</div>';
+  }
+  const legend=`<div class="ig-legend"><span><i class="o"></i>${en?'Occurrence (O)':'발생 (O)'}</span><span><i class="x"></i>${en?'Non-occurrence (X)':'비발생 (X)'}</span></div>`;
+  return `<div class="ig-wrap"><div class="ig-grid">${nums}${body}${agreeRow}</div></div>${legend}`;
+}
+// 간격형 쌍별 산식 (전체·발생·비발생 일치도, 실제 데이터 포함)
+function ioaIntervalPairFormulas(p,en){
+  const L=[`${en?'Total':'전체'}: ${p.agree} / ${p.total} × 100 = ${p.rate}%`];
+  if(p.occRate!=null) L.push(`${en?'Occurrence':'발생'}: ${p.occAgree} / ${p.occInt} × 100 = ${p.occRate}%`);
+  if(p.nonRate!=null) L.push(`${en?'Non-occurrence':'비발생'}: ${p.nonAgree} / ${p.nonInt} × 100 = ${p.nonRate}%`);
+  return L.join('<br>');
+}
+// 혼자 기록한 간격기록 상세 (기록 상세 시트용)
+function renderSoloIntervalDetail(rec,en){
+  const s=normalizeIntervalSession(rec); if(!s) return '';
+  const head=`<div class="ioa-drow" style="margin:2px 0 8px"><span>${en?'Occurrence':'발생률'}</span><b>${s.pct}% (${s.occurCount}/${s.total})</b></div>`;
+  const title=`<div class="ioa-parts-label">${en?'Interval-by-interval':'간격별 발생 여부'}</div>`;
+  const rows=[{label:s.mode==='sample'?(en?'Codes':'코드'):(en?'Mark':'기록'), marks:s.marks}];
+  return `<div class="sh-interval">${head}${title}${renderIntervalGridHtml(rows,s.total,en,null)}</div>`;
+}
 function renderIoaDetail(s,en){
-  const r=s.result||calcOfficialIoaResult(s);
+  // 과거 세션은 result에 발생/비발생 일치도가 없으므로 간격형은 재계산
+  const r=(s.type==='interval'&&(!s.result||s.result.occRate===undefined))?calcOfficialIoaResult(s):(s.result||calcOfficialIoaResult(s));
   const drow=(k,v)=>`<div class="ioa-drow"><span>${k}</span><b>${v}</b></div>`;
   let html='';
   html+=drow(en?'Behavior':'행동', ioaBehaviorLabel(s));
   html+=drow(en?'When':'일시', fmtShortDate(new Date(s.completedAt||s.updatedAt||Date.now())));
   html+=drow(en?'Recording time':'기록 소요시간', fmtDur(ioaRecordDurationSec(s)));
+  if(s.type==='interval'){
+    if(r.occRate!=null) html+=drow(en?'Occurrence agreement':'발생 일치도', r.occRate+'%');
+    if(r.nonRate!=null) html+=drow(en?'Non-occurrence agreement':'비발생 일치도', r.nonRate+'%');
+  }
   html+=`<div class="ioa-parts"><div class="ioa-parts-label">${en?'Each recorder':'기록자별 기록'}</div>${renderIoaParticipants(s,en)}</div>`;
-  const pairs=(r.pairs||[]).map(p=>`<div class="ioa-pair-row"><span>${ioaPName(s,p.a,en)} ↔ ${ioaPName(s,p.b,en)}</span><b>${Math.round(p.rate)}%</b></div><div class="ioa-pair-detail">${ioaPairFormula(s,p,en)}</div>`).join('');
+  if(s.type==='interval'){
+    const total=Number(s.totalIntervals||0);
+    const ids=ioaParticipantIds(s);
+    const gridRows=ids.map(id=>({label:s.participants?.[id]?.name||(en?'Observer':'관찰자'), marks:Array.from({length:total},(_,k)=>s.responses?.[id]?.[k]||'X')}));
+    const agree=Array.from({length:total},(_,k)=>{const f=s.responses?.[ids[0]]?.[k]||'';return ids.every(id=>(s.responses?.[id]?.[k]||'')===f);});
+    html+=`<div class="ioa-formula-block"><div class="ioa-parts-label">${en?'Interval-by-interval':'간격별 체크'}</div>${renderIntervalGridHtml(gridRows,total,en,agree)}</div>`;
+  }
+  const pairs=(r.pairs||[]).map(p=>`<div class="ioa-pair-row"><span>${ioaPName(s,p.a,en)} ↔ ${ioaPName(s,p.b,en)}</span><b>${Math.round(p.rate)}%</b></div><div class="ioa-pair-detail">${s.type==='interval'?ioaIntervalPairFormulas(p,en):ioaPairFormula(s,p,en)}</div>`).join('');
   html+=`<div class="ioa-formula-block"><div class="ioa-parts-label">${en?'Calculation':'산식'}</div>${pairs}</div>`;
   return html;
 }
