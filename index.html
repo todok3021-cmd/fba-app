@@ -214,10 +214,38 @@
   .acc-rank{display:inline-flex; align-items:center; justify-content:center; width:19px; height:19px; border-radius:7px; background:#eef3f1; color:var(--primary); font-size:11px; font-weight:800; flex:none;}
   .acc-sub{font-size:12px; color:var(--sub); font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
   .acc-chevron{width:20px; height:20px; color:#aeb6b9; flex:none; transition:transform .22s ease;}
-  .acc.open .acc-chevron{transform:rotate(180deg);}
+  .acc.open > .acc-head .acc-chevron{transform:rotate(180deg);}
   .acc-body{display:none; padding:0 16px 16px;}
-  .acc.open .acc-body{display:block;}
+  .acc.open > .acc-body{display:block;}
   .acc-body .hyp{border-radius:14px; padding:16px;}
+  /* 중첩 아코디언 (분석결과 그룹 내부) */
+  .acc-body .acc{margin:10px 0 0; background:#fcfbf8; border-radius:14px;}
+  .acc-body .acc:first-child{margin-top:2px;}
+  .acc-body .acc .acc-head{padding:14px 15px;}
+  .acc-body .acc .acc-title{font-size:14px;}
+  /* 행동정의 카드 */
+  .bd-target{border:1px solid var(--line); border-radius:14px; padding:14px; margin-bottom:10px; background:#fff;}
+  .bd-target.bd-hl{border-color:#ead38a; background:#fdfaf1;}
+  .bd-name{font-size:15px; font-weight:800; color:var(--ink); display:flex; align-items:center; gap:7px; margin-bottom:8px;}
+  .bd-name .bd-dot{width:14px;height:14px;border-radius:5px;flex:none;}
+  .bd-row{margin-top:9px;}
+  .bd-label{font-size:10.5px; font-weight:800; color:var(--sub); letter-spacing:.02em; text-transform:uppercase; margin-bottom:3px;}
+  .bd-text{font-size:13.5px; color:var(--ink); line-height:1.5;}
+  .bd-text.muted{color:#aeb6b9;}
+  .bd-eg{display:flex; gap:8px; margin-top:9px;}
+  .bd-eg>div{flex:1; min-width:0; border-radius:10px; padding:9px 10px;}
+  .bd-eg .bd-pos{background:#eef6ec;}
+  .bd-eg .bd-neg{background:#fbeee9;}
+  .bd-eg .bd-label{margin-bottom:2px;}
+  .bd-edit{display:inline-flex; align-items:center; gap:5px; margin-top:4px; border:1px solid var(--line); background:#fff; color:var(--primary); font-weight:800; font-size:12.5px; font-family:inherit; padding:8px 13px; border-radius:10px; cursor:pointer;}
+  /* 간접평가 카드 */
+  .ia-row{display:flex; align-items:center; gap:11px; padding:11px 0; border-bottom:1px solid var(--line2);}
+  .ia-row:last-child{border-bottom:none;}
+  .ia-ic{width:34px;height:34px;border-radius:10px;flex:none;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:13px;}
+  .ia-meta{flex:1; min-width:0;}
+  .ia-meta b{font-size:13.5px; font-weight:800; color:var(--ink); display:block;}
+  .ia-meta span{font-size:12px; color:var(--sub); display:block; margin-top:1px;}
+  .ia-go{border:none; background:none; color:var(--primary); font-weight:800; font-size:12.5px; font-family:inherit; cursor:pointer; flex:none;}
   .acc-csub{font-size:12px; color:var(--sub); margin:0 0 12px; font-weight:600;}
   .measure-bare{padding:0; border:none; background:none; margin:0;}
   .measure-bare h3{margin:16px 0 4px; font-size:14px; font-weight:800; letter-spacing:-.01em; color:var(--ink);}
@@ -255,6 +283,48 @@
   .measure-table th{background:#f5f2ec;color:var(--sub);font-weight:800;}
   .measure-table td:first-child,.measure-table th:first-child{text-align:left;}
   .measure-empty{font-size:12.5px;color:var(--sub);line-height:1.5;background:#fbfaf6;border:1px dashed var(--line);border-radius:12px;padding:13px;}
+
+  /* 지원계획(BSP/BIP) */
+  #planBody{padding:2px 18px 26px;}
+  .plan-share-btn{flex:none;font-size:13px;padding:10px 14px;border-radius:13px;display:flex;align-items:center;gap:7px;white-space:nowrap;}
+  .plan-share-btn svg{width:15px;height:15px;flex:none;}
+  .plan-share-btn span{font-size:inherit!important;color:inherit!important;margin:0!important;font-weight:900!important;}
+  .plan-summary{background:linear-gradient(135deg,#0F6E6C,#1f8e83);color:#fff;border-radius:18px;padding:18px;margin:12px 0 14px;box-shadow:0 18px 34px -26px rgba(14,40,45,.75);}
+  .plan-summary-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:13px;}
+  .plan-kicker{font-size:10.5px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;opacity:.72;margin-bottom:4px;}
+  .plan-target-name{font-size:21px;font-weight:900;line-height:1.15;letter-spacing:0;}
+  .plan-status{display:inline-flex;align-items:center;gap:5px;flex:none;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.22);border-radius:999px;padding:6px 9px;font-size:10.5px;font-weight:900;color:#fff;}
+  .plan-summary .bd-label{color:rgba(255,255,255,.72);}
+  .plan-summary .bd-text{color:#fff;}
+  .plan-summary .bd-text.muted{color:rgba(255,255,255,.72);}
+  .plan-sum-row+.plan-sum-row{margin-top:13px;}
+  .plan-sum-note{font-size:11.5px;line-height:1.5;color:rgba(255,255,255,.74);margin-top:13px;border-top:1px solid rgba(255,255,255,.16);padding-top:11px;}
+  .plan-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:14px;}
+  .plan-metric{background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.16);border-radius:12px;padding:9px 8px;min-width:0;}
+  .plan-metric b{display:block;font-size:16px;font-weight:900;line-height:1;color:#fff;}
+  .plan-metric span{display:block;font-size:10px;font-weight:750;color:rgba(255,255,255,.72);line-height:1.25;margin-top:5px;}
+  .plan-toolbar{display:flex;gap:8px;margin:0 0 14px;}
+  .plan-tool-btn{flex:1;border:1px solid var(--line);background:#fff;color:var(--primary);border-radius:13px;padding:11px 12px;font-size:12.5px;font-weight:900;font-family:inherit;cursor:pointer;}
+  .plan-tool-btn.secondary{color:var(--sub);background:#fbfaf6;}
+  .plan-section-title{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin:18px 1px 9px;}
+  .plan-section-title b{font-size:13px;font-weight:900;color:var(--ink);}
+  .plan-section-title span{font-size:11px;color:var(--sub);font-weight:700;text-align:right;}
+  .plan-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:15px;margin-bottom:10px;}
+  .plan-card-head{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;}
+  .plan-num{width:24px;height:24px;border-radius:8px;background:#eef6f5;color:var(--primary);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;flex:none;}
+  .plan-card-title{flex:1;min-width:0;}
+  .plan-card-title b{display:block;font-size:14px;font-weight:900;color:var(--ink);line-height:1.25;}
+  .plan-card-title span{display:block;font-size:11.5px;color:var(--sub);font-weight:650;line-height:1.4;margin-top:3px;}
+  .plan-card textarea{border-radius:13px;background:#fff;min-height:84px;line-height:1.5;}
+  .plan-card textarea:focus,.plan-card input:focus{outline:none;border-color:var(--primary);}
+  .plan-grid{display:grid;grid-template-columns:1fr;gap:0;}
+  .plan-date{width:100%;border:1.5px solid var(--line);border-radius:13px;padding:12px 14px;font-size:14px;font-family:inherit;color:var(--ink);background:#fff;}
+  .plan-actions{display:flex;gap:10px;margin:14px 0 8px;}
+  .plan-actions .btn-prim{flex:1;padding:13px;border-radius:14px;font-size:14px;}
+  .plan-updated{font-size:11.5px;color:var(--sub);text-align:center;margin:10px 0 0;}
+  .plan-empty-tip{font-size:12px;color:var(--sub);line-height:1.55;background:#fbfaf6;border:1px dashed var(--line);border-radius:14px;padding:13px;margin-bottom:12px;}
+  .st-plan-wrap{max-width:920px;}
+  .st-plan-wrap .plan-summary{margin-top:0;}
 
   /* ABC 관찰기록 표 (전역 — 모바일·데스크톱 공통) */
   .abc-rec-wrap{overflow-x:auto;background:#fff;border-radius:14px;border:1px solid #d6cfbf;padding:0;-webkit-overflow-scrolling:touch;}
@@ -400,6 +470,11 @@
   .mas-edit-item .func-dot{width:9px;height:9px;border-radius:50%;flex:none;}
   .mas-edit-item .me-text{flex:1; font-size:13px; font-weight:600; color:var(--ink); line-height:1.4;}
   .mas-edit-item .me-func{font-size:10.5px; font-weight:800; padding:3px 8px; border-radius:7px; flex:none;}
+  /* 목표행동 ★ 지정 */
+  .starbtn{width:30px;height:30px;border:none;background:none;cursor:pointer;font-size:18px;line-height:1;color:#cdd3d6;flex:none;font-family:inherit;padding:0;}
+  .starbtn.on{color:#E0972F;}
+  .lab-star{color:#E0972F;}
+  .bl-star{color:#E0972F;margin-right:3px;}
 
   /* 동기화 상태 배지 */
   #syncBadge{position:absolute;top:14px;right:16px;font-size:10.5px;font-weight:700;
@@ -1027,6 +1102,10 @@
           <svg viewBox="0 0 24 24"><line x1="4" y1="20" x2="4" y2="11"/><line x1="10" y1="20" x2="10" y2="4"/><line x1="16" y1="20" x2="16" y2="14"/><line x1="22" y1="20" x2="22" y2="8"/></svg>
           <span data-i18n="analysis">분석</span>
         </div>
+        <div class="st-menu-item" data-stab="plan">
+          <svg viewBox="0 0 24 24"><path d="M9 4h6a1 1 0 0 1 1 1v1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h1V5a1 1 0 0 1 1-1z"/><path d="M9 13l2 2 4-4"/></svg>
+          <span data-i18n="planTab">지원계획</span>
+        </div>
         <div class="st-menu-item" data-stab="notes">
           <svg viewBox="0 0 24 24"><path d="M14 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-9"/><path d="M14 3l5 5"/><path d="M9 13h6M9 17h4"/></svg>
           <span data-i18n="notesShort">관찰 노트</span>
@@ -1183,6 +1262,18 @@
           </button>
         </div>
         <div id="analysisBody"></div>
+      </div>
+
+      <!-- SUPPORT PLAN -->
+      <div class="screen" id="s-plan">
+        <div class="pagehead">
+          <div><h1 data-i18n="planTab">지원계획</h1><p data-i18n="planSub">기능 가설에 근거한 행동지원계획(BSP/BIP)</p></div>
+          <button class="btn-prim plan-share-btn" data-action="share-plan" data-plan-prefix="plan">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7"/><path d="M12 16V4"/><path d="M7 9l5-5 5 5"/></svg>
+            <span data-i18n="sharePlan">공유하기</span>
+          </button>
+        </div>
+        <div id="planBody"></div>
       </div>
 
       <!-- SETTINGS -->
@@ -1606,7 +1697,7 @@
           <div class="ioa-live-title" id="ioaLiveTitle">공동 관찰</div>
           <div class="ioa-live-meta" id="ioaLiveMeta"></div>
         </div>
-        <button class="ioa-live-close" data-action="close-ioa-overlay">닫기</button>
+        <button class="ioa-live-close" data-action="close-ioa-overlay" data-i18n="closeView">화면 닫기</button>
       </div>
       <div class="ioa-live-main">
         <div class="ioa-live-timer" id="ioaLiveTimer">--</div>
@@ -1720,6 +1811,7 @@
       <button class="tab on" data-tab="record"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.2" fill="currentColor" stroke="none"/></svg><span data-i18n="record">기록</span></button>
       <button class="tab" data-tab="review"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="9" y1="6" x2="20" y2="6"/><line x1="9" y1="12" x2="20" y2="12"/><line x1="9" y1="18" x2="20" y2="18"/><circle cx="4.5" cy="6" r="1.3" fill="currentColor" stroke="none"/><circle cx="4.5" cy="12" r="1.3" fill="currentColor" stroke="none"/><circle cx="4.5" cy="18" r="1.3" fill="currentColor" stroke="none"/></svg><span data-i18n="review">검토</span></button>
       <button class="tab" data-tab="analysis"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="20" x2="4" y2="11"/><line x1="10" y1="20" x2="10" y2="4"/><line x1="16" y1="20" x2="16" y2="14"/><line x1="22" y1="20" x2="22" y2="8"/></svg><span data-i18n="analysis">분석</span></button>
+      <button class="tab" data-tab="plan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4h6a1 1 0 0 1 1 1v1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h1V5a1 1 0 0 1 1-1z"/><path d="M9 13l2 2 4-4"/></svg><span data-i18n="planTab">지원계획</span></button>
       <button class="tab" data-tab="settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span data-i18n="settings">설정</span></button>
     </div>
   </div>
@@ -1918,7 +2010,7 @@ const I18N={
     studioLogo:'FBA 작업실<span>데스크톱 분석 환경</span>', students:'학생', dashboard:'대시보드', analysis:'분석', notesShort:'관찰 노트', pdfReport:'PDF 리포트',
     settings:'설정', signout:'로그아웃', user:'사용자', synced:'동기화됨', savePdf:'PDF 저장',
     recording:'기록 중', todayRecords:'오늘 기록', abcIncomplete:'ABC 미완성', thisWeek:'이번 주 합계',
-    observationNotes:'관찰 노트', noteSub:'면담 · 척도 · 메모', open:'열기', memoCount:'메모 {n}', scaleDone:'척도 ✓', interviewDone:'면담 ✓',
+    observationNotes:'관찰 노트', noteSub:'면담 · 척도 · 메모', open:'열기', closeView:'화면 닫기', memoCount:'메모 {n}', scaleDone:'척도 ✓', interviewDone:'면담 ✓',
     latencyRunning:'지연시간 측정 중 — 행동 버튼을 눌러 종료', cancel:'취소',
     intervalObservingOx:'관찰 중 — 간격 종료 시 O/X 입력', intervalObservingSample:'관찰 중 — 간격 종료 시 코드 입력',
     withBehavior:'발생 간격', withoutBehavior:'미발생 간격', occurrence:'발생률', endObservation:'관찰 종료',
@@ -1926,6 +2018,7 @@ const I18N={
     settingEventTitle:'배경사건',
     behaviorRecording:'행동 기록 <em>간격 · 지연 · 행동</em>', intervalRecording:'간격 기록', startAntecedent:'선행 시작',
     review:'검토', analysisSub:'최근 7일 패턴과 기능 가설입니다.', settingsSub:'미리 정의해 두면 현장에선 누르기만 하면 됩니다.',
+    planTab:'지원계획', planSub:'기능 가설에 근거한 행동지원계획(BSP/BIP)', sharePlan:'공유하기', savePlan:'지원계획 저장', autoDraftPlan:'빈 칸 자동 채우기',
     record:'기록', addStudent:'+ 학생', noStudent:'설정 탭에서 학생을 먼저 추가해 주세요', count:'빈도', duration:'시간', addBehavior:'행동 추가',
     observer:'관찰자', savedQuick:'<b>{name}</b> 저장됨 · ABC는 검토에서 채울 수 있어요', timerStarted:'<b>{name}</b> 측정 시작 — 끝나면 다시 누르세요',
     recordedQuick:'<b>{name}</b> 기록됨 · ABC는 검토에서 채울 수 있어요',
@@ -1964,7 +2057,7 @@ const I18N={
     studioLogo:'FBA Studio<span>Desktop analysis workspace</span>', students:'Students', dashboard:'Dashboard', analysis:'Analysis', notesShort:'Notes', pdfReport:'PDF Report',
     settings:'Settings', signout:'Sign out', user:'User', synced:'Synced', savePdf:'Save PDF',
     recording:'Recording', todayRecords:'Today', abcIncomplete:'ABC incomplete', thisWeek:'This week',
-    observationNotes:'Observation Notes', noteSub:'Interview · Scale · Memo', open:'Open', memoCount:'Memo {n}', scaleDone:'Scale ✓', interviewDone:'Interview ✓',
+    observationNotes:'Observation Notes', noteSub:'Interview · Scale · Memo', open:'Open', closeView:'Close View', memoCount:'Memo {n}', scaleDone:'Scale ✓', interviewDone:'Interview ✓',
     latencyRunning:'Latency timer running - tap a behavior to stop', cancel:'Cancel',
     intervalObservingOx:'Observing - mark O/X at the end of each interval', intervalObservingSample:'Observing - choose a code at the end of each interval',
     withBehavior:'With behavior', withoutBehavior:'Without', occurrence:'Occurrence', endObservation:'End Observation',
@@ -1972,6 +2065,7 @@ const I18N={
     settingEventTitle:'Setting events',
     behaviorRecording:'Behavior Recording <em>Interval · Latency · Behavior</em>', intervalRecording:'Interval Recording', startAntecedent:'Start Antecedent',
     review:'Review', analysisSub:'Recent 7-day patterns and function hypothesis.', settingsSub:'Set up items in advance so field recording stays quick.',
+    planTab:'Support Plan', planSub:'Behavior Support Plan (BSP/BIP) based on the hypothesis', sharePlan:'Share', savePlan:'Save Plan', autoDraftPlan:'Auto-fill blanks',
     record:'Record', addStudent:'+ Student', noStudent:'Add a student in Settings first.', count:'Count', duration:'Duration', addBehavior:'Add behavior',
     observer:'Observer', savedQuick:'<b>{name}</b> saved · Add ABC details in Review', timerStarted:'<b>{name}</b> timer started - tap again to stop',
     recordedQuick:'<b>{name}</b> recorded · Add ABC details in Review',
@@ -3550,7 +3644,7 @@ function renderGrid(){
       <span class="type">${b.type==='freq'?msg('count'):msg('duration')}</span>
       <span class="count ${c>0?'show':''}">${c}</span>
       <span class="disc" style="background:${b.color}">${svg(b.icon)}</span>
-      <span class="lab">${escHtml(localText(b.name))}</span>
+      <span class="lab">${b.target?'<span class="lab-star">★</span> ':''}${escHtml(localText(b.name))}</span>
       <span class="timer" id="tm-${b.id}">00:00</span>
     </button>`;
   }).join('')+`<button class="btn add" data-action="add-behavior">
@@ -3868,8 +3962,15 @@ function buildHypothesisCandidate(sid,days=7){
   const since=Date.now()-days*864e5;
   const recs=activeRecords().filter(r=>r.sid===sid&&new Date(r.ts).getTime()>since);
   const byB={}; recs.forEach(r=>byB[r.bid]=(byB[r.bid]||0)+1);
-  const topB=topCount(byB);
-  const tb=topB?(bMap[topB.label]||{id:topB.label,name:'행동',color:'#0F6E6C'}):null;
+  // 목표행동(★)이 지정돼 있으면 그 행동에 가설을 고정, 없으면 최다빈도 행동
+  const targets=(db.behaviors||[]).filter(b=>b.target);
+  let tb;
+  if(targets.length){
+    tb=targets.slice().sort((a,b)=>(byB[b.id]||0)-(byB[a.id]||0))[0];
+  }else{
+    const topB=topCount(byB);
+    tb=topB?(bMap[topB.label]||{id:topB.label,name:'행동',color:'#0F6E6C'}):null;
+  }
   const tRecs=tb?recs.filter(r=>r.bid===tb.id):[];
   const aCount={},cCount={}; let fullABC=0, partialABC=0;
   tRecs.forEach(r=>{
@@ -4331,7 +4432,7 @@ function renderMeasurementReportSections(sid){
   return html;
 }
 // 분석 아코디언 — 펼침 상태 유지 (기본: 기능 가설만 펼침)
-let analysisOpenKeys=new Set(['hyp']);
+let analysisOpenKeys=new Set(['behaviordef']);
 // 아코디언 항목 — 제목만 보이고 펼치기 버튼으로 본문 표시
 function accItem(key,rank,title,sub,bodyHtml){
   if(!bodyHtml) return '';
@@ -4339,7 +4440,7 @@ function accItem(key,rank,title,sub,bodyHtml){
   return `<div class="acc ${open?'open':''}" data-acc-key="${key}">
     <button class="acc-head" data-acc-toggle aria-expanded="${open?'true':'false'}">
       <span class="acc-titles">
-        <span class="acc-title"><span class="acc-rank">${rank}</span>${escHtml(title)}</span>
+        <span class="acc-title">${rank?`<span class="acc-rank">${rank}</span>`:''}${escHtml(title)}</span>
         ${sub?`<span class="acc-sub">${escHtml(sub)}</span>`:''}
       </span>
       <svg class="acc-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
@@ -4348,46 +4449,80 @@ function accItem(key,rank,title,sub,bodyHtml){
   </div>`;
 }
 
+// ===== 분석 탭 (FBA 워크플로우 순서로 재구조화) =====
+  // ① 행동정의 → ② 간접평가 → ③ ABC 관찰기록 → ④ 분석결과(묶음) → ⑤ 기능 가설
 function renderAnalysis(){
   const since=Date.now()-7*864e5;
   const mine=activeRecords().filter(r=>r.sid===state.sid&&new Date(r.ts).getTime()>since);
-  const body=$('#analysisBody');
+  const body=$('#analysisBody'); if(!body) return;
   const en=appLang==='en';
-  const curStudent=cur();
-  // 긍정적행동지원(PBS) 순서·중요도 기반 정렬:
-  // ① 기능 가설(핵심 결론) → ② ABC 관찰기록(가설의 직접 근거·인과관계) → ③ 행동별 빈도(기초선)
-  // → ④ 주간 산점도(선행/시간 패턴) → ⑤ 측정 그래프(행동 변화 추이) → ⑥ 관찰자 간 일치도(데이터 신뢰도)
-  const hypBody=renderHypothesisCard(state.sid,{bare:true});
-  const measureBody=renderMeasurementGraphs(state.sid,{bare:true});
-  const abcBody=renderAbcSection(state.sid,en);
-
-  if(mine.length<3){
-    const emptyText=en
-      ? 'There are not enough records to analyze yet.<br>Scatterplots and graphs will appear as records accumulate.'
-      : '분석할 기록이 아직 적어요.<br>기록이 쌓이면 산점도와 그래프가 나타납니다.';
-    body.innerHTML=
-      accItem('hyp','1',en?'Function Hypothesis':'기능 가설',en?'Core conclusion':'핵심 결론',hypBody)
-      +accItem('abc','2',en?'ABC Observation Record':'ABC 관찰기록',en?'Antecedent · Behavior · Consequence':'선행·행동·후속결과',abcBody)
-      +accItem('measure','5',en?'Measurement Graphs':'측정 그래프',en?'Behavior change over time':'행동 변화 추이',measureBody)
-      +`<div class="empty" style="margin-top:18px">${emptyText}</div>`;
-    translateStaticDom(body);
-    return;
+  const abcBody=renderAbcSection(state.sid,en)||`<p class="acc-csub">${en?'No ABC records yet.':'아직 ABC 기록이 없어요.'}</p>`;
+  body.innerHTML=
+    accItem('behaviordef','1',en?'Behavior Definition':'행동 정의',en?'Target behavior & operational definition':'목표행동 · 조작적 정의',renderBehaviorDefCard(state.sid,en))
+    +accItem('indirect','2',en?'Indirect Assessment':'간접평가',en?'Interview · scale · memo':'면담 · 척도 · 메모',renderIndirectCard(state.sid,en))
+    +accItem('abc','3',en?'ABC Observation Record':'ABC 관찰기록',en?'Direct observation evidence':'직접 관찰 근거',abcBody)
+    +accItem('results','4',en?'Analysis Results':'분석결과',en?'Frequency · patterns · graphs · reliability':'빈도 · 패턴 · 그래프 · 신뢰도',renderAnalysisResults(state.sid,en,mine))
+    +accItem('hyp','5',en?'Function Hypothesis':'기능 가설',en?'Core conclusion · the answer':'핵심 결론',renderHypothesisCard(state.sid,{bare:true}));
+  translateStaticDom(body);
+}
+// ① 행동정의 — 목표행동 + 조작적 정의 + 예시/비예시
+function renderBehaviorDefCard(sid,en){
+  const targets=(db.behaviors||[]).filter(b=>b.target);
+  if(!targets.length){
+    return `<p class="acc-csub">${en?'No target behavior set yet. In Settings → Edit behaviors, tap ☆ to designate the FBA target behavior.':'아직 목표행동이 지정되지 않았어요. 설정 → 행동정의 편집에서 ☆를 눌러 FBA 대상 행동을 지정하세요.'}</p>`;
   }
-
-  // ② 행동별 빈도
+  return targets.map(b=>{
+    const hasDef=!!(b.def&&b.def.trim());
+    const ex=b.example&&b.example.trim()?escLines(b.example):'';
+    const nx=b.nonExample&&b.nonExample.trim()?escLines(b.nonExample):'';
+    return `<div class="bd-target bd-hl">
+      <div class="bd-name"><span class="bd-dot" style="background:${b.color}"></span>${escHtml(localText(b.name))} <span class="lab-star">★</span></div>
+      <div class="bd-row">
+        <div class="bd-label">${en?'Operational definition':'조작적 정의'}</div>
+        <div class="bd-text ${hasDef?'':'muted'}">${hasDef?escLines(b.def):(en?'Not written yet — tap Edit to add an observable, measurable definition.':'아직 작성되지 않았어요 — 편집을 눌러 관찰·측정 가능한 정의를 적어주세요.')}</div>
+      </div>
+      ${(ex||nx)?`<div class="bd-eg">
+        ${ex?`<div class="bd-pos"><div class="bd-label">${en?'Example':'예시'}</div><div class="bd-text">${ex}</div></div>`:''}
+        ${nx?`<div class="bd-neg"><div class="bd-label">${en?'Non-example':'비예시'}</div><div class="bd-text">${nx}</div></div>`:''}
+      </div>`:''}
+      <button class="bd-edit" data-edit-behavior="${b.id}">✏️ ${en?'Edit definition':'정의 편집'}</button>
+    </div>`;
+  }).join('');
+}
+// ② 간접평가 — 면담 · 척도(MAS) · 메모 요약 + 관찰 노트 열기
+function renderIndirectCard(sid,en){
+  const ivs=(db.interviews||[]).filter(i=>i.sid===sid).sort((a,b)=>new Date(b.ts)-new Date(a.ts));
+  const mas=(db.masScores||[]).filter(m=>m.sid===sid);
+  const memos=getNotes(sid);
+  const masSum=getMasFunctionSummary(sid);
+  const row=(color,letter,title,sub)=>`<div class="ia-row"><div class="ia-ic" style="background:${color}">${letter}</div><div class="ia-meta"><b>${title}</b><span>${sub}</span></div></div>`;
+  const ivSub=ivs.length?((en?`${ivs.length} record(s)`:`${ivs.length}건`)+(ivs[0].respondent?` · ${escHtml(localText(ivs[0].respondent))}`:'')):(en?'No record':'기록 없음');
+  const masSub=mas.length?(masSum?`${en?'Strongest function':'추정 기능'}: ${escHtml(masSum.label)} ${masSum.pct}%`:(en?`${mas.length} record(s)`:`${mas.length}건`)):(en?'No record':'기록 없음');
+  const memoSub=memos.length?(en?`${memos.length} memo(s)`:`메모 ${memos.length}건`):(en?'No memo':'메모 없음');
+  return `<p class="acc-csub">${en?'Information gathered before/around direct observation':'직접관찰 전·주변에서 수집한 정보'}</p>
+    ${row('#E0972F',en?'I':'면',en?'Interview':'면담',ivSub)}
+    ${row('#3E86C0',en?'S':'척',en?'Rating scale (MAS)':'행동평정척도 (MAS)',masSub)}
+    ${row('#0F6E6C',en?'M':'메',en?'Memo':'메모',memoSub)}
+    <button class="bd-edit" data-action="open-note" style="margin-top:13px">📋 ${en?'Open observation notes (all three)':'관찰 노트 열기 (면담·척도·메모)'}</button>`;
+}
+// ④ 분석결과 — 빈도·산점도·활동·배경사건·측정·IOA를 한 메뉴로 묶음 (중첩 아코디언)
+function renderAnalysisResults(sid,en,mine){
+  if(mine.length<3){
+    return `<p class="acc-csub">${en?'Not enough records yet. Frequency, scatterplot and graphs appear here as records accumulate.':'기록이 아직 적어요. 기록이 쌓이면 빈도·산점도·그래프가 여기에 나타납니다.'}</p>`;
+  }
+  // 행동별 빈도
   const byB={};mine.forEach(r=>byB[r.bid]=(byB[r.bid]||0)+1);
   const max=Math.max(...Object.values(byB));
-  const bars=Object.keys(byB).sort((a,b)=>byB[b]-byB[a]).map(id=>{const b=bMap[id]||{name:'?',color:'#9aa6aa'};return `<div class="barrow"><div class="bl">${escHtml(localText(b.name))}</div><div class="bt"><div class="bf" style="width:${byB[id]/max*100}%;background:${b.color}"></div></div><div class="bn">${byB[id]}</div></div>`;}).join('');
+  const bars=Object.keys(byB).sort((a,b)=>{const ta=bMap[a]?.target?1:0,tb=bMap[b]?.target?1:0;return ta!==tb?tb-ta:byB[b]-byB[a];}).map(id=>{const b=bMap[id]||{name:'?',color:'#9aa6aa'};return `<div class="barrow"><div class="bl">${b.target?'<span class="bl-star">★</span>':''}${escHtml(localText(b.name))}</div><div class="bt"><div class="bf" style="width:${byB[id]/max*100}%;background:${b.color}"></div></div><div class="bn">${byB[id]}</div></div>`;}).join('');
   const freqBody=`<p class="acc-csub">${en?'Recent 7-day total':'최근 7일 합계'}</p>${bars}`;
-
-  // ③ 주간 산점도
+  // 주간 산점도
   const now=new Date();const cols=[];
   for(let i=6;i>=0;i--){const d=new Date(now);d.setDate(now.getDate()-i);cols.push(d);}
   const colHTML=cols.map(d=>{
     const k=dkey(d);
     const marks=mine.filter(r=>dkey(new Date(r.ts))===k).map(r=>{
       const t=new Date(r.ts);const hour=t.getHours()+t.getMinutes()/60;
-      const top=Math.max(0,Math.min(100,(hour-6)/14*100));// 6:00–20:00
+      const top=Math.max(0,Math.min(100,(hour-6)/14*100));
       const b=bMap[r.bid]||{color:'#9aa6aa'};
       return `<div class="mark" style="top:${top}%;background:${b.color}"></div>`;
     }).join('');
@@ -4401,8 +4536,7 @@ function renderAnalysis(){
     <div class="scatter"><div class="sc-hours"><span style="top:0">06</span><span style="top:21%">09</span><span style="top:43%">12</span><span style="top:64%">15</span><span style="top:86%">18</span></div>
     <div class="sc-grid">${colHTML}</div><div class="sc-days">${dayLabels}</div></div>
     <div class="legend">${legend}</div>`;
-
-  // ④ 활동·교시별 발생
+  // 활동·교시별 발생
   const unassigned=en?'Unassigned':'활동 미지정';
   const byAct={}; mine.forEach(r=>{const k=r.act?localText(r.act):unassigned; byAct[k]=(byAct[k]||0)+1;});
   const actKeys=Object.keys(byAct);
@@ -4415,23 +4549,322 @@ function renderAnalysis(){
     const abars=actKeys.sort((a,b)=>byAct[b]-byAct[a]).map(k=>`<div class="barrow"><div class="bl">${escHtml(k)}</div><div class="bt"><div class="bf" style="width:${byAct[k]/amax*100}%;background:${k===unassigned?'#b8bfc6':'#5E7CA8'}"></div></div><div class="bn">${byAct[k]}</div></div>`).join('');
     actBody=`<p class="acc-csub">${en?'Recent 7-day occurrences by activity / period':'최근 7일 · 활동·교시별 발생'}</p>${abars}`;
   }
+  const setImpactBody=renderSettingImpact(sid,en);
+  const measureBody=renderMeasurementGraphs(sid,{bare:true});
+  const ioaBody=renderIOASection(sid);
+  return accItem('freq','',en?'Behavior Frequency':'행동별 빈도',en?'What & how often':'무엇이 · 얼마나',freqBody)
+    +accItem('scatter','',en?'Weekly Scatterplot':'주간 산점도',en?'When it occurs':'언제 발생하나',scatterBody)
+    +accItem('act','',en?'By Activity / Period':'활동·교시별 발생',en?'In which activity':'어떤 활동에서',actBody)
+    +accItem('setimpact','',en?'Setting Event Impact':'배경사건 영향',en?'Slow triggers':'배경요인',setImpactBody)
+    +accItem('measure','',en?'Measurement Graphs':'측정 그래프',en?'Behavior change over time':'행동 변화 추이',measureBody)
+    +accItem('ioa','',en?'Inter-Observer Agreement':'관찰자 간 일치도',en?'Data reliability':'데이터 신뢰도',ioaBody);
+}
+// ===== 지원계획(BSP/BIP) 탭 =====
+const SUPPORT_PLAN_FIELDS=['longGoal','shortGoal','prevention','settingEvents','replacement','communication','teach','reinforcement','problemResponse','safety','roles','progress','reviewDate'];
 
-  // ⑥ 배경사건 영향
-  const setImpactBody=renderSettingImpact(state.sid,en);
-
-  // ⑦ 관찰자 간 일치도(IOA)
-  const ioaBody=curStudent ? renderIOASection(curStudent.id) : '';
-
-  body.innerHTML=
-    accItem('hyp','1',en?'Function Hypothesis':'기능 가설',en?'Core conclusion · the answer':'핵심 결론',hypBody)
-    +accItem('abc','2',en?'ABC Observation Record':'ABC 관찰기록',en?'Evidence behind the hypothesis':'가설의 직접 근거',abcBody)
-    +accItem('freq','3',en?'Behavior Frequency':'행동별 빈도',en?'What & how often':'무엇이 · 얼마나',freqBody)
-    +accItem('act','4',en?'By Activity / Period':'활동·교시별 발생',en?'In which activity it occurs':'어떤 활동에서 발생하나',actBody)
-    +accItem('scatter','5',en?'Weekly Scatterplot':'주간 산점도',en?'When it occurs':'언제 발생하나',scatterBody)
-    +accItem('setimpact','6',en?'Setting Event Impact':'배경사건 영향',en?'Slow triggers behind behavior':'행동을 키우는 배경요인',setImpactBody)
-    +accItem('measure','7',en?'Measurement Graphs':'측정 그래프',en?'Behavior change over time':'행동 변화 추이',measureBody)
-    +accItem('ioa','8',en?'Inter-Observer Agreement':'관찰자 간 일치도',en?'Data reliability':'데이터 신뢰도',ioaBody);
+function supportPlanStats(sid,tb){
+  const since=Date.now()-14*864e5;
+  const recs=activeRecords().filter(r=>r.sid===sid&&new Date(r.ts).getTime()>since);
+  const targetRecs=tb?recs.filter(r=>r.bid===tb.id):recs;
+  const allTarget=activeRecords().filter(r=>r.sid===sid&&(!tb||r.bid===tb.id)).sort((a,b)=>new Date(b.ts)-new Date(a.ts));
+  const aCount={},cCount={}; let fullABC=0;
+  targetRecs.forEach(r=>{
+    if((r.a||[]).length&&(r.c||[]).length) fullABC++;
+    (r.a||[]).forEach(x=>aCount[x]=(aCount[x]||0)+1);
+    (r.c||[]).forEach(x=>cCount[x]=(cCount[x]||0)+1);
+  });
+  return {
+    days:14,total:recs.length,target:targetRecs.length,
+    abcPct:pct(fullABC,targetRecs.length),
+    topA:topCount(aCount),topC:topCount(cCount),
+    last:allTarget[0]||null
+  };
+}
+function supportPlanDatePlus(days){
+  const d=new Date(); d.setDate(d.getDate()+days);
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+function buildSupportPlanDraft(sid){
+  const en=appLang==='en';
+  const s=db.students.find(x=>x.id===sid)||cur()||{};
+  const tb=(db.behaviors||[]).find(b=>b.target)||null;
+  const h=hypothesisForDisplay(sid).data;
+  const fnKey=h.functionKey||hypFuncKey(h.functionName);
+  const hints=planHints(fnKey,en);
+  const stats=supportPlanStats(sid,tb);
+  const bName=localText(tb?.name||h.behavior||(en?'target behavior':'목표행동'));
+  const fn=hypFuncLabel(fnKey);
+  const topA=stats.topA?.label||h.antecedent;
+  const topC=stats.topC?.label||h.consequence;
+  const base=en
+    ? `Based on recent ${stats.days}-day data (${stats.target}/${stats.total} target records),`
+    : `최근 ${stats.days}일 자료(${stats.total}건 중 목표행동 ${stats.target}건)를 기준으로`;
+  return {
+    longGoal:en
+      ? `Within 8 weeks, reduce ${bName} from the current baseline and increase participation in the target routine.`
+      : `8주 이내 ${bName} 행동을 현재 기준선보다 의미 있게 감소시키고, 해당 일과 참여를 향상한다.`,
+    shortGoal:en
+      ? `Within 4 weeks, the student will use the replacement behavior with adult prompting or less in the target situation.`
+      : `4주 이내 목표 상황에서 성인 촉구 이하로 대체행동을 사용한다.`,
+    prevention:en
+      ? `${base} adjust antecedents such as ${localText(topA||'identified triggers')}. ${hints.prevention}.`
+      : `${base}, ${localText(topA||'확인된 선행사건')}와 관련된 환경을 조정한다. ${hints.prevention}.`,
+    settingEvents:en
+      ? `Check sleep, medication, health, routine changes, and sensory load before high-risk routines.`
+      : `고위험 일과 전 수면, 약물, 건강상태, 일과 변화, 감각 부담을 확인하고 필요 시 요구량과 환경 자극을 조정한다.`,
+    replacement:hints.replacement,
+    communication:en
+      ? `Use the student's accessible communication mode: speech, gesture, picture card, AAC, or written choice.`
+      : `학생이 사용할 수 있는 의사소통 방식(말, 제스처, 그림카드, AAC, 선택지)을 정해 같은 기능의 요청을 표현하게 한다.`,
+    teach:hints.teach,
+    reinforcement:en
+      ? `Immediately reinforce the replacement behavior with the same function (${fn}). Use specific praise and quick access to the agreed outcome.`
+      : `대체행동이 나타나면 같은 기능(${fn})의 결과를 즉시 제공하고, 구체적 칭찬과 약속된 강화로 연결한다.`,
+    problemResponse:en
+      ? `Respond calmly and briefly to problem behavior, protect safety, prompt the replacement behavior, and minimize access to ${localText(topC||'the maintaining outcome')}.`
+      : `문제행동에는 차분하고 짧게 반응하며 안전을 확보한다. 대체행동을 다시 촉구하고 ${localText(topC||'행동을 유지시키는 결과')} 접근은 최소화한다.`,
+    safety:en
+      ? `If there is risk of injury, increase distance, remove dangerous items, call the agreed support person, and document the event.`
+      : `상해 위험이 있으면 주변 거리 확보, 위험 물건 제거, 합의된 지원인력 호출, 사건 기록 절차를 따른다.`,
+    roles:en
+      ? `Special educator: plan coordination/data review. Classroom teacher/therapist: daily implementation. Caregiver: home generalization and feedback.`
+      : `특수교사: 계획 조정과 자료 검토. 담임/치료사: 일상 실행과 촉구·강화. 보호자: 가정 일반화와 피드백 공유.`,
+    progress:en
+      ? `Review app data weekly. If target behavior does not decrease or replacement behavior does not increase for 2 consecutive weeks, revise the plan.`
+      : `매주 앱 자료를 검토한다. 2주 연속 목표행동 감소 또는 대체행동 증가가 나타나지 않으면 계획을 수정한다.`,
+    reviewDate:supportPlanDatePlus(14)
+  };
+}
+function normalizeSupportPlan(plan={}){
+  return {
+    ...plan,
+    longGoal:plan.longGoal||plan.goal||'',
+    prevention:plan.prevention||'',
+    replacement:plan.replacement||'',
+    teach:plan.teach||'',
+    reinforcement:plan.reinforcement||plan.consequence||'',
+    reviewDate:plan.reviewDate||''
+  };
+}
+function renderSupportPlanView(sid,{prefix='plan',desktop=false}={}){
+  const en=appLang==='en';
+  const s=db.students.find(x=>x.id===sid)||cur();
+  if(!sid||!s) return `<div class="empty">${en?'Select a student.':'학생을 선택해 주세요.'}</div>`;
+  const tb=(db.behaviors||[]).find(b=>b.target)||null;
+  const hyp=hypothesisForDisplay(sid).data;
+  const fnKey=hyp.functionKey||hypFuncKey(hyp.functionName);
+  const plan=normalizeSupportPlan(getSupportPlan(sid)||{});
+  const stats=supportPlanStats(sid,tb);
+  const esc=v=>escHtml(v||'');
+  const tbName=tb?escHtml(localText(tb.name)):(en?'No target behavior set':'목표행동 미지정');
+  const tbDef=tb&&tb.def?escLines(tb.def):(en?'No operational definition yet':'조작적 정의 미작성');
+  const hypText=hyp&&hyp.ready?escLines(hyp.summary||buildHypothesisSentence(hyp,sid)):(en?'Hypothesis is still tentative. Add more ABC records or edit it in Analysis.':'가설이 아직 잠정적이에요. ABC 기록을 더 모으거나 분석 탭에서 직접 수정하세요.');
+  const fnLabel=hypFuncLabel(fnKey);
+  const metric=(v,l)=>`<div class="plan-metric"><b>${escHtml(v)}</b><span>${escHtml(l)}</span></div>`;
+  const header=`<div class="plan-summary">
+    <div class="plan-summary-top">
+      <div><div class="plan-kicker">${en?'Target behavior':'목표행동'}</div><div class="plan-target-name">${tbName}${tb?` <span class="lab-star">★</span>`:''}</div></div>
+      <div class="plan-status">${escHtml(fnLabel)}</div>
+    </div>
+    <div class="plan-sum-row"><div class="bd-label">${en?'Operational definition':'조작적 정의'}</div><div class="bd-text muted">${tbDef}</div></div>
+    <div class="plan-sum-row"><div class="bd-label">${en?'Function hypothesis':'기능 가설'}</div><div class="bd-text">${hypText}</div></div>
+    <div class="plan-metrics">
+      ${metric(stats.target+'/'+stats.total,en?'Target / total records':'목표 / 전체 기록')}
+      ${metric(stats.abcPct+'%',en?'ABC complete':'ABC 완성률')}
+      ${metric(stats.last?fmtShortDate(new Date(stats.last.ts)):'-',en?'Latest record':'최근 기록')}
+    </div>
+    <div class="plan-sum-note">${en?'Target behavior and hypothesis are edited in the Analysis tab. This plan turns them into daily BSP/BIP actions.':'목표행동과 기능가설은 분석 탭에서 수정합니다. 이 탭은 그 내용을 실제 BSP/BIP 실행계획으로 옮기는 공간입니다.'}</div>
+  </div>`;
+  const fillTip=(!plan.longGoal&&!plan.prevention&&!plan.replacement&&!plan.reinforcement)
+    ? `<div class="plan-empty-tip">${en?'Use auto-fill to draft a PBS plan from the current function hypothesis and recent data. Review and edit every item before sharing.':'빈 칸 자동 채우기를 누르면 현재 기능가설과 최근 기록을 바탕으로 긍정적행동지원 계획 초안이 들어갑니다. 공유 전 반드시 팀이 검토하고 수정하세요.'}</div>`:'';
+  const field=(key,num,title,sub,hint,rows=3)=>`<div class="plan-card">
+    <div class="plan-card-head"><div class="plan-num">${num}</div><div class="plan-card-title"><b>${title}</b><span>${sub}</span></div></div>
+    <textarea class="notebox" id="${prefix}${key}" rows="${rows}" placeholder="${en?'e.g., ':'예: '}${esc(hint)}">${esc(plan[key]||'')}</textarea>
+  </div>`;
+  const dateField=`<div class="plan-card">
+    <div class="plan-card-head"><div class="plan-num">8</div><div class="plan-card-title"><b>${en?'Review date':'다음 점검일'}</b><span>${en?'When the team will review data and revise the plan':'팀이 자료를 보고 계획을 수정할 날짜'}</span></div></div>
+    <input class="plan-date" id="${prefix}reviewDate" type="date" value="${esc(plan.reviewDate||'')}">
+  </div>`;
+  const form=`<div class="plan-toolbar">
+      <button class="plan-tool-btn" data-action="draft-plan" data-plan-prefix="${prefix}" data-plan-sid="${sid}" data-i18n="autoDraftPlan">${en?'Auto-fill blanks':'빈 칸 자동 채우기'}</button>
+      <button class="plan-tool-btn secondary" data-action="share-plan" data-plan-prefix="${prefix}" data-plan-sid="${sid}" data-i18n="sharePlan">${en?'Share':'공유하기'}</button>
+    </div>
+    ${fillTip}
+    <div class="plan-section-title"><b>${en?'1. Measurable Goals':'1. 측정 가능한 목표'}</b><span>BSP/BIP · IEP</span></div>
+    <div class="plan-grid">
+      ${field('longGoal','1A',en?'Long-term goal':'장기 목표',en?'Outcome expected across 6-8 weeks':'6-8주 단위로 기대하는 큰 변화',en?'Reduce the target behavior by 50% and improve participation.':'목표행동을 50% 이상 감소시키고 일과 참여를 높인다.',2)}
+      ${field('shortGoal','1B',en?'Short-term objective / mastery criterion':'단기 목표·성취 기준',en?'Observable criterion, period, and measurement method':'관찰 가능한 기준, 기간, 측정 방법',en?'Within 4 weeks, replacement behavior occurs at least 3 times per day.':'4주 이내 대체행동을 하루 3회 이상 사용한다.',2)}
+    </div>
+    <div class="plan-section-title"><b>${en?'2. Prevent':'2. 예방 전략'}</b><span>${en?'Antecedent & setting-event adjustment':'선행·배경 조정'}</span></div>
+    <div class="plan-grid">
+      ${field('prevention','2A',en?'Antecedent strategies':'선행사건 조정',en?'Change what happens before the behavior':'행동 직전 조건을 어떻게 바꿀지',en?'Preview transitions, reduce task length, offer choices.':'전이 예고, 과제 분량 조절, 선택권 제공',3)}
+      ${field('settingEvents','2B',en?'Setting-event supports':'배경사건 지원',en?'Slow triggers such as sleep, health, medication, sensory load':'수면, 건강, 약물, 감각 부담 같은 느린 촉발요인',en?'Check sleep/health and adjust demand level when needed.':'수면·건강을 확인하고 필요 시 요구 수준 조정',3)}
+    </div>
+    <div class="plan-section-title"><b>${en?'3. Teach':'3. 대체행동 교수'}</b><span>${en?'Functionally equivalent behavior':'기능이 같은 행동'}</span></div>
+    <div class="plan-grid">
+      ${field('replacement','3A',en?'Replacement behavior':'대체행동',en?'Appropriate behavior that serves the same function':'문제행동과 같은 기능을 하는 바람직한 행동',en?'Ask for help or request a break.':'도움 요청 또는 휴식 요청',2)}
+      ${field('communication','3B',en?'Communication mode':'의사소통 방식',en?'Speech, gesture, visual card, AAC, writing, etc.':'말, 제스처, 그림카드, AAC, 쓰기 등',en?'Use a break card, AAC button, or spoken phrase.':'휴식카드, AAC 버튼 또는 말로 요청',2)}
+      ${field('teach','3C',en?'Teaching procedure':'교수 방법',en?'Modeling, prompting, practice, prompt fading, generalization':'시범, 촉구, 연습, 촉구 소거, 일반화',en?'Model the request, prompt immediately, reinforce, then fade prompts.':'요청 시범, 즉각 촉구, 강화 후 촉구 소거',3)}
+    </div>
+    <div class="plan-section-title"><b>${en?'4. Respond':'4. 후속결과 전략'}</b><span>${en?'Reinforce replacement, reduce payoff':'강화와 반응'}</span></div>
+    <div class="plan-grid">
+      ${field('reinforcement','4A',en?'Reinforcement plan':'강화 계획',en?'What happens when the replacement behavior occurs':'대체행동이 나왔을 때 제공할 결과',en?'Provide a brief break immediately after an appropriate request.':'적절한 요청 직후 짧은 휴식 제공',3)}
+      ${field('problemResponse','4B',en?'Response to problem behavior':'문제행동 반응 계획',en?'Safety first, brief response, prompt replacement, avoid reinforcing problem behavior':'안전 확보, 짧은 반응, 대체행동 촉구, 문제행동 강화 방지',en?'Keep response brief, block unsafe behavior, prompt the replacement behavior.':'짧게 반응하고 위험행동을 차단한 뒤 대체행동 촉구',3)}
+    </div>
+    <div class="plan-section-title"><b>${en?'5. Implement & Review':'5. 실행·점검'}</b><span>${en?'Team roles and data review':'역할과 자료 검토'}</span></div>
+    <div class="plan-grid">
+      ${field('safety','5A',en?'Safety / crisis plan':'안전·위기 대응',en?'Only when aggression, self-injury, elopement, or severe disruption may occur':'공격, 자해, 이탈, 심각한 방해가 있을 때',en?'Increase distance, remove hazards, call agreed support person.':'거리 확보, 위험물 제거, 합의된 지원인력 호출',3)}
+      ${field('roles','5B',en?'Team roles':'역할 분담',en?'Special educator, classroom teacher, therapist, caregiver, assistant':'특수교사, 담임, 치료사, 보호자, 보조인력',en?'Special educator reviews data; therapist teaches communication; teacher implements daily.':'특수교사는 자료 검토, 치료사는 의사소통 교수, 담임은 일상 실행',3)}
+      ${field('progress','5C',en?'Progress monitoring':'진행 점검',en?'Which app data will be reviewed, how often, and when to revise':'어떤 자료를 얼마나 자주 보고 언제 수정할지',en?'Review weekly frequency/duration and ABC completion; revise after 2 weeks without progress.':'주간 빈도/시간과 ABC 완성률 검토, 2주 무변화 시 수정',3)}
+      ${dateField}
+    </div>
+    <div class="plan-actions">
+      <button class="btn-prim" data-action="save-plan" data-plan-prefix="${prefix}" data-plan-sid="${sid}" data-i18n="savePlan">${en?'Save Plan':'지원계획 저장'}</button>
+    </div>`;
+  const updated=plan.updatedAt?`<div class="plan-updated">${en?'Last saved':'마지막 저장'} · ${fmtShortDate(new Date(plan.updatedAt))}${plan.updatedByName?' · '+escHtml(localText(plan.updatedByName)):''}</div>`:'';
+  return header+form+updated+`<div style="height:${desktop?'8':'20'}px"></div>`;
+}
+function renderSupportPlan(){
+  const body=$('#planBody'); if(!body) return;
+  body.innerHTML=renderSupportPlanView(state.sid,{prefix:'plan'});
   translateStaticDom(body);
+}
+function readSupportPlanForm(prefix='plan',sid=state.sid,existing={}){
+  const get=(key)=>($(`#${prefix}${key}`)?.value||existing[key]||'').trim();
+  const now=new Date().toISOString();
+  return {
+    ...existing,
+    id:planDocId(sid), sid, kind:'supportPlan', type:'supportPlan',
+    longGoal:get('longGoal'), shortGoal:get('shortGoal'), prevention:get('prevention'), settingEvents:get('settingEvents'),
+    replacement:get('replacement'), communication:get('communication'), teach:get('teach'),
+    reinforcement:get('reinforcement'), problemResponse:get('problemResponse'), safety:get('safety'),
+    roles:get('roles'), progress:get('progress'), reviewDate:get('reviewDate'),
+    goal:get('longGoal')||existing.goal||'', consequence:get('reinforcement')||existing.consequence||'',
+    ts:existing.ts||now, updatedAt:now,
+    updatedByUid:fbUser?.uid||OBSERVER_ID,
+    updatedByName:fbUser?.displayName||fbUser?.email||'관찰자'
+  };
+}
+async function saveSupportPlan(prefix='plan',sid=state.sid){
+  if(!sid) return;
+  const existing=normalizeSupportPlan(getSupportPlan(sid)||{});
+  const plan=readSupportPlanForm(prefix,sid,existing);
+  if(!db.notes) db.notes=[];
+  const idx=db.notes.findIndex(n=>n.id===plan.id);
+  if(idx>=0) db.notes[idx]={...db.notes[idx],...plan}; else db.notes.push(plan);
+  syncActiveCaseFromDb();
+  await saveSharedExtra('notes', plan);
+  persist();
+  if(state.tab==='plan'&&sid===state.sid) renderSupportPlan();
+  if(isDesktop()&&stTab==='plan') renderStPlan();
+  toast(appLang==='en'?'Support plan saved':'지원계획 저장됐어요');
+}
+function fillSupportPlanDraft(prefix='plan',sid=state.sid){
+  if(!sid) return;
+  const draft=buildSupportPlanDraft(sid);
+  let changed=0;
+  SUPPORT_PLAN_FIELDS.forEach(key=>{
+    const el=$(`#${prefix}${key}`);
+    if(el&&!el.value.trim()&&draft[key]){el.value=draft[key];changed++;}
+  });
+  toast(changed
+    ? (appLang==='en'?`Auto-filled ${changed} blank items. Review before saving.`:`빈 칸 ${changed}개를 채웠어요. 저장 전 검토해 주세요.`)
+    : (appLang==='en'?'No blank plan fields to fill.':'채울 빈 칸이 없어요.'));
+}
+function supportPlanPrintHtml(sid,plan){
+  const en=appLang==='en';
+  const s=db.students.find(x=>x.id===sid)||cur()||{};
+  const tb=(db.behaviors||[]).find(b=>b.target)||null;
+  const hyp=hypothesisForDisplay(sid).data;
+  const fnKey=hyp.functionKey||hypFuncKey(hyp.functionName);
+  const stats=supportPlanStats(sid,tb);
+  const now=new Date();
+  const dateStr=en
+    ? `${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')}`
+    : `${now.getFullYear()}년 ${now.getMonth()+1}월 ${now.getDate()}일`;
+  const val=(key,empty='')=>escLines(plan[key]||empty||'');
+  const row=(label,value)=>`<tr><th>${label}</th><td>${value||'<span class="muted">-</span>'}</td></tr>`;
+  const sec=(num,title,rows)=>`<section><h2>${num}. ${title}</h2><table>${rows}</table></section>`;
+  const hypText=hyp?.ready?escLines(hyp.summary||buildHypothesisSentence(hyp,sid)):escLines(en?'Tentative hypothesis - more data may be needed.':'잠정 가설 - 추가 자료가 필요할 수 있음.');
+  return `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${en?'Behavior Support Plan':'행동지원계획'} - ${escHtml(localText(s.name||''))}</title>
+  <style>
+    *{box-sizing:border-box} body{font-family:'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif;color:#1C2A2E;background:#fff;margin:0;padding:28px;font-size:12.5px;line-height:1.55;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .doc{max-width:840px;margin:0 auto}.top{display:flex;justify-content:space-between;gap:20px;border-bottom:3px solid #0F6E6C;padding-bottom:16px;margin-bottom:18px}
+    h1{margin:0;font-size:26px;letter-spacing:0} .sub{color:#637277;margin-top:4px;font-weight:700}.meta{text-align:right;color:#637277;font-weight:700}
+    .summary{display:grid;grid-template-columns:1.15fr .85fr;gap:12px;margin-bottom:14px}.box{border:1px solid #d9e5e1;border-radius:10px;padding:12px;background:#f8fbfa}
+    .box b{display:block;font-size:13px;color:#0F6E6C;margin-bottom:5px}.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.chip{background:#eef6f5;color:#0F6E6C;border:1px solid #d3e7e3;border-radius:999px;padding:3px 8px;font-size:10.5px;font-weight:800}
+    section{break-inside:avoid;margin-top:13px} h2{font-size:15px;margin:0 0 7px;color:#0F6E6C} table{width:100%;border-collapse:collapse;table-layout:fixed} th,td{border:1px solid #d9d4c8;padding:9px 10px;vertical-align:top} th{width:28%;background:#f3efe6;text-align:left;color:#4c5d61;font-weight:900} td{white-space:pre-wrap}.muted{color:#9aa6aa}
+    .footer{display:flex;justify-content:space-between;border-top:1px solid #ddd;margin-top:18px;padding-top:10px;color:#637277;font-size:11px}
+    @media print{body{padding:18mm}.no-print{display:none!important}.doc{max-width:none}}
+  </style></head><body><div class="doc">
+    <div class="top"><div><h1>${en?'Behavior Support Plan (BSP/BIP)':'행동지원계획(BSP/BIP)'}</h1><div class="sub">${en?'Positive Behavior Support plan based on FBA data':'기능평가 자료에 근거한 긍정적행동지원 계획'}</div></div><div class="meta">${escHtml(localText(s.name||''))}<br>${dateStr}</div></div>
+    <div class="summary">
+      <div class="box"><b>${en?'Target behavior':'목표행동'}</b>${escHtml(localText(tb?.name||hyp.behavior||(en?'Not set':'미지정')))}${tb?.def?`<div class="muted">${escLines(tb.def)}</div>`:''}</div>
+      <div class="box"><b>${en?'Data snapshot':'자료 요약'}</b>${en?'Recent':'최근'} ${stats.days}${en?' days':'일'} · ${stats.target}/${stats.total}${en?' target records':' 목표 기록'} · ABC ${stats.abcPct}%</div>
+      <div class="box"><b>${en?'Function hypothesis':'기능 가설'} · ${escHtml(hypFuncLabel(fnKey))}</b>${hypText}</div>
+      <div class="box"><b>${en?'Main evidence':'주요 근거'}</b><div class="chips">${(hyp.evidence||[]).slice(0,5).map(x=>`<span class="chip">${escHtml(localText(x))}</span>`).join('')||'<span class="muted">-</span>'}</div></div>
+    </div>
+    ${sec(en?'1':'1',en?'Measurable goals':'측정 가능한 목표',
+      row(en?'Long-term goal':'장기 목표',val('longGoal'))+
+      row(en?'Short-term objective / mastery criterion':'단기 목표·성취 기준',val('shortGoal')))}
+    ${sec(en?'2':'2',en?'Prevention strategies':'예방 전략',
+      row(en?'Antecedent strategies':'선행사건 조정',val('prevention'))+
+      row(en?'Setting-event supports':'배경사건 지원',val('settingEvents')))}
+    ${sec(en?'3':'3',en?'Replacement behavior teaching':'대체행동 교수',
+      row(en?'Replacement behavior':'대체행동',val('replacement'))+
+      row(en?'Communication mode':'의사소통 방식',val('communication'))+
+      row(en?'Teaching procedure':'교수 방법',val('teach')))}
+    ${sec(en?'4':'4',en?'Consequence strategies':'후속결과 전략',
+      row(en?'Reinforcement plan':'강화 계획',val('reinforcement'))+
+      row(en?'Response to problem behavior':'문제행동 반응 계획',val('problemResponse')))}
+    ${sec(en?'5':'5',en?'Implementation and review':'실행 및 점검',
+      row(en?'Safety / crisis plan':'안전·위기 대응',val('safety'))+
+      row(en?'Team roles':'역할 분담',val('roles'))+
+      row(en?'Progress monitoring':'진행 점검',val('progress'))+
+      row(en?'Next review date':'다음 점검일',escHtml(plan.reviewDate||'')))}
+    <div class="footer"><span>FBA ${en?'Record & Analysis App':'기록·분석 앱'} · ${en?'Support plan document':'지원계획 문서'}</span><span>${escHtml(plan.updatedByName||fbUser?.displayName||fbUser?.email||'')}</span></div>
+  </div></body></html>`;
+}
+function openSupportPlanPrintOverlay(html){
+  let overlay=document.getElementById('printOverlay');
+  if(overlay) overlay.remove();
+  const oldStyle=document.getElementById('printStyle');
+  if(oldStyle) oldStyle.remove();
+  overlay=document.createElement('div');
+  overlay.id='printOverlay';
+  overlay.style.cssText='position:fixed;inset:0;z-index:9999;background:#fff;overflow-y:auto;-webkit-overflow-scrolling:touch;';
+  const closeBar=document.createElement('div');
+  closeBar.style.cssText='position:sticky;top:0;z-index:2;background:#f5f2ec;border-bottom:1px solid #ddd9d0;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;gap:10px;';
+  const info=document.createElement('span');
+  info.textContent=appLang==='en'?'Print or save this support plan as PDF.':'지원계획서를 인쇄하거나 PDF로 저장할 수 있어요.';
+  info.style.cssText='font-size:13px;font-weight:800;color:#5e7275';
+  const actions=document.createElement('div');
+  actions.style.cssText='display:flex;gap:8px;align-items:center;';
+  const printBtn=document.createElement('button');
+  printBtn.textContent=appLang==='en'?'Print / Save PDF':'인쇄 / PDF 저장';
+  printBtn.style.cssText='border:none;background:#0F6E6C;color:#fff;padding:8px 13px;border-radius:10px;font-size:13px;font-weight:800;cursor:pointer';
+  printBtn.addEventListener('click',()=>window.print());
+  const closeBtn=document.createElement('button');
+  closeBtn.textContent=appLang==='en'?'Close':'닫기';
+  closeBtn.style.cssText='border:none;background:#E2603F;color:#fff;padding:8px 13px;border-radius:10px;font-size:13px;font-weight:800;cursor:pointer';
+  closeBtn.addEventListener('click',()=>{document.getElementById('printOverlay')?.remove();document.getElementById('printStyle')?.remove();});
+  actions.appendChild(printBtn); actions.appendChild(closeBtn);
+  closeBar.appendChild(info); closeBar.appendChild(actions);
+  const content=document.createElement('div');
+  content.innerHTML=html;
+  overlay.appendChild(closeBar); overlay.appendChild(content);
+  document.body.appendChild(overlay);
+  const printStyle=document.createElement('style');
+  printStyle.id='printStyle';
+  printStyle.textContent='@media print{body>*:not(#printOverlay){display:none!important;}#printOverlay{position:static!important;overflow:visible!important;}#printOverlay>div:first-child{display:none!important;}}';
+  document.head.appendChild(printStyle);
+  toast(appLang==='en'?'Support plan opened for printing.':'지원계획서 인쇄 화면을 열었어요.');
+}
+function printSupportPlan(prefix='plan',sid=state.sid){
+  if(!sid) return;
+  const existing=normalizeSupportPlan(getSupportPlan(sid)||{});
+  const plan=readSupportPlanForm(prefix,sid,existing);
+  openSupportPlanPrintOverlay(supportPlanPrintHtml(sid,plan));
 }
 
 // 분석 탭용 ABC 관찰기록 — 일자별 표 조회 (날짜 칩 + 해당 일자 표 서식)
@@ -4532,6 +4965,7 @@ function renderBehaviorManagerList(){
     <div class="rdisc" style="width:34px;height:34px;border-radius:10px;background:${b.color};margin:-2px 0;color:#fff;display:flex;align-items:center;justify-content:center;flex:none">${svg(b.icon).replace('stroke="currentColor"','stroke="#fff"')}</div>
     <div class="me-text">${escHtml(localText(b.name))}</div>
     <span class="me-func" style="background:${b.type==='freq'?'#eef3f1':'#fbeee9'};color:${b.type==='freq'?'#3a6f63':'#b4502f'}">${b.type==='freq'?(appLang==='en'?'Count':'빈도형'):(appLang==='en'?'Duration':'시간형')}</span>
+    <button class="starbtn ${b.target?'on':''}" data-target-behavior="${b.id}" title="${appLang==='en'?'Mark as target behavior':'목표행동으로 지정'}">${b.target?'★':'☆'}</button>
     <button class="iconbtn" data-edit-behavior="${b.id}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4v16h16v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4z"/></svg></button>
   </div>`).join(''):`<div class="empty" style="padding:32px 12px">${appLang==='en'?'No behaviors yet.':'등록된 행동이 없어요.'}</div>`;
   translateStaticDom(el);
@@ -4566,7 +5000,7 @@ function renderChipManager(which){
 function openEditor(kind,id){
   let ed;
   if(kind==='student'){const s=id?sMap[id]:null;ed={kind,id,name:s?s.name:'',color:s?s.color:PALETTE[0],sub:s?s.sub:''};}
-  else if(kind==='behavior'){const b=id?bMap[id]:null;ed={kind,id,name:b?b.name:'',color:b?b.color:PALETTE[8],icon:b?b.icon:'hit',type:b?b.type:'freq'};}
+  else if(kind==='behavior'){const b=id?bMap[id]:null;ed={kind,id,name:b?b.name:'',color:b?b.color:PALETTE[8],icon:b?b.icon:'hit',type:b?b.type:'freq',target:b?!!b.target:false,def:b?b.def||'':'',example:b?b.example||'':'',nonExample:b?b.nonExample||'':''};}
   else if(kind==='chip'){const[which,cid]=id.split(':');const arr=which==='a'?db.aChips:db.cChips;const c=cid?arr.find(x=>x.id===cid):null;ed={kind,which,id:cid||null,text:c?c.text:'',fav:c?c.fav:false};}
   state.ed=ed;renderEditor();
   $('#edScrim').classList.add('show');$('#editor').classList.add('open');
@@ -4589,7 +5023,11 @@ function renderEditor(){
         <button class="${ed.type==='freq'?'on':''}" data-type="freq">빈도형<span class="sd">횟수를 셈</span></button>
         <button class="${ed.type==='dur'?'on':''}" data-type="dur">시간형<span class="sd">지속시간을 잼</span></button></div></div>
       <div class="field"><label>색상</label><div class="swatches">${sw('color',ed.color)}</div></div>
-      <div class="field"><label>아이콘</label><div class="iconpick">${ICON_KEYS.map(k=>`<div class="ip ${k===ed.icon?'on':''}" data-icon="${k}">${svg(k)}</div>`).join('')}</div></div>`;
+      <div class="field"><label>아이콘</label><div class="iconpick">${ICON_KEYS.map(k=>`<div class="ip ${k===ed.icon?'on':''}" data-icon="${k}">${svg(k)}</div>`).join('')}</div></div>
+      <div class="favtoggle" data-action="toggle-target" style="background:${ed.target?'#fdf8ec':'#f6f4ee'};border-color:${ed.target?'#ead38a':'var(--line)'}"><div><div class="ft">목표행동으로 지정 (★)</div><div class="fs">FBA의 대상 행동입니다. 가설·분석이 이 행동을 중심으로 정리돼요.</div></div><div class="sw-toggle ${ed.target?'on':''}"></div></div>
+      <div class="field" style="margin-top:18px"><label>조작적 정의 — 관찰·측정 가능하게</label><textarea class="notebox" id="edDef" rows="3" placeholder="예: 손바닥으로 자신의 머리를 3초 이내 2회 이상 침">${(ed.def||'').replace(/</g,'&lt;')}</textarea></div>
+      <div class="field"><label>예시 (선택)</label><textarea class="notebox" id="edExample" rows="2" placeholder="예: 과제 중 머리를 연속으로 때림">${(ed.example||'').replace(/</g,'&lt;')}</textarea></div>
+      <div class="field"><label>비예시 (선택) — 목표행동이 아닌 것</label><textarea class="notebox" id="edNonExample" rows="2" placeholder="예: 가려워서 머리를 한 번 긁음">${(ed.nonExample||'').replace(/</g,'&lt;')}</textarea></div>`;
   }else{
     $('#edTitle').textContent=(ed.which==='a'?'선행사건(A) ':'후속결과(C) ')+(ed.id?'수정':'추가');
     $('#edBody').innerHTML=`
@@ -4597,7 +5035,7 @@ function renderEditor(){
       <div class="favtoggle" data-action="toggle-fav"><div><div class="ft">시트 상단 고정 (★)</div><div class="fs">자주 쓰는 칩이면 켜세요. 기록할 때 맨 앞에 떠요.</div></div><div class="sw-toggle ${ed.fav?'on':''}"></div></div>`;
   }
 }
-function syncEd(){const n=$('#edName');if(n)state.ed.text!==undefined?state.ed.text=n.value:state.ed.name=n.value;const s=$('#edSub');if(s)state.ed.sub=s.value;}
+function syncEd(){const n=$('#edName');if(n)state.ed.text!==undefined?state.ed.text=n.value:state.ed.name=n.value;const s=$('#edSub');if(s)state.ed.sub=s.value;const dEl=$('#edDef');if(dEl)state.ed.def=dEl.value;const exEl=$('#edExample');if(exEl)state.ed.example=exEl.value;const nxEl=$('#edNonExample');if(nxEl)state.ed.nonExample=nxEl.value;}
 async function saveEditor(){
   syncEd();const ed=state.ed;
   if(ed.kind==='student'){
@@ -4606,8 +5044,10 @@ async function saveEditor(){
     else{syncActiveCaseFromDb();const s={id:ulid(),name:ed.name.trim(),color:ed.color,sub:ed.sub,ownerUid:fbUser?.uid||null,memberUids:fbUser?[fbUser.uid]:[],members:fbUser?[fbUser.uid]:[],shareCode:null,shareCodeExpiresAt:null,...caseDefaults()};db.students.push(s);state.sid=s.id;rememberLastStudent(s.id);applyCaseToDb(s);}
   }else if(ed.kind==='behavior'){
     if(!ed.name.trim()){toast('행동 이름을 입력하세요');return;}
-    if(ed.id){const b=bMap[ed.id];b.name=ed.name.trim();b.color=ed.color;b.icon=ed.icon;b.type=ed.type;}
-    else db.behaviors.push({id:uid('b'),name:ed.name.trim(),color:ed.color,icon:ed.icon,type:ed.type});
+    let savedB;
+    if(ed.id){const b=bMap[ed.id];b.name=ed.name.trim();b.color=ed.color;b.icon=ed.icon;b.type=ed.type;b.target=!!ed.target;b.def=(ed.def||'').trim();b.example=(ed.example||'').trim();b.nonExample=(ed.nonExample||'').trim();savedB=b;}
+    else {savedB={id:uid('b'),name:ed.name.trim(),color:ed.color,icon:ed.icon,type:ed.type,target:!!ed.target,def:(ed.def||'').trim(),example:(ed.example||'').trim(),nonExample:(ed.nonExample||'').trim()};db.behaviors.push(savedB);}
+    if(savedB.target)(db.behaviors||[]).forEach(x=>{if(x.id!==savedB.id)x.target=false;}); // 목표행동은 하나만
   }else{
     if(!ed.text.trim()){toast('내용을 입력하세요');return;}
     const arr=ed.which==='a'?db.aChips:db.cChips;
@@ -4638,10 +5078,23 @@ async function delEditor(){
   toast('삭제했어요');
 }
 
-function refreshAll(){paintStudent();renderSwitcher();renderGrid();renderSettings();if(state.tab==='review')renderTimeline();if(state.tab==='analysis')renderAnalysis();updateNoteBadge();updateSyncUI();if(isDesktop()&&db){renderStudioSidebar();switchStTab(stTab);updateStudioSync();}}
+function refreshAll(){paintStudent();renderSwitcher();renderGrid();renderSettings();if(state.tab==='review')renderTimeline();if(state.tab==='analysis')renderAnalysis();if(state.tab==='plan')renderSupportPlan();updateNoteBadge();updateSyncUI();if(isDesktop()&&db){renderStudioSidebar();switchStTab(stTab);updateStudioSync();}}
 
 // ============ 관찰 노트 ============
-function getNotes(sid){return (db.notes||[]).filter(n=>n.sid===sid&&!isHypothesisDoc(n));}
+function isPlanDoc(n){return n?.kind==='supportPlan'||n?.type==='supportPlan';}
+function getNotes(sid){return (db.notes||[]).filter(n=>n.sid===sid&&!isHypothesisDoc(n)&&!isPlanDoc(n));}
+function getSupportPlan(sid){return (db?.notes||[]).filter(n=>n.sid===sid&&isPlanDoc(n)).sort((a,b)=>new Date(b.updatedAt||b.ts||0)-new Date(a.updatedAt||a.ts||0))[0]||null;}
+function planDocId(sid){return 'plan_'+sid;}
+function planHints(fnKey,en){
+  const H={
+    escape:{prevention:en?'Adjust task difficulty/length, offer choices, preview the schedule':'과제 난이도·분량 조정, 선택권 제공, 일과 미리 예고',replacement:en?'Teach asking for help / requesting a break':'도움 요청·휴식 요청(카드·말)로 대체',teach:en?'Model & prompt the request, then fade prompts':'요청 시범→촉구→점진적 촉구 소거',consequence:en?'Honor the break/help on replacement; keep demand after problem behavior':'대체행동 시 즉시 휴식·도움 제공, 문제행동엔 과제 유지'},
+    attention:{prevention:en?'Give frequent non-contingent attention, peer buddy activities':'주기적 비유관 관심 제공, 또래 짝 활동',replacement:en?'Teach appropriate ways to request attention':'적절한 방법으로 관심 요청하기',teach:en?'Teach a signal/phrase to gain attention; reinforce immediately':'관심 요청 신호·말 지도, 즉시 강화',consequence:en?'Immediate attention for replacement; planned ignoring of problem behavior':'대체행동에 즉시 관심, 문제행동엔 계획된 무관심'},
+    tangible:{prevention:en?'Schedule access to preferred items, practice waiting':'선호 물건·활동 접근 일정 제공, 기다리기 연습',replacement:en?'Teach requesting / exchanging for the item':'요청·교환(카드)으로 원하는 것 얻기',teach:en?'Teach a request response; reinforce with the item':'요청 반응 지도→원하는 것으로 강화',consequence:en?'Provide item for replacement; do not provide after problem behavior':'대체행동 시 제공, 문제행동 시 미제공'},
+    sensory:{prevention:en?'Provide alternative sensory activities, adjust environment':'대체 감각활동 제공, 환경 자극 조정',replacement:en?'Teach an acceptable sensory alternative':'허용되는 감각활동으로 대체',teach:en?'Schedule & prompt the alternative activity':'대체 감각활동 일정·촉구',consequence:en?'Reinforce use of the alternative activity':'대체 감각활동 사용 강화'},
+    unknown:{prevention:en?'Adjust antecedents/setting events linked to the behavior':'행동과 연관된 선행·배경요인 조정',replacement:en?'Teach a functionally-equivalent appropriate behavior':'기능이 같은 바람직한 대체행동 지도',teach:en?'Model, prompt, and reinforce the replacement':'시범·촉구·강화로 대체행동 교수',consequence:en?'Reinforce replacement; minimize payoff for problem behavior':'대체행동 강화, 문제행동의 이득 최소화'}
+  };
+  return H[fnKey]||H.unknown;
+}
 function getLatestMas(sid){const all=(db.masScores||[]).filter(s=>s.sid===sid);return all.sort((a,b)=>new Date(b.ts)-new Date(a.ts))[0]||null;}
 function getLatestIv(sid){const all=(db.interviews||[]).filter(i=>i.sid===sid);return all.sort((a,b)=>new Date(b.ts)-new Date(a.ts))[0]||null;}
 
@@ -5648,8 +6101,8 @@ function switchStTab(tab){
   );
   // 헤더 타이틀
   const titles=appLang==='en'
-    ?{dashboard:'Dashboard',analysis:'Analysis',notes:'Observation Notes',abc:'ABC Observation Record',pdf:'PDF Report',settings:'Settings'}
-    :{dashboard:'대시보드',analysis:'분석',notes:'관찰 노트',abc:'ABC 관찰기록',pdf:'PDF 리포트',settings:'설정'};
+    ?{dashboard:'Dashboard',analysis:'Analysis',plan:'Support Plan',notes:'Observation Notes',abc:'ABC Observation Record',pdf:'PDF Report',settings:'Settings'}
+    :{dashboard:'대시보드',analysis:'분석',plan:'지원계획',notes:'관찰 노트',abc:'ABC 관찰기록',pdf:'PDF 리포트',settings:'설정'};
   const titleEl=$('#stTitle'); if(titleEl) titleEl.textContent=titles[tab]||tab;
   // PDF 버튼 — pdf 탭일 때만 표시
   const pdfBtn=$('#stPdfBtn'); if(pdfBtn) pdfBtn.style.display=tab==='pdf'?'':'none';
@@ -5657,6 +6110,7 @@ function switchStTab(tab){
   const body=$('#stBody'); if(!body) return;
   if(tab==='dashboard')   renderStDashboard();
   else if(tab==='analysis')  renderStAnalysis();
+  else if(tab==='plan')      renderStPlan();
   else if(tab==='notes')     renderStNotes();
   else if(tab==='abc')       renderStAbc();
   else if(tab==='pdf')       renderStPdf();
@@ -5768,6 +6222,24 @@ function renderStAnalysis(){
       </div>
       ${measurementHtml}
     </div>`;
+  translateStaticDom(body);
+}
+
+// ── 지원계획 ──
+function renderStPlan(){
+  const body=$('#stBody'); if(!body) return;
+  const s=db.students.find(s=>s.id===stSid)||db.students[0];
+  if(!s){body.innerHTML=`<p style="color:var(--sub)">${appLang==='en'?'Select a student.':'학생을 선택해 주세요'}</p>`;return;}
+  const sub=$('#stSub'); if(sub) sub.textContent=localText(s.name);
+  body.innerHTML=`
+    <div class="st-section-title" style="display:flex;align-items:center;justify-content:space-between;gap:16px">
+      <div>${escHtml(localText(s.name))} ${appLang==='en'?'Support Plan':'지원계획'} <span>BSP/BIP</span></div>
+      <button class="btn-prim plan-share-btn" data-action="share-plan" data-plan-prefix="stPlan" data-plan-sid="${s.id}" style="flex:none">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7"/><path d="M12 16V4"/><path d="M7 9l5-5 5 5"/></svg>
+        <span data-i18n="sharePlan">${appLang==='en'?'Share':'공유하기'}</span>
+      </button>
+    </div>
+    <div class="st-plan-wrap">${renderSupportPlanView(s.id,{prefix:'stPlan',desktop:true})}</div>`;
   translateStaticDom(body);
 }
 
@@ -6298,7 +6770,12 @@ async function cancelIoaSession(id){
   const ok=confirm(appLang==='en'?'Cancel this IOA session? It will disappear from active sessions.':'이 IOA 세션을 취소할까요? 진행 중인 세션 목록에서 사라집니다.');
   if(!ok) return;
   await FS.ioaSession(s.sid,id).set({status:'cancelled',cancelledAt:new Date().toISOString(),cancelledByUid:ioaUid(),updatedAt:new Date().toISOString()},{merge:true});
-  if(ioaState.activeId===id) closeIoaOverlay();
+  const local=(db.ioaSessions||[]).find(x=>x.id===id);
+  if(local) local.status='cancelled';
+  if(ioaState.activeId===id){
+    closeIoaOverlay();
+    clearIoaActiveSession();
+  }
   renderIoaSessionList();
 }
 
@@ -6317,7 +6794,12 @@ async function leaveIoaSession(id){
     participantOrder:firebase.firestore.FieldValue.arrayRemove(uid0),
     updatedAt:new Date().toISOString()
   });
-  if(ioaState.activeId===id) closeIoaOverlay();
+  if(s.participants) delete s.participants[uid0];
+  if(Array.isArray(s.participantOrder)) s.participantOrder=s.participantOrder.filter(x=>x!==uid0);
+  if(ioaState.activeId===id){
+    closeIoaOverlay();
+    clearIoaActiveSession();
+  }
   renderIoaSessionList();
 }
 function listenIoaSession(sid,id,show=false){
@@ -6328,6 +6810,7 @@ function listenIoaSession(sid,id,show=false){
     ioaState.session={id:doc.id,...doc.data(),sid:doc.data().sid||sid};
     if(ioaState.session.status==='cancelled'){
       closeIoaOverlay();
+      clearIoaActiveSession();
       if($('#ioaSetupSheet')?.classList.contains('open')) renderIoaSessionList();
       return;
     }
@@ -6339,6 +6822,17 @@ function listenIoaSession(sid,id,show=false){
 }
 function closeIoaOverlay(){
   $('#ioaOverlay').classList.remove('show');
+}
+function clearIoaActiveSession(){
+  if(ioaState.unsub){ioaState.unsub();ioaState.unsub=null;}
+  clearInterval(ioaState.timer);
+  ioaState.timer=null;
+  ioaState.activeId=null;
+  ioaState.sid=null;
+  ioaState.session=null;
+  ioaState.durStartMs=null;
+  ioaState.advancing=false;
+  ioaState.completing=false;
 }
 function startIoaTick(){
   clearInterval(ioaState.timer);
@@ -6361,7 +6855,13 @@ function renderIoaOverlay(){
   if(s.status==='waiting'){
     timer.textContent='--';
     prompt.textContent=appLang==='en'?'Have at least two observers join and mark ready.':'두 명 이상의 관찰자가 참가한 뒤 준비 완료를 눌러야 시작할 수 있어요.';
-    controls.innerHTML=`<button class="ioa-live-btn primary" data-ioa-ready="${s.id}">${s.participants?.[ioaUid()]?.ready?(appLang==='en'?'Ready ✓':'준비됨 ✓'):(appLang==='en'?'Ready':'준비 완료')}</button>${ioaCanStart(s)?`<button class="ioa-live-btn warn" data-ioa-start="${s.id}">${appLang==='en'?'Start':'시작'}</button>`:''}${s.createdByUid===ioaUid()?`<button class="ioa-live-btn danger" data-ioa-cancel="${s.id}">${appLang==='en'?'Cancel session':'세션 취소'}</button>`:`<button class="ioa-live-btn danger" data-ioa-leave="${s.id}">${appLang==='en'?'Leave':'나가기'}</button>`}`;
+    const mine=ioaIsParticipant(s);
+    const exitBtn=s.createdByUid===ioaUid()
+      ? `<button class="ioa-live-btn danger" data-ioa-cancel="${s.id}">${appLang==='en'?'Cancel session':'세션 취소'}</button>`
+      : (mine
+        ? `<button class="ioa-live-btn danger" data-ioa-leave="${s.id}">${appLang==='en'?'Leave':'나가기'}</button>`
+        : `<button class="ioa-live-btn primary" data-ioa-join="${s.id}">${appLang==='en'?'Join':'참가'}</button>`);
+    controls.innerHTML=`<button class="ioa-live-btn primary" data-ioa-ready="${s.id}">${s.participants?.[ioaUid()]?.ready?(appLang==='en'?'Ready ✓':'준비됨 ✓'):(appLang==='en'?'Ready':'준비 완료')}</button>${ioaCanStart(s)?`<button class="ioa-live-btn warn" data-ioa-start="${s.id}">${appLang==='en'?'Start':'시작'}</button>`:''}${exitBtn}`;
     return;
   }
   if(s.status==='complete'){
@@ -6989,6 +7489,7 @@ function switchTab(t){
   // statusbar 숨김 처리됨
   if(t==='review')renderTimeline();
   if(t==='analysis')renderAnalysis();
+  if(t==='plan')renderSupportPlan();
   if(t==='settings')renderSettings();
 }
 
@@ -7014,6 +7515,7 @@ document.addEventListener('click',e=>{
   const shareSid=t.closest('[data-share-sid]');
   if(shareSid){ openShareModal(shareSid.dataset.shareSid); return; }
   const es=t.closest('[data-edit-student]'); if(es){openEditor('student',es.dataset.editStudent);return;}
+  const tb=t.closest('[data-target-behavior]'); if(tb){const b=(db.behaviors||[]).find(x=>x.id===tb.dataset.targetBehavior);if(b){const turnOn=!b.target;(db.behaviors||[]).forEach(x=>x.target=false);b.target=turnOn;persist();renderBehaviorManagerList();renderGrid();if(state.tab==='analysis')renderAnalysis();if(state.tab==='plan')renderSupportPlan();if(isDesktop()&&stTab==='plan')renderStPlan();toast(b.target?(appLang==='en'?'Set as target behavior':'목표행동으로 지정됨'):(appLang==='en'?'Target removed':'목표행동 해제됨'));}return;}
   const eb=t.closest('[data-edit-behavior]'); if(eb){openEditor('behavior',eb.dataset.editBehavior);return;}
   const ec=t.closest('[data-edit-chip]'); if(ec){openEditor('chip',ec.dataset.editChip);return;}
   const chip=t.closest('[data-chip]'); if(chip){const set=state.sel[chip.dataset.chip];const v=chip.dataset.v;set.has(v)?set.delete(v):set.add(v);renderChips();return;}
@@ -7057,6 +7559,7 @@ document.addEventListener('click',e=>{
     else if(a==='add-chip-a'){const i=$('#addA');if(i&&i.value.trim()){db.aChips.push({id:uid('ch'),text:i.value.trim(),fav:false});i.value='';persist();renderSettings();renderChips();}}
     else if(a==='add-chip-c'){const i=$('#addC');if(i&&i.value.trim()){db.cChips.push({id:uid('ch'),text:i.value.trim(),fav:false});i.value='';persist();renderSettings();renderChips();}}
     else if(a==='toggle-fav'){state.ed.fav=!state.ed.fav;renderEditor();}
+    else if(a==='toggle-target'){syncEd();state.ed.target=!state.ed.target;renderEditor();}
     else if(a==='editor-save'){if(state.masEd)saveMasEditor();else if(state.ivEd)saveIvEditor();else if(state.actEd)saveActEditor();else if(state.seEd)saveSeEditor();else saveEditor();}
     else if(a==='editor-del'){if(state.masEd)delMasEditor();else if(state.ivEd)delIvEditor();else if(state.actEd)delActEditor();else if(state.seEd)delSeEditor();else delEditor();}
     else if(a==='editor-cancel'){if(state.masEd)closeMasEditor();else if(state.ivEd)closeIvEditor();else if(state.actEd)closeActEditor();else if(state.seEd)closeSeEditor();else closeEditor();}
@@ -7065,6 +7568,9 @@ document.addEventListener('click',e=>{
     else if(a==='add-memo')addMemo();
     else if(a==='close-hypothesis')closeHypothesisEditor();
     else if(a==='save-hypothesis')saveHypothesis();
+    else if(a==='save-plan')saveSupportPlan(act.dataset.planPrefix||'plan',act.dataset.planSid||state.sid);
+    else if(a==='draft-plan')fillSupportPlanDraft(act.dataset.planPrefix||'plan',act.dataset.planSid||state.sid);
+    else if(a==='share-plan')printSupportPlan(act.dataset.planPrefix||'plan',act.dataset.planSid||state.sid);
     else if(a==='reset-hypothesis-auto')resetHypothesisAuto();
     else if(a==='build-hypothesis-summary')buildHypothesisSummaryFromForm();
     else if(a==='save-interview')saveInterview();
