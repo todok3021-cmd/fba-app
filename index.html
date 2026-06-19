@@ -199,6 +199,28 @@
   .barrow .bt{flex:1; height:13px; background:#f1eee5; border-radius:7px; overflow:hidden;}
   .barrow .bf{height:100%; border-radius:7px;}
   .barrow .bn{width:24px; font-size:12px; font-weight:800; color:var(--sub); font-variant-numeric:tabular-nums;}
+  /* 분석 아코디언 — 제목만 보이고 펼치기 */
+  .acc{background:#fff; border:1px solid var(--line); border-radius:18px; margin:12px 18px; overflow:hidden;}
+  .acc-head{width:100%; display:flex; align-items:center; justify-content:space-between; gap:12px; padding:16px 18px; background:none; border:none; cursor:pointer; text-align:left; font-family:inherit; color:var(--ink);}
+  .acc-head:active{background:#faf8f4;}
+  .acc-titles{display:flex; flex-direction:column; gap:3px; min-width:0;}
+  .acc-title{font-size:15px; font-weight:800; letter-spacing:-.01em; display:flex; align-items:center; gap:8px;}
+  .acc-rank{display:inline-flex; align-items:center; justify-content:center; width:19px; height:19px; border-radius:7px; background:#eef3f1; color:var(--primary); font-size:11px; font-weight:800; flex:none;}
+  .acc-sub{font-size:12px; color:var(--sub); font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .acc-chevron{width:20px; height:20px; color:#aeb6b9; flex:none; transition:transform .22s ease;}
+  .acc.open .acc-chevron{transform:rotate(180deg);}
+  .acc-body{display:none; padding:0 16px 16px;}
+  .acc.open .acc-body{display:block;}
+  .acc-body .hyp{border-radius:14px; padding:16px;}
+  .acc-csub{font-size:12px; color:var(--sub); margin:0 0 12px; font-weight:600;}
+  .measure-bare{padding:0; border:none; background:none; margin:0;}
+  .measure-bare h3{margin:16px 0 4px; font-size:14px; font-weight:800; letter-spacing:-.01em; color:var(--ink);}
+  .measure-bare:first-child h3{margin-top:2px;}
+  /* 분석 탭 ABC 관찰기록 (일자별 표 조회) */
+  .abc-date-row{display:flex; gap:7px; overflow-x:auto; padding-bottom:10px; margin-bottom:4px; -webkit-overflow-scrolling:touch; scrollbar-width:none;}
+  .abc-date-row::-webkit-scrollbar{display:none;}
+  .abc-date-chip{flex:none; border:1.5px solid var(--line); background:#fff; color:var(--sub); border-radius:999px; padding:7px 13px; font-size:12.5px; font-weight:700; font-family:inherit; cursor:pointer; white-space:nowrap;}
+  .abc-date-chip.on{background:var(--primary); border-color:var(--primary); color:#fff;}
   .measure-card .chart-wrap{background:#fbfaf6;border:1px solid var(--line2);border-radius:14px;padding:12px;margin-top:10px;overflow:hidden;}
   .measure-card .chart-wrap+.chart-wrap{margin-top:12px;}
   .measure-chart{width:100%;height:auto;display:block;overflow:visible;}
@@ -3685,12 +3707,23 @@ function renderHypothesisCard(sid,opts={}){
   const emptyText=appLang==='en'
     ? 'As more records are collected, the auto draft will become more precise. You can also write a hypothesis manually now.'
     : '기록이 더 쌓이면 자동 초안이 정교해집니다. 지금도 직접 가설을 작성할 수 있어요.';
+  const editLabel=appLang==='en'?(saved?'Edit':'Write'):(saved?'수정':'작성');
+  // bare: 아코디언 본문용 — 제목(h3) 없이 그라데이션 패널만 (제목은 아코디언 헤더가 담당)
+  if(opts.bare){
+    return `<div class="hyp">
+      <div class="hyp-head"><div><p class="csub">${escHtml(sub)}</p></div><button class="hyp-edit-btn" data-hyp-edit="${sid}">${editLabel}</button></div>
+      ${empty?`<div class="verdict">${emptyText}</div>`:renderHypElements(h)}
+      ${!empty?`<div class="verdict">${escLines(h.summary||buildHypothesisSentence(h,sid))}</div>`:''}
+      ${h.addendum?`<div class="hyp-addendum"><b>${appLang==='en'?'Addendum':'덧붙임'}</b> · ${escLines(h.addendum)}</div>`:''}
+      ${evidence?`<div class="hyp-evidence">${evidence}</div>`:''}
+    </div>`;
+  }
   return `<div class="${outer}">
     <div class="hyp-head">
       <div>
         ${desktop?`<span class="hyp-status">${escHtml(sub)}</span>`:`<h3>${title}</h3><p class="csub">${escHtml(sub)}</p>`}
       </div>
-      <button class="hyp-edit-btn" data-hyp-edit="${sid}">${appLang==='en'?(saved?'Edit':'Write'):(saved?'수정':'작성')}</button>
+      <button class="hyp-edit-btn" data-hyp-edit="${sid}">${editLabel}</button>
     </div>
     ${empty?`<div class="${desktop?'hyp-verdict':'verdict'}">${emptyText}</div>`:renderHypElements(h)}
     ${!empty?`<div class="${desktop?'hyp-verdict':'verdict'}">${escLines(h.summary||buildHypothesisSentence(h,sid))}</div>`:''}
@@ -3973,10 +4006,11 @@ function renderIntervalGraphPanel(sid, opts={}){
       : `발생 ${s.occurCount} / 전체 ${s.total}`;
     return `<tr><td>${sessions.length-Math.min(8,sessions.length)+i+1}회기</td><td>${fmtShortDate(s.date)}</td><td>${escHtml(s.label)}</td><td>${result}</td><td>${s.pct}%</td></tr>`;
   }).join('');
-  const cls=opts.desktop?'analysis-panel wide measure-card':'card measure-card';
+  const cls=opts.desktop?'analysis-panel wide measure-card':(opts.bare?'measure-card measure-bare':'card measure-card');
+  const subCls=opts.bare?'acc-csub':'csub';
   return `<div class="${cls}">
     <h3>간격·시간표집 그래프</h3>
-    <p class="csub">최근 ${sessions.length}회기 · 원자료를 간격 수와 백분율로 변환</p>
+    <p class="${subCls}">최근 ${sessions.length}회기 · 원자료를 간격 수와 백분율로 변환</p>
     <div class="chart-wrap">${lineChartSvg(countSeries,labels,{title:'발생 간격 수',yLabel:'간격 수'})}${chartLegend(countSeries)}</div>
     <div class="chart-wrap">${lineChartSvg(pctSeries,labels,{title:'발생 간격 백분율',yLabel:'백분율',yMax:100})}${chartLegend(pctSeries)}</div>
     <table class="measure-table"><tr><th>회기</th><th>일시</th><th>관찰</th><th>원자료 요약</th><th>%</th></tr>${rawRows}</table>
@@ -3995,10 +4029,11 @@ function renderDurationGraphPanel(sid, opts={}){
     byDay[k].total+=r.minutes; byDay[k].n++;
   });
   const avgRows=Object.values(byDay).slice(-7).map(d=>`<tr><td>${d.date.getMonth()+1}/${d.date.getDate()}</td><td>${fmtNum(d.total/d.n)}분</td><td>${d.n}회</td></tr>`).join('');
-  const cls=opts.desktop?'analysis-panel wide measure-card':'card measure-card';
+  const cls=opts.desktop?'analysis-panel wide measure-card':(opts.bare?'measure-card measure-bare':'card measure-card');
+  const subCls=opts.bare?'acc-csub':'csub';
   return `<div class="${cls}">
     <h3>지속시간 그래프</h3>
-    <p class="csub">최근 ${records.length}회기 · 시간형 행동의 지속시간</p>
+    <p class="${subCls}">최근 ${records.length}회기 · 시간형 행동의 지속시간</p>
     <div class="chart-wrap">${lineChartSvg(series,labels,{title:'지속시간',yLabel:'분'})}${chartLegend(series)}</div>
     <table class="measure-table"><tr><th>날짜</th><th>평균</th><th>회기 수</th></tr>${avgRows}</table>
   </div>`;
@@ -4047,23 +4082,57 @@ function renderMeasurementReportSections(sid){
   }
   return html;
 }
+// 분석 아코디언 — 펼침 상태 유지 (기본: 기능 가설만 펼침)
+let analysisOpenKeys=new Set(['hyp']);
+// 아코디언 항목 — 제목만 보이고 펼치기 버튼으로 본문 표시
+function accItem(key,rank,title,sub,bodyHtml){
+  if(!bodyHtml) return '';
+  const open=analysisOpenKeys.has(key);
+  return `<div class="acc ${open?'open':''}" data-acc-key="${key}">
+    <button class="acc-head" data-acc-toggle aria-expanded="${open?'true':'false'}">
+      <span class="acc-titles">
+        <span class="acc-title"><span class="acc-rank">${rank}</span>${escHtml(title)}</span>
+        ${sub?`<span class="acc-sub">${escHtml(sub)}</span>`:''}
+      </span>
+      <svg class="acc-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    <div class="acc-body">${bodyHtml}</div>
+  </div>`;
+}
+
 function renderAnalysis(){
   const since=Date.now()-7*864e5;
   const mine=activeRecords().filter(r=>r.sid===state.sid&&new Date(r.ts).getTime()>since);
   const body=$('#analysisBody');
-  const measurementHtml=renderMeasurementGraphs(state.sid);
+  const en=appLang==='en';
+  const curStudent=cur();
+  // 긍정적행동지원(PBS) 순서·중요도 기반 정렬:
+  // ① 기능 가설(핵심 결론) → ② ABC 관찰기록(가설의 직접 근거·인과관계) → ③ 행동별 빈도(기초선)
+  // → ④ 주간 산점도(선행/시간 패턴) → ⑤ 측정 그래프(행동 변화 추이) → ⑥ 관찰자 간 일치도(데이터 신뢰도)
+  const hypBody=renderHypothesisCard(state.sid,{bare:true});
+  const measureBody=renderMeasurementGraphs(state.sid,{bare:true});
+  const abcBody=renderAbcSection(state.sid,en);
+
   if(mine.length<3){
-    const emptyText=appLang==='en'
+    const emptyText=en
       ? 'There are not enough records to analyze yet.<br>Scatterplots and graphs will appear as records accumulate.'
       : '분석할 기록이 아직 적어요.<br>기록이 쌓이면 산점도와 그래프가 나타납니다.';
-    body.innerHTML=renderHypothesisCard(state.sid)+(measurementHtml||`<div class="empty" style="margin-top:30px">${emptyText}</div>`);
+    body.innerHTML=
+      accItem('hyp','1',en?'Function Hypothesis':'기능 가설',en?'Core conclusion':'핵심 결론',hypBody)
+      +accItem('abc','2',en?'ABC Observation Record':'ABC 관찰기록',en?'Antecedent · Behavior · Consequence':'선행·행동·후속결과',abcBody)
+      +accItem('measure','5',en?'Measurement Graphs':'측정 그래프',en?'Behavior change over time':'행동 변화 추이',measureBody)
+      +`<div class="empty" style="margin-top:18px">${emptyText}</div>`;
     translateStaticDom(body);
     return;
   }
-  // hypothesis: saved draft + automatic candidate
+
+  // ② 행동별 빈도
   const byB={};mine.forEach(r=>byB[r.bid]=(byB[r.bid]||0)+1);
-  const hyp=renderHypothesisCard(state.sid);
-  // scatter
+  const max=Math.max(...Object.values(byB));
+  const bars=Object.keys(byB).sort((a,b)=>byB[b]-byB[a]).map(id=>{const b=bMap[id]||{name:'?',color:'#9aa6aa'};return `<div class="barrow"><div class="bl">${escHtml(localText(b.name))}</div><div class="bt"><div class="bf" style="width:${byB[id]/max*100}%;background:${b.color}"></div></div><div class="bn">${byB[id]}</div></div>`;}).join('');
+  const freqBody=`<p class="acc-csub">${en?'Recent 7-day total':'최근 7일 합계'}</p>${bars}`;
+
+  // ③ 주간 산점도
   const now=new Date();const cols=[];
   for(let i=6;i>=0;i--){const d=new Date(now);d.setDate(now.getDate()-i);cols.push(d);}
   const colHTML=cols.map(d=>{
@@ -4076,30 +4145,84 @@ function renderAnalysis(){
     }).join('');
     return `<div class="sc-col">${marks}</div>`;
   }).join('');
-  const wd=['일','월','화','수','목','금','토'];const today=dkey(now);
+  const today=dkey(now);
   const dayLabels=cols.map(d=>`<span class="${dkey(d)===today?'td':''}">${d.getDate()}</span>`).join('');
   const present=[...new Set(mine.map(r=>r.bid))].map(id=>bMap[id]).filter(Boolean);
   const legend=present.map(b=>`<span><i style="background:${b.color}"></i>${escHtml(localText(b.name))}</span>`).join('');
-  // frequency by behavior
-  const max=Math.max(...Object.values(byB));
-  const bars=Object.keys(byB).sort((a,b)=>byB[b]-byB[a]).map(id=>{const b=bMap[id]||{name:'?',color:'#9aa6aa'};return `<div class="barrow"><div class="bl">${escHtml(localText(b.name))}</div><div class="bt"><div class="bf" style="width:${byB[id]/max*100}%;background:${b.color}"></div></div><div class="bn">${byB[id]}</div></div>`;}).join('');
+  const scatterBody=`<p class="acc-csub">${en?'Recent 7 days · occurrence by time (6:00-20:00)':'최근 7일 · 시간대별 발생 (6시–20시)'}</p>
+    <div class="scatter"><div class="sc-hours"><span style="top:0">06</span><span style="top:21%">09</span><span style="top:43%">12</span><span style="top:64%">15</span><span style="top:86%">18</span></div>
+    <div class="sc-grid">${colHTML}</div><div class="sc-days">${dayLabels}</div></div>
+    <div class="legend">${legend}</div>`;
 
-  // IOA 섹션 — 완료된 공식 공동 관찰 세션 결과만 표시
-  const curStudent=cur();
-  const ioaHtml=curStudent ? renderIOASection(curStudent.id) : '';
+  // ⑤ 관찰자 간 일치도(IOA)
+  const ioaBody=curStudent ? renderIOASection(curStudent.id) : '';
 
-  body.innerHTML=ioaHtml+hyp+measurementHtml
-    +(appLang==='en'
-      ? `<div class="card"><h3>Weekly Scatterplot</h3><p class="csub">Recent 7 days · occurrence by time (6:00-20:00)</p>`
-      : `<div class="card"><h3>주간 산점도</h3><p class="csub">최근 7일 · 시간대별 발생 (6시–20시)</p>`)
-    +`
-       <div class="scatter"><div class="sc-hours"><span style="top:0">06</span><span style="top:21%">09</span><span style="top:43%">12</span><span style="top:64%">15</span><span style="top:86%">18</span></div>
-       <div class="sc-grid">${colHTML}</div><div class="sc-days">${dayLabels}</div></div>
-       <div class="legend">${legend}</div></div>`
-    +(appLang==='en'
-      ? `<div class="card"><h3>Behavior Frequency</h3><p class="csub">Recent 7-day total</p>${bars}</div>`
-      : `<div class="card"><h3>행동별 빈도</h3><p class="csub">최근 7일 합계</p>${bars}</div>`);
+  body.innerHTML=
+    accItem('hyp','1',en?'Function Hypothesis':'기능 가설',en?'Core conclusion · the answer':'핵심 결론',hypBody)
+    +accItem('abc','2',en?'ABC Observation Record':'ABC 관찰기록',en?'Evidence behind the hypothesis':'가설의 직접 근거',abcBody)
+    +accItem('freq','3',en?'Behavior Frequency':'행동별 빈도',en?'What & how often':'무엇이 · 얼마나',freqBody)
+    +accItem('scatter','4',en?'Weekly Scatterplot':'주간 산점도',en?'When it occurs':'언제 발생하나',scatterBody)
+    +accItem('measure','5',en?'Measurement Graphs':'측정 그래프',en?'Behavior change over time':'행동 변화 추이',measureBody)
+    +accItem('ioa','6',en?'Inter-Observer Agreement':'관찰자 간 일치도',en?'Data reliability':'데이터 신뢰도',ioaBody);
   translateStaticDom(body);
+}
+
+// 분석 탭용 ABC 관찰기록 — 일자별 표 조회 (날짜 칩 + 해당 일자 표 서식)
+let abcSelDate=null;
+// 기록이 있는 날짜 목록 (최신순)
+function abcDatesFor(sid){
+  const recs=activeRecords().filter(r=>r.sid===sid);
+  const seen=new Set(), dates=[];
+  recs.sort((a,b)=>new Date(b.ts)-new Date(a.ts)).forEach(r=>{
+    const k=dkey(new Date(r.ts)); if(!seen.has(k)){seen.add(k);dates.push(k);}
+  });
+  return dates;
+}
+// 선택한 일자의 ABC 관찰기록 표
+function renderAbcTableFor(sid,dateKey,en){
+  const rows=getAbcRows(sid).filter(r=>dkey(new Date(r.tsMs))===dateKey);
+  if(!rows.length) return `<div class="note-empty">${en?'No records on this date.':'이 날짜엔 기록이 없어요'}</div>`;
+  const nl=t=>escHtml(t).replace(/\n/g,'<br>');
+  const cell=(chips,note,bg)=>{
+    let h='';
+    if(chips) h+=`<span class="abc-rec-chip" style="background:${bg}">${escHtml(chips)}</span>`;
+    if(note)  h+=`<div class="abc-rec-note">${nl(note)}</div>`;
+    return h||'<span class="abc-rec-empty">—</span>';
+  };
+  const trs=rows.map((r,i)=>{
+    const timeOnly=(r.when.split('\n')[1]||r.when);
+    return `<tr>
+      <td class="abc-rec-no">${i+1}</td>
+      <td class="abc-rec-when">${escHtml(timeOnly)}</td>
+      <td>${cell(r.aChips,r.aNote,'#eef3df')}</td>
+      <td><div class="abc-rec-bname" style="color:${r.bcolor}">${escHtml(r.bname)}</div>${r.bNote?`<div class="abc-rec-note">${nl(r.bNote)}</div>`:''}</td>
+      <td>${cell(r.cChips,r.cNote,'#fbe8de')}</td>
+      <td class="abc-rec-remark">${r.note?nl(r.note):'<span class="abc-rec-empty">—</span>'}</td>
+    </tr>`;
+  }).join('');
+  return `<div class="abc-rec-wrap"><table class="abc-rec-table">
+    <thead><tr>
+      <th style="width:34px">${en?'No.':'번호'}</th>
+      <th style="width:62px">${en?'Time':'시각'}</th>
+      <th>${en?'Antecedent (A)':'선행사건 (A)'}</th>
+      <th style="width:120px">${en?'Behavior (B)':'행동 (B)'}</th>
+      <th>${en?'Consequence (C)':'후속결과 (C)'}</th>
+      <th style="width:110px">${en?'Remarks':'비고'}</th>
+    </tr></thead>
+    <tbody>${trs}</tbody>
+  </table></div>`;
+}
+// 아코디언 본문: 날짜 칩 줄 + 표 영역
+function renderAbcSection(sid,en){
+  const dates=abcDatesFor(sid);
+  if(!dates.length) return '';
+  if(!abcSelDate||!dates.includes(abcSelDate)) abcSelDate=dates[0];
+  const wd=en?['Sun','Mon','Tue','Wed','Thu','Fri','Sat']:['일','월','화','수','목','금','토'];
+  const chips=dates.map(k=>{
+    const d=new Date(k+'T00:00:00');
+    return `<button class="abc-date-chip ${k===abcSelDate?'on':''}" data-abc-date="${k}">${d.getMonth()+1}/${d.getDate()} (${wd[d.getDay()]})</button>`;
+  }).join('');
+  return `<div class="abc-date-row">${chips}</div><div id="abcTableHost">${renderAbcTableFor(sid,abcSelDate,en)}</div>`;
 }
 
 // ============ settings ============
@@ -5251,7 +5374,7 @@ function getAbcRows(sid){
     const b=bMap[r.bid]||{name:appLang==='en'?'(deleted behavior)':'(삭제된 행동)',color:'#9aa6aa'};
     const when=`${d.getFullYear()}.${p2(d.getMonth()+1)}.${p2(d.getDate())} (${wkd[d.getDay()]})\n${p2(d.getHours())}:${p2(d.getMinutes())}${r.dur?' · '+fmtDur(r.dur):''}`;
     return {
-      num:i+1, when,
+      num:i+1, when, tsMs:d.getTime(),
       bname:localText(b.name), bcolor:b.color||'#0F6E6C',
       aChips:(r.a||[]).map(localText).join(', '), aNote:r.aNote||'',
       bNote:r.bNote||'',
@@ -6305,6 +6428,8 @@ document.addEventListener('click',e=>{
   const editIvq=t.closest('[data-edit-ivq]'); if(editIvq){openIvEditor(editIvq.dataset.editIvq);return;}
   const ivMode=t.closest('[data-iv-mode]'); if(ivMode){setIntervalMode(ivMode.dataset.ivMode);return;}
   const ivMark=t.closest('[data-iv-mark]'); if(ivMark){markInterval(ivMark.dataset.ivMark);return;}
+  const accToggle=t.closest('[data-acc-toggle]'); if(accToggle){const acc=accToggle.closest('.acc');if(acc){const k=acc.dataset.accKey;const willOpen=!acc.classList.contains('open');acc.classList.toggle('open',willOpen);accToggle.setAttribute('aria-expanded',willOpen?'true':'false');if(k){if(willOpen)analysisOpenKeys.add(k);else analysisOpenKeys.delete(k);}}return;}
+  const abcDateBtn=t.closest('[data-abc-date]'); if(abcDateBtn){abcSelDate=abcDateBtn.dataset.abcDate;const host=$('#abcTableHost');if(host)host.innerHTML=renderAbcTableFor(state.sid,abcSelDate,appLang==='en');document.querySelectorAll('[data-abc-date]').forEach(b=>b.classList.toggle('on',b.dataset.abcDate===abcSelDate));return;}
   const hypEdit=t.closest('[data-hyp-edit]'); if(hypEdit){openHypothesisEditor(hypEdit.dataset.hypEdit);return;}
   const hypStatus=t.closest('[data-hyp-status]'); if(hypStatus){setHypStatus(hypStatus.dataset.hypStatus);return;}
   const hypFunc=t.closest('[data-hyp-func]'); if(hypFunc){setHypFunction(hypFunc.dataset.hypFunc);return;}
