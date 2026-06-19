@@ -807,7 +807,6 @@
   .ioa-rate.good{color:#5E9A57;}
   .ioa-rate.warn{color:#E0972F;}
   .ioa-rate.bad{color:#E2603F;}
-  .ioa-sub{font-size:12px;color:var(--sub);margin:4px 0 12px;}
   .ioa-parts{display:flex;flex-direction:column;gap:7px;border-top:1px solid var(--line2);padding-top:11px;}
   .ioa-parts-label{font-size:10.5px;font-weight:800;color:var(--sub);letter-spacing:.02em;text-transform:uppercase;margin-bottom:1px;}
   .ioa-part{display:flex;justify-content:space-between;align-items:center;gap:10px;}
@@ -815,7 +814,12 @@
   .ioa-creator{font-size:9.5px;font-weight:800;color:var(--primary);background:#eef6f5;border-radius:5px;padding:1px 5px;margin-left:4px;}
   .ioa-part-val{font-size:13px;font-weight:800;color:var(--ink);flex:none;font-variant-numeric:tabular-nums;}
   .ioa-detail-toggle{margin-top:12px;border:none;background:none;color:var(--primary);font-weight:800;font-size:12.5px;font-family:inherit;cursor:pointer;padding:2px 0;}
-  .ioa-detail{margin-top:8px;border-top:1px dashed var(--line);padding-top:10px;}
+  .ioa-detail{margin-top:8px;border-top:1px dashed var(--line);padding-top:12px;}
+  .ioa-drow{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:12.5px;margin-bottom:8px;}
+  .ioa-drow span{color:var(--sub);font-weight:700;}
+  .ioa-drow b{color:var(--ink);font-weight:800;text-align:right;}
+  .ioa-detail .ioa-parts{margin-top:4px;}
+  .ioa-formula-block{margin-top:11px;border-top:1px dashed var(--line);padding-top:10px;}
   .ioa-formula{font-size:11.5px;color:var(--sub);margin-bottom:8px;}
   .ioa-pair-row{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:12.5px;font-weight:700;color:var(--ink);margin-top:8px;}
   .ioa-pair-detail{font-size:11.5px;color:var(--sub);margin-top:2px;}
@@ -6523,17 +6527,33 @@ function renderIoaParticipants(s,en){
       <span class="ioa-part-val">${ioaParticipantMetric(s,id,en)}</span>
     </div>`).join('');
 }
-function renderIoaPairDetail(s,en){
+// 기록 소요시간(초) — 시작~완료 실제 경과, 없으면 계획된 관찰시간
+function ioaRecordDurationSec(s){
+  if(s.startedAt&&s.completedAt){const d=Math.round((new Date(s.completedAt)-new Date(s.startedAt))/1000);if(d>0)return d;}
+  return Number(s.totalSec||0);
+}
+// 실제 데이터가 들어간 산식 한 줄 (쌍별) — 예: 4회 / 5회 × 100 = 80%
+function ioaPairFormula(s,p,en){
+  const pct=Math.round(p.rate);
+  if(s.type==='interval') return `${p.agree} / ${p.total} ${en?'intervals':'간격'} × 100 = ${pct}%`;
+  if(s.type==='frequency'){
+    const mn=Math.min(p.countA,p.countB), mx=Math.max(p.countA,p.countB);
+    return `${mn}${en?'':'회'} / ${mx}${en?'':'회'} × 100 = ${pct}%`;
+  }
+  const mn=Math.min(p.durationA||0,p.durationB||0), mx=Math.max(p.durationA||0,p.durationB||0);
+  return `${fmtDur(Math.round(mn/1000))} / ${fmtDur(Math.round(mx/1000))} × 100 = ${pct}%`;
+}
+function renderIoaDetail(s,en){
   const r=s.result||calcOfficialIoaResult(s);
-  const formula=en?r.formula:({interval:'간격별 일치 수 / 전체 간격 수 × 100',frequency:'작은 빈도 / 큰 빈도 × 100',duration:'짧은 총 지속시간 / 긴 총 지속시간 × 100'}[r.type]||r.formula);
-  const rows=(r.pairs||[]).map(p=>{
-    let detail='';
-    if(r.type==='interval') detail=en?`${p.agree}/${p.total} intervals agree`:`${p.total}간격 중 ${p.agree}간격 일치`;
-    else if(r.type==='frequency') detail=`${ioaPName(s,p.a,en)} ${p.countA}${en?'':'회'} · ${ioaPName(s,p.b,en)} ${p.countB}${en?'':'회'}`;
-    else detail=`${ioaPName(s,p.a,en)} ${fmtDur(Math.round((p.durationA||0)/1000))} · ${ioaPName(s,p.b,en)} ${fmtDur(Math.round((p.durationB||0)/1000))}`;
-    return `<div class="ioa-pair-row"><span>${ioaPName(s,p.a,en)} ↔ ${ioaPName(s,p.b,en)}</span><b>${Math.round(p.rate)}%</b></div><div class="ioa-pair-detail">${detail}</div>`;
-  }).join('');
-  return `<div class="ioa-formula">${en?'Formula':'산식'}: ${escHtml(formula)}</div>${rows}`;
+  const drow=(k,v)=>`<div class="ioa-drow"><span>${k}</span><b>${v}</b></div>`;
+  let html='';
+  html+=drow(en?'Behavior':'행동', ioaBehaviorLabel(s));
+  html+=drow(en?'When':'일시', fmtShortDate(new Date(s.completedAt||s.updatedAt||Date.now())));
+  html+=drow(en?'Recording time':'기록 소요시간', fmtDur(ioaRecordDurationSec(s)));
+  html+=`<div class="ioa-parts"><div class="ioa-parts-label">${en?'Each recorder':'기록자별 기록'}</div>${renderIoaParticipants(s,en)}</div>`;
+  const pairs=(r.pairs||[]).map(p=>`<div class="ioa-pair-row"><span>${ioaPName(s,p.a,en)} ↔ ${ioaPName(s,p.b,en)}</span><b>${Math.round(p.rate)}%</b></div><div class="ioa-pair-detail">${ioaPairFormula(s,p,en)}</div>`).join('');
+  html+=`<div class="ioa-formula-block"><div class="ioa-parts-label">${en?'Calculation':'산식'}</div>${pairs}</div>`;
+  return html;
 }
 function renderIOASection(sid){
   const sessions=ioaSessionsForStudent(sid).filter(s=>s.status==='complete'&&s.result).slice(0,3);
@@ -6545,13 +6565,8 @@ function renderIOASection(sid){
     return `<div class="ioa-card">
       <div class="ioa-title">${en?'Inter-Observer Agreement (IOA)':'관찰자간 일치도 (IOA)'} · ${ioaTypeLabel(s.type)}</div>
       <div class="ioa-rate ${rateClass}">${Math.round(r.rate||0)}%</div>
-      <div class="ioa-sub">${ioaBehaviorLabel(s)} · ${ioaParticipantIds(s).length}${en?' observers':'명'} · ${fmtShortDate(new Date(s.completedAt||s.updatedAt||Date.now()))}</div>
-      <div class="ioa-parts">
-        <div class="ioa-parts-label">${en?'Recorders':'기록자별 기록'}</div>
-        ${renderIoaParticipants(s,en)}
-      </div>
       <button class="ioa-detail-toggle" data-ioa-detail="${s.id}">${en?'Details ▾':'자세히 ▾'}</button>
-      <div class="ioa-detail" id="ioaDetail-${s.id}" hidden>${renderIoaPairDetail(s,en)}</div>
+      <div class="ioa-detail" id="ioaDetail-${s.id}" hidden>${renderIoaDetail(s,en)}</div>
     </div>`;
   }).join('');
 }
