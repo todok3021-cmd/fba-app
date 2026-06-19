@@ -446,6 +446,17 @@
   .iv-item .iv-q{font-size:13px; font-weight:800; color:var(--ink); margin-bottom:9px; line-height:1.4;}
   .iv-item textarea{width:100%; border:1.5px solid var(--line); border-radius:10px; padding:9px 11px; font-size:13px; font-family:inherit; resize:none; color:var(--ink); background:#fafaf7; min-height:60px;}
   .iv-item textarea:focus{outline:none; border-color:var(--primary);}
+  .iv-history{padding:4px 18px 14px;display:flex;flex-direction:column;gap:9px;}
+  .iv-history-title{font-size:12px;font-weight:900;color:var(--sub);margin:4px 0 2px;}
+  .iv-record{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 14px;position:relative;}
+  .iv-record-head{display:flex;align-items:center;gap:8px;margin-bottom:8px;padding-right:24px;}
+  .iv-record-person{font-size:13px;font-weight:900;color:var(--ink);}
+  .iv-record-time{font-size:11px;color:#9aa6aa;font-weight:700;font-variant-numeric:tabular-nums;}
+  .iv-record-qa{border-top:1px solid var(--line2);padding-top:8px;margin-top:8px;}
+  .iv-record-q{font-size:11.5px;font-weight:900;color:var(--sub);line-height:1.4;margin-bottom:3px;}
+  .iv-record-a{font-size:13px;color:var(--ink);line-height:1.5;white-space:pre-wrap;}
+  .iv-record-del{position:absolute;top:9px;right:9px;background:none;border:none;color:#c8cdd0;font-size:16px;cursor:pointer;padding:2px 6px;line-height:1;}
+  .iv-record-del:hover{color:var(--rec);}
 
   /* MAS 척도 탭 */
   .mas-header{padding:14px 18px 8px; display:flex; justify-content:space-between; align-items:center;}
@@ -745,6 +756,22 @@
     .st-add-chip-row input:focus{border-color:var(--primary);}
     .st-add-chip-row button{padding:7px 14px;border-radius:9px;border:none;background:var(--primary);
       color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;}
+    .st-settings-v2 .st-wide{grid-column:1/-1;}
+    .st-settings-v2 .settings-panel{min-width:0;}
+    .st-set-desc{font-size:12px;color:var(--sub);line-height:1.55;margin:-6px 0 12px;}
+    .st-student-mini-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;}
+    .st-student-mini-grid .st-set-item{border:1px solid var(--line2);border-radius:12px;padding:10px 12px;}
+    .st-behavior-icon{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex:none;}
+    .st-behavior-icon svg{width:19px;height:19px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+    .st-target-dot{width:30px;height:30px;border-radius:9px;border:1px solid var(--line);background:#fff;color:#c6bfae;
+      font-size:15px;font-weight:900;cursor:pointer;flex:none;}
+    .st-target-dot.on{background:#fff6df;border-color:#ead38a;color:#E0972F;}
+    .st-target-dot:hover{border-color:#E0972F;color:#E0972F;}
+    .st-mini-empty{font-size:12.5px;color:var(--sub);padding:10px 0;}
+    @media(max-width:1180px){
+      .st-settings-grid{grid-template-columns:repeat(2,1fr);}
+      .st-student-mini-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
+    }
   }
 
   /* ── 행동 순서 편집 ── */
@@ -1102,15 +1129,15 @@
           <svg viewBox="0 0 24 24"><line x1="4" y1="20" x2="4" y2="11"/><line x1="10" y1="20" x2="10" y2="4"/><line x1="16" y1="20" x2="16" y2="14"/><line x1="22" y1="20" x2="22" y2="8"/></svg>
           <span data-i18n="analysis">분석</span>
         </div>
-        <div class="st-menu-item" data-stab="plan">
+        <div class="st-menu-item" data-stab="plan" data-feature-plan hidden>
           <svg viewBox="0 0 24 24"><path d="M9 4h6a1 1 0 0 1 1 1v1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h1V5a1 1 0 0 1 1-1z"/><path d="M9 13l2 2 4-4"/></svg>
           <span data-i18n="planTab">지원계획</span>
         </div>
-        <div class="st-menu-item" data-stab="notes">
+        <div class="st-menu-item" data-stab="notes" hidden>
           <svg viewBox="0 0 24 24"><path d="M14 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-9"/><path d="M14 3l5 5"/><path d="M9 13h6M9 17h4"/></svg>
           <span data-i18n="notesShort">관찰 노트</span>
         </div>
-        <div class="st-menu-item" data-stab="abc">
+        <div class="st-menu-item" data-stab="abc" hidden>
           <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="9" x2="9" y2="20"/><line x1="15" y1="9" x2="15" y2="20"/></svg>
           <span data-i18n="abcRecord">ABC 관찰기록</span>
         </div>
@@ -1265,7 +1292,7 @@
       </div>
 
       <!-- SUPPORT PLAN -->
-      <div class="screen" id="s-plan">
+      <div class="screen" id="s-plan" data-feature-plan hidden>
         <div class="pagehead">
           <div><h1 data-i18n="planTab">지원계획</h1><p data-i18n="planSub">기능 가설에 근거한 행동지원계획(BSP/BIP)</p></div>
           <button class="btn-prim plan-share-btn" data-action="share-plan" data-plan-prefix="plan">
@@ -1285,6 +1312,20 @@
           <button class="addbtn" data-action="add-student">＋ 학생 추가</button>
 
           <div class="gh"><span>기록 항목</span></div>
+          <div class="row" style="cursor:pointer" data-action="open-se-manager">
+            <div class="rdisc" style="background:#8A6FB0">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            </div>
+            <div class="rmeta"><b>배경사건 편집</b><span id="seManagerSub">항목 0개</span></div>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9aa6aa" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          </div>
+          <div class="row" style="cursor:pointer" data-action="open-act-manager">
+            <div class="rdisc" style="background:#5E7CA8">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            </div>
+            <div class="rmeta"><b>활동·교시 편집</b><span id="actManagerSub">활동 0개</span></div>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9aa6aa" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          </div>
           <div class="row" style="cursor:pointer" data-action="open-behavior-manager">
             <div class="rdisc" style="background:#0F6E6C">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v5M12 16v5M3 12h5M16 12h5M6 6l3 3M15 15l3 3M18 6l-3 3M9 15l-3 3"/></svg>
@@ -1300,20 +1341,6 @@
           <div class="row" style="cursor:pointer" data-action="open-c-manager">
             <div class="rdisc" style="background:#b4502f">C</div>
             <div class="rmeta"><b>후속결과 편집</b><span id="consequenceManagerSub">후속결과 0개</span></div>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9aa6aa" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
-          </div>
-          <div class="row" style="cursor:pointer" data-action="open-act-manager">
-            <div class="rdisc" style="background:#5E7CA8">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-            </div>
-            <div class="rmeta"><b>활동·교시 편집</b><span id="actManagerSub">활동 0개</span></div>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9aa6aa" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
-          </div>
-          <div class="row" style="cursor:pointer" data-action="open-se-manager">
-            <div class="rdisc" style="background:#8A6FB0">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-            </div>
-            <div class="rmeta"><b>배경사건 항목 편집</b><span id="seManagerSub">항목 0개</span></div>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9aa6aa" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
           </div>
           <div class="gh" style="padding-top:22px"><span>행동평정척도 (MAS)</span></div>
@@ -1512,6 +1539,7 @@
           <button class="btn-prim" style="flex:none;font-size:13px;padding:9px 14px;border-radius:12px" data-action="save-interview">저장</button>
         </div>
         <div id="ivQuestions"></div>
+        <div id="ivList"></div>
       </div>
       <!-- MAS 척도 탭 -->
       <div class="ntab-body" id="nb-mas" style="overflow-y:auto;flex:1;display:none">
@@ -1811,13 +1839,23 @@
       <button class="tab on" data-tab="record"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.2" fill="currentColor" stroke="none"/></svg><span data-i18n="record">기록</span></button>
       <button class="tab" data-tab="review"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="9" y1="6" x2="20" y2="6"/><line x1="9" y1="12" x2="20" y2="12"/><line x1="9" y1="18" x2="20" y2="18"/><circle cx="4.5" cy="6" r="1.3" fill="currentColor" stroke="none"/><circle cx="4.5" cy="12" r="1.3" fill="currentColor" stroke="none"/><circle cx="4.5" cy="18" r="1.3" fill="currentColor" stroke="none"/></svg><span data-i18n="review">검토</span></button>
       <button class="tab" data-tab="analysis"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="20" x2="4" y2="11"/><line x1="10" y1="20" x2="10" y2="4"/><line x1="16" y1="20" x2="16" y2="14"/><line x1="22" y1="20" x2="22" y2="8"/></svg><span data-i18n="analysis">분석</span></button>
-      <button class="tab" data-tab="plan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4h6a1 1 0 0 1 1 1v1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h1V5a1 1 0 0 1 1-1z"/><path d="M9 13l2 2 4-4"/></svg><span data-i18n="planTab">지원계획</span></button>
+      <button class="tab" data-tab="plan" data-feature-plan hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4h6a1 1 0 0 1 1 1v1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h1V5a1 1 0 0 1 1-1z"/><path d="M9 13l2 2 4-4"/></svg><span data-i18n="planTab">지원계획</span></button>
       <button class="tab" data-tab="settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span data-i18n="settings">설정</span></button>
     </div>
   </div>
 </div>
 
 <script>
+// 기능 플래그: 지원계획(BSP/BIP)은 윤리·민원 리스크 검토 전까지 화면에서 숨깁니다.
+// 다시 사용할 때는 true로 바꾸면 모바일/데스크톱 탭이 함께 노출됩니다.
+const SUPPORT_PLAN_ENABLED = false;
+function syncSupportPlanVisibility(){
+  document.querySelectorAll('[data-feature-plan]').forEach(el=>{
+    el.hidden = !SUPPORT_PLAN_ENABLED;
+    el.style.display = SUPPORT_PLAN_ENABLED ? '' : 'none';
+  });
+}
+
 // ============ icons ============
 const ICON = {
   seat:'<path d="M5 5v9M5 14h9M14 9v9M16 6h4M18 4v4" stroke-linecap="round"/>',
@@ -2151,7 +2189,7 @@ const STATIC_EN={
   '과제 제거':'Task removed','교사 관심':'Teacher attention','또래 반응':'Peer response','원하는 것 제공':'Access provided','무시함':'Ignored','타임아웃':'Timeout',
   '등교·아침':'Arrival','수업':'Class','쉬는 시간':'Break','점심시간':'Lunch','전이·이동':'Transition','특별활동':'Special','하교':'Dismissal',
   '수면 부족':'Poor sleep','약물 변경':'Medication change','결식·식사 거름':'Skipped meal','컨디션 난조':'Feeling unwell','정서 불안':'Emotional distress','일과 변화':'Routine change',
-  '오늘의 배경사건':'Today’s Setting Events','배경사건 항목 편집':'Edit Setting Events','＋ 배경사건 항목 편집':'+ Edit Setting Events','메모 (선택)':'Memo (optional)',
+  '오늘의 배경사건':'Today’s Setting Events','배경사건 편집':'Edit Setting Events','배경사건 항목 편집':'Edit Setting Events','＋ 배경사건 항목 편집':'+ Edit Setting Events','메모 (선택)':'Memo (optional)',
   '해당하는 항목을 켜 두면 그날의 상태로 저장돼요. 수면·약물·식사처럼 행동에 영향을 주는 배경요인을 기록하세요.':'Toggle on what applies to save the day’s condition. Log background factors that affect behavior, such as sleep, medication, or meals.',
   '자주 쓰는 배경요인을 미리 등록해 두면, 매일 탭 한 번으로 그날의 상태를 기록할 수 있어요.':'Register common background factors in advance so you can log the day’s condition with a single tap.',
   '과제나 활동이 어려울 때 이 행동을 하는가?':'Does the behavior occur when tasks or activities are difficult?',
@@ -2279,6 +2317,7 @@ function applyStaticI18n(){
   const mode=document.getElementById('ivMode')?.value==='sample'?'sample':'ox';
   if(unit) unit.textContent=msg(mode==='sample'?'secPerCode':'secPerOx');
   translateStaticDom(document.body);
+  syncSupportPlanVisibility();
 }
 function refreshLanguageSensitiveUi(){
   applyStaticI18n();
@@ -2288,6 +2327,7 @@ function refreshLanguageSensitiveUi(){
     if(state.tab==='review') renderTimeline();
     if(state.tab==='analysis') renderAnalysis();
     if(state.tab==='settings') renderSettings();
+    if(state.tab==='plan'&&!SUPPORT_PLAN_ENABLED) switchTab('analysis');
     if(typeof isDesktop==='function'&&isDesktop()){ renderStudioSidebar(); switchStTab(typeof stTab!=='undefined'?stTab:'dashboard'); updateStudioSync(); }
   }catch(e){ console.warn('language refresh skipped:', e); }
 }
@@ -3467,6 +3507,7 @@ async function initApp(){
   const ue = document.getElementById('settingUserEmail');
   if(un) un.textContent = (fbUser?.displayName || fbUser?.email || msg('user')) + ' · ' + msg('signout');
   if(ue) ue.textContent = fbUser?.email || '';
+  syncSupportPlanVisibility();
   if(isDesktop()) initStudio();
   resumeSharedListeners();
 }
@@ -5078,7 +5119,17 @@ async function delEditor(){
   toast('삭제했어요');
 }
 
-function refreshAll(){paintStudent();renderSwitcher();renderGrid();renderSettings();if(state.tab==='review')renderTimeline();if(state.tab==='analysis')renderAnalysis();if(state.tab==='plan')renderSupportPlan();updateNoteBadge();updateSyncUI();if(isDesktop()&&db){renderStudioSidebar();switchStTab(stTab);updateStudioSync();}}
+function refreshAll(){
+  if(state.tab==='plan'&&!SUPPORT_PLAN_ENABLED) state.tab='analysis';
+  if(stTab==='plan'&&!SUPPORT_PLAN_ENABLED) stTab='analysis';
+  syncSupportPlanVisibility();
+  paintStudent();renderSwitcher();renderGrid();renderSettings();
+  if(state.tab==='review')renderTimeline();
+  if(state.tab==='analysis')renderAnalysis();
+  if(state.tab==='plan'&&SUPPORT_PLAN_ENABLED)renderSupportPlan();
+  updateNoteBadge();updateSyncUI();
+  if(isDesktop()&&db){renderStudioSidebar();switchStTab(stTab);updateStudioSync();}
+}
 
 // ============ 관찰 노트 ============
 function isPlanDoc(n){return n?.kind==='supportPlan'||n?.type==='supportPlan';}
@@ -5096,19 +5147,22 @@ function planHints(fnKey,en){
   return H[fnKey]||H.unknown;
 }
 function getLatestMas(sid){const all=(db.masScores||[]).filter(s=>s.sid===sid);return all.sort((a,b)=>new Date(b.ts)-new Date(a.ts))[0]||null;}
-function getLatestIv(sid){const all=(db.interviews||[]).filter(i=>i.sid===sid);return all.sort((a,b)=>new Date(b.ts)-new Date(a.ts))[0]||null;}
+function getInterviewRecords(sid){
+  return (db.interviews||[]).filter(i=>i.sid===sid).sort((a,b)=>new Date(b.ts)-new Date(a.ts));
+}
+function getLatestIv(sid){return getInterviewRecords(sid)[0]||null;}
 
 function updateNoteBadge(){
   const sid=state.sid;
   const n=getNotes(sid).length;
   const hasMas=!!getLatestMas(sid);
-  const hasIv=!!getLatestIv(sid);
+  const ivCount=getInterviewRecords(sid).length;
   const badge=$('#noteBadge');
   if(!badge)return;
   const parts=[];
   if(n>0)parts.push(msg('memoCount',{n}));
   if(hasMas)parts.push(msg('scaleDone'));
-  if(hasIv)parts.push(msg('interviewDone'));
+  if(ivCount>0)parts.push(appLang==='en'?`Interview ${ivCount}`:`면담 ${ivCount}건`);
   badge.textContent=parts.length?parts.join(' · '):msg('open');
 }
 
@@ -5121,14 +5175,13 @@ function openNoteSheet(){
   // 기존 MAS 점수 불러오기
   const prevMas=getLatestMas(state.sid);
   if(prevMas)state.masTemp={...prevMas.scores};
-  // 기존 면담 불러오기
-  const prevIv=getLatestIv(state.sid);
-  if(prevIv){state.ivTemp={...prevIv.answers};if($('#ivRespondent'))$('#ivRespondent').value=prevIv.respondent||'';}
+  if($('#ivRespondent'))$('#ivRespondent').value='';
   switchNoteTab(state.noteTab);
   $('#noteScrim').classList.add('show');
   $('#noteSheet').classList.add('open');
   renderMemoList();
   renderIvQuestions();
+  renderIvList();
   renderMasItems();
   translateStaticDom($('#noteSheet'));
 }
@@ -5178,6 +5231,30 @@ function renderIvQuestions(){
     : `<div style="color:#9aa6aa;font-size:13px;padding:16px 0;text-align:center">${appLang==='en'?'Add interview questions in Settings.':'설정에서 면담 질문을 추가하세요'}</div>`;
   translateStaticDom(el);
 }
+function renderIvList(){
+  const el=$('#ivList'); if(!el)return;
+  const list=getInterviewRecords(state.sid);
+  const questions=db.ivQuestions||[];
+  if(!list.length){
+    el.innerHTML=`<div class="iv-history"><div class="note-empty">${appLang==='en'?'No interview records yet.':'아직 면담 기록이 없어요'}</div></div>`;
+    return;
+  }
+  const qText=qid=>localText((questions.find(q=>q.id===qid)||{}).q||qid);
+  el.innerHTML=`<div class="iv-history">
+    <div class="iv-history-title">${appLang==='en'?'Saved interviews':'저장된 면담 기록'} · ${list.length}${appLang==='en'?'':'건'}</div>
+    ${list.map(iv=>{
+      const answers=Object.entries(iv.answers||{}).filter(([,ans])=>String(ans||'').trim());
+      return `<div class="iv-record">
+        <button class="iv-record-del" data-del-interview="${iv.id}" title="${appLang==='en'?'Delete':'삭제'}">×</button>
+        <div class="iv-record-head">
+          <div class="iv-record-person">${escHtml(localText(iv.respondent|| (appLang==='en'?'Unspecified interviewee':'대상 미입력')))}</div>
+          <div class="iv-record-time">${fmtShortDate(new Date(iv.ts))}</div>
+        </div>
+        ${answers.length?answers.map(([qid,ans])=>`<div class="iv-record-qa"><div class="iv-record-q">Q. ${escHtml(qText(qid))}</div><div class="iv-record-a">${escLines(ans)}</div></div>`).join(''):`<div class="iv-record-a" style="color:#9aa6aa">${appLang==='en'?'No answers entered.':'답변이 입력되지 않았어요.'}</div>`}
+      </div>`;
+    }).join('')}
+  </div>`;
+}
 async function saveInterview(){
   const respondent=($('#ivRespondent')||{}).value||'';
   const answers={};
@@ -5188,6 +5265,11 @@ async function saveInterview(){
   db.interviews.push(interview);
   updateNoteBadge();
   await saveSharedExtra('interviews', interview);
+  state.ivTemp={};
+  const respondentEl=$('#ivRespondent'); if(respondentEl) respondentEl.value='';
+  document.querySelectorAll('[data-ivq]').forEach(el=>{el.value='';});
+  renderIvQuestions();
+  renderIvList();
   persist(); toast(appLang==='en'?'<b>Interview record</b> saved.':'<b>면담 기록</b> 저장됐어요');
 }
 
@@ -5408,14 +5490,14 @@ function saveActEditor(){
   else db.activities.push({id:uid('act'),name});
   // 현재 선택값이 이름 변경된 활동이면 동기화
   if(prevName && state.currentAct===prevName){state.currentAct=name;try{localStorage.setItem('fba_current_act',name);}catch(_){}}
-  persist();closeActEditor();renderActManagerList();renderSettings();renderActBar();toast(appLang==='en'?'Activity saved':'활동 저장됐어요');
+  persist();closeActEditor();renderActManagerList();renderSettings();renderActBar();refreshDesktopSettingsIfOpen();toast(appLang==='en'?'Activity saved':'활동 저장됐어요');
 }
 function delActEditor(){
   const ed=state.actEd; if(!ed||!ed.id)return;
   const removed=(db.activities||[]).find(x=>x.id===ed.id);
   db.activities=(db.activities||[]).filter(x=>x.id!==ed.id);
   if(removed && state.currentAct===localText(removed.name)){state.currentAct='';try{localStorage.setItem('fba_current_act','');}catch(_){}}
-  persist();closeActEditor();renderActManagerList();renderSettings();renderActBar();toast(appLang==='en'?'Activity deleted':'활동 삭제됐어요');
+  persist();closeActEditor();renderActManagerList();renderSettings();renderActBar();refreshDesktopSettingsIfOpen();toast(appLang==='en'?'Activity deleted':'활동 삭제됐어요');
 }
 
 // ============ 배경사건(Setting Event) 일일 로그 ============
@@ -5517,7 +5599,7 @@ function saveSeEditor(){
   if(!db.settingEvents)db.settingEvents=[];
   if(ed.id){const item=db.settingEvents.find(x=>x.id===ed.id);if(item)item.name=name;}
   else db.settingEvents.push({id:uid('se'),name});
-  persist();closeSeEditor();renderSeManagerList();renderSettings();
+  persist();closeSeEditor();renderSeManagerList();renderSettings();refreshDesktopSettingsIfOpen();
   if(state.setTemp) renderSettingChips();
   updateSettingFab();
   toast(appLang==='en'?'Saved':'저장됐어요');
@@ -5525,7 +5607,7 @@ function saveSeEditor(){
 function delSeEditor(){
   const ed=state.seEd; if(!ed||!ed.id)return;
   db.settingEvents=(db.settingEvents||[]).filter(x=>x.id!==ed.id);
-  persist();closeSeEditor();renderSeManagerList();renderSettings();
+  persist();closeSeEditor();renderSeManagerList();renderSettings();refreshDesktopSettingsIfOpen();
   if(state.setTemp){state.setTemp.events.delete(ed.id);renderSettingChips();}
   updateSettingFab();
   toast(appLang==='en'?'Deleted':'삭제됐어요');
@@ -5610,6 +5692,17 @@ function _printReport(){
 
   // 기능 가설 계산
   const hypHtml=renderHypothesisReport(s.id);
+  const targetDefs=(db.behaviors||[]).filter(b=>b.target);
+  const behaviorDefHtml=targetDefs.length?targetDefs.map(b=>{
+    const ex=b.example&&b.example.trim()?`<div class="bd-mini"><b>예시</b>${escLines(b.example)}</div>`:'';
+    const nx=b.nonExample&&b.nonExample.trim()?`<div class="bd-mini neg"><b>비예시</b>${escLines(b.nonExample)}</div>`:'';
+    return `<div class="bd-report-card">
+      <div class="bd-report-name"><span class="dot" style="background:${b.color}"></span>${escHtml(localText(b.name))} ★</div>
+      <div class="bd-report-label">조작적 정의</div>
+      <div class="bd-report-text">${b.def?escLines(b.def):'<span class="ac-dash">아직 작성되지 않았어요.</span>'}</div>
+      ${(ex||nx)?`<div class="bd-mini-grid">${ex}${nx}</div>`:''}
+    </div>`;
+  }).join(''):`<p class="sub">목표행동이 아직 지정되지 않았어요. 설정의 행동정의 편집에서 ★ 목표행동을 지정하세요.</p>`;
 
   // 빈도 막대
   const maxV=sortedBids.length?Math.max(...sortedBids.map(id=>byB[id])):1;
@@ -5642,7 +5735,11 @@ function _printReport(){
   // 범례
   const present=[...new Set(mine.map(r=>r.bid))].map(id=>bMap[id]).filter(Boolean);
   const legendHtml=present.map(b=>`<span class="leg-item"><span class="dot" style="background:${b.color};width:10px;height:10px;display:inline-block;border-radius:50%;vertical-align:middle;margin-right:4px"></span>${b.name}</span>`).join('');
-  const measurementReportHtml=renderMeasurementReportSections(s.id);
+  const measurementReportHtml=renderMeasurementReportSections(s.id)
+    .replace(/<section class="report-section">/g,'<div class="report-subblock">')
+    .replace(/<\/section>/g,'</div>')
+    .replace(/<h2>/g,'<h3>')
+    .replace(/<\/h2>/g,'</h3>');
 
   // MAS 척도
   let masHtml='';
@@ -5670,30 +5767,36 @@ function _printReport(){
     });
     const topFunc=totals.sort((a,b)=>b.pct-a.pct)[0];
     const masDate=new Date(masData.ts);
-    masHtml=`<section class="report-section">
-      <h2>동기평가척도 (MAS) 결과</h2>
+    masHtml=`<div class="report-subblock">
+      <h3>행동평정척도 (MAS)</h3>
       <p class="sub">측정일: ${masDate.getFullYear()}년 ${masDate.getMonth()+1}월 ${masDate.getDate()}일</p>
       <table class="mas-table"><tr>${masCols}</tr></table>
       <p class="verdict">주도 기능 추정: <strong style="color:${funcColors2[topFunc.func]}">${funcNames[topFunc.func]}</strong> (${Math.round(topFunc.pct*100)}%)</p>
-    </section>`;
+    </div>`;
+  }else{
+    masHtml='<div class="report-subblock"><h3>행동평정척도 (MAS)</h3><p class="sub">기록이 없어요.</p></div>';
   }
 
   // 면담 기록
   let ivHtml='';
-  const ivData=getLatestIv(s.id);
-  if(ivData&&Object.keys(ivData.answers||{}).length){
+  const ivRecords=getInterviewRecords(s.id).slice().reverse();
+  if(ivRecords.length){
     const questions=db.ivQuestions||[];
-    const ivDate=new Date(ivData.ts);
-    const qRows=Object.entries(ivData.answers).map(([qid,ans])=>{
-      if(!ans.trim())return '';
-      const q=questions.find(x=>x.id===qid);
-      return q?`<div class="iv-qa"><div class="iv-q">Q. ${q.q}</div><div class="iv-a">${ans}</div></div>`:'';
+    const qText=qid=>localText((questions.find(x=>x.id===qid)||{}).q||qid);
+    const ivItems=ivRecords.map(iv=>{
+      const ivDate=new Date(iv.ts);
+      const qRows=Object.entries(iv.answers||{}).map(([qid,ans])=>{
+        if(!String(ans||'').trim())return '';
+        return `<div class="iv-qa"><div class="iv-q">Q. ${escHtml(qText(qid))}</div><div class="iv-a">${escLines(ans)}</div></div>`;
+      }).join('');
+      return `<div class="iv-report-record">
+        <p class="sub">면담 대상: ${escHtml(localText(iv.respondent||'미입력'))} · ${ivDate.getFullYear()}년 ${ivDate.getMonth()+1}월 ${ivDate.getDate()}일</p>
+        ${qRows||'<p class="sub">답변이 입력되지 않았어요.</p>'}
+      </div>`;
     }).join('');
-    ivHtml=`<section class="report-section">
-      <h2>면담 기록</h2>
-      <p class="sub">면담 대상: ${ivData.respondent||'미입력'} · ${ivDate.getFullYear()}년 ${ivDate.getMonth()+1}월 ${ivDate.getDate()}일</p>
-      ${qRows}
-    </section>`;
+    ivHtml=`<div class="report-subblock"><h3>면담 기록</h3>${ivItems}</div>`;
+  }else{
+    ivHtml='<div class="report-subblock"><h3>면담 기록</h3><p class="sub">기록이 없어요.</p></div>';
   }
 
   // 관찰 메모
@@ -5707,10 +5810,12 @@ function _printReport(){
       const tagColor=m.tag==='before'?'#0F6E6C':'#C77A1E';
       return `<div class="memo-row"><span class="memo-tag" style="color:${tagColor};border-color:${tagColor}">${tagLabel}</span><span class="memo-time">${mTime}</span><span class="memo-text">${m.text}</span></div>`;
     }).join('');
-    memoHtml=`<section class="report-section">
-      <h2>관찰 메모</h2>
+    memoHtml=`<div class="report-subblock">
+      <h3>관찰 메모</h3>
       ${memoItems}
-    </section>`;
+    </div>`;
+  }else{
+    memoHtml='<div class="report-subblock"><h3>관찰 메모</h3><p class="sub">기록이 없어요.</p></div>';
   }
 
   // ABC 관찰기록 (전체 기록 · 시간 오름차순)
@@ -5727,12 +5832,14 @@ function _printReport(){
       <td class="ac-note">${r.note?nl(r.note):'<span class="ac-dash">—</span>'}</td>
     </tr>`).join('');
     abcHtml=`<section class="report-section abc-section">
-      <h2>ABC 관찰기록</h2>
+      <h2>3. ABC 관찰기록</h2>
       <table class="abc-table">
         <thead><tr><th style="width:30px">번호</th><th style="width:92px">일시</th><th>선행사건 (A)</th><th style="width:130px">행동 (B)</th><th>후속결과 (C)</th><th style="width:120px">비고</th></tr></thead>
         <tbody>${abcTr}</tbody>
       </table>
     </section>`;
+  }else{
+    abcHtml='<section class="report-section"><h2>3. ABC 관찰기록</h2><p class="sub">기록이 없어요.</p></section>';
   }
 
   // ── HTML 조립 ──────────────────────────────
@@ -5764,7 +5871,17 @@ function _printReport(){
   /* 섹션 */
   .report-section{margin:0 28px 20px;page-break-inside:avoid;}
   .report-section h2{font-size:13px;font-weight:800;color:${s.color||'#0F6E6C'};border-left:3px solid ${s.color||'#0F6E6C'};padding-left:8px;margin-bottom:10px;}
+  .report-subblock{border:1px solid #e5e0d5;border-radius:8px;padding:12px 14px;margin:10px 0;background:#fff;page-break-inside:avoid;}
+  .report-subblock h3{font-size:12px;font-weight:800;color:#1e1e1e;margin-bottom:8px;}
   .sub{font-size:10.5px;color:#7a8a8f;margin-bottom:8px;}
+  .bd-report-card{border:1px solid #e5e0d5;border-radius:8px;padding:12px 14px;background:#faf8f4;}
+  .bd-report-name{font-size:13px;font-weight:800;color:#1e1e1e;margin-bottom:8px;}
+  .bd-report-label{font-size:10px;font-weight:800;color:#7a8a8f;margin-bottom:3px;}
+  .bd-report-text{font-size:12px;line-height:1.55;color:#1e1e1e;}
+  .bd-mini-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;}
+  .bd-mini{background:#eef6ec;border-radius:6px;padding:8px;font-size:11.5px;line-height:1.45;}
+  .bd-mini.neg{background:#fbeee9;}
+  .bd-mini b{display:block;font-size:10px;color:#637277;margin-bottom:3px;}
 
   /* 가설 */
   .hyp-box{background:#f0f7f6;border:1px solid #c8e0dc;border-radius:8px;padding:14px 16px;}
@@ -5830,6 +5947,8 @@ function _printReport(){
   .iv-qa{margin-bottom:10px;padding:10px 12px;background:#f8f7f2;border-radius:6px;}
   .iv-q{font-size:11px;font-weight:700;color:#555;margin-bottom:4px;}
   .iv-a{font-size:12px;color:#1e1e1e;line-height:1.5;}
+  .iv-report-record{border-top:1px solid #ece8e0;padding-top:9px;margin-top:9px;}
+  .iv-report-record:first-of-type{border-top:none;padding-top:0;margin-top:0;}
 
   /* 메모 */
   .memo-row{display:flex;align-items:baseline;gap:8px;margin-bottom:7px;font-size:11.5px;}
@@ -5881,34 +6000,45 @@ function _printReport(){
   <div class="stat-cell"><span class="stat-val">${allRecs.length}</span><div class="stat-label">전체 누적 기록</div></div>
 </div>
 
-<!-- 기능 가설 -->
+<!-- 1. 행동정의 -->
 <section class="report-section">
-  <h2>기능 가설</h2>
+  <h2>1. 행동정의</h2>
+  ${behaviorDefHtml}
+</section>
+
+<!-- 2. 간접평가 -->
+<section class="report-section">
+  <h2>2. 간접평가</h2>
+  ${ivHtml}
+  ${masHtml}
+  ${memoHtml}
+</section>
+
+${abcHtml}
+
+<!-- 4. 분석결과 -->
+<section class="report-section">
+  <h2>4. 분석결과</h2>
+  <div class="report-subblock">
+    <h3>행동별 빈도 (최근 7일)</h3>
+    ${freqRows?`<table class="freq-table">${freqRows}</table>`:'<p class="sub">기록이 없어요.</p>'}
+  </div>
+  ${measurementReportHtml}
+  <div class="report-subblock">
+    <h3>주간 발생 현황 (시간대별)</h3>
+    <table class="scatter-table">
+      <tr><th class="hr"></th>${dayHeaders}</tr>
+      ${scatterRows}
+    </table>
+    <div class="legend">${legendHtml}</div>
+  </div>
+</section>
+
+<!-- 5. 기능 가설 -->
+<section class="report-section">
+  <h2>5. 기능 가설</h2>
   <div class="hyp-box">${hypHtml}</div>
 </section>
-
-<!-- 행동별 빈도 -->
-<section class="report-section">
-  <h2>행동별 빈도 (최근 7일)</h2>
-  ${freqRows?`<table class="freq-table">${freqRows}</table>`:'<p class="sub">기록이 없어요.</p>'}
-</section>
-
-${measurementReportHtml}
-
-<!-- 주간 산점도 -->
-<section class="report-section">
-  <h2>주간 발생 현황 (시간대별)</h2>
-  <table class="scatter-table">
-    <tr><th class="hr"></th>${dayHeaders}</tr>
-    ${scatterRows}
-  </table>
-  <div class="legend">${legendHtml}</div>
-</section>
-
-${masHtml}
-${ivHtml}
-${memoHtml}
-${abcHtml}
 
 <!-- 푸터 -->
 <div class="rpt-footer">
@@ -6069,6 +6199,7 @@ function isDesktop(){ return window.innerWidth>=1024; }
 // 작업실 진입점 — initApp 후 호출
 function initStudio(){
   if(!isDesktop()) return;
+  syncSupportPlanVisibility();
   stSid = state.sid || db.students[0]?.id || null;
   renderStudioSidebar();
   switchStTab('dashboard');
@@ -6094,6 +6225,8 @@ function renderStudioSidebar(){
 
 // 작업실 탭 전환
 function switchStTab(tab){
+  if(tab==='plan'&&!SUPPORT_PLAN_ENABLED) tab='analysis';
+  syncSupportPlanVisibility();
   stTab=tab;
   // 메뉴 활성
   document.querySelectorAll('[data-stab]').forEach(el=>
@@ -6158,69 +6291,33 @@ function renderStAnalysis(){
   const s=db.students.find(s=>s.id===stSid)||db.students[0];
   if(!s){body.innerHTML=`<p style="color:var(--sub)">${appLang==='en'?'Select a student.':'학생을 선택해 주세요'}</p>`;return;}
   const sub=$('#stSub'); if(sub) sub.textContent=localText(s.name);
+  const en=appLang==='en';
   const since=Date.now()-7*864e5;
   const mine=activeRecords().filter(r=>r.sid===s.id&&new Date(r.ts).getTime()>since);
-
-  // 빈도
-  const byB={};mine.forEach(r=>byB[r.bid]=(byB[r.bid]||0)+1);
-  const sortedBids=Object.keys(byB).sort((a,b)=>byB[b]-byB[a]);
-  const maxV=sortedBids.length?Math.max(...sortedBids.map(id=>byB[id])):1;
-  const freqRows=sortedBids.map(id=>{
-    const b=bMap[id]||{name:'?',color:'#9aa'};
-    const pct=Math.round(byB[id]/maxV*100);
-    return `<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-      <div style="width:6px;height:6px;border-radius:50%;background:${b.color};flex:none"></div>
-      <div style="width:90px;font-size:13px;font-weight:600;color:var(--ink)">${escHtml(localText(b.name))}</div>
-      <div style="flex:1;background:var(--line2);border-radius:4px;height:14px;overflow:hidden">
-        <div style="width:${pct}%;height:100%;background:${b.color};border-radius:4px"></div>
-      </div>
-      <div style="width:28px;text-align:right;font-size:13px;font-weight:800">${byB[id]}</div>
-    </div>`;
-  }).join('');
-
-  // 가설
-  let hypHtml=renderHypothesisCard(s.id,{desktop:true});
-
-  // 산점도
-  const days7=[];const now=new Date();
-  for(let i=6;i>=0;i--){const d=new Date(now);d.setDate(now.getDate()-i);days7.push(d);}
-  const timeSlots=[6,8,10,12,14,16,18];
-  const scatterRows=timeSlots.map(hr=>{
-    const cells=days7.map(d=>{
-      const recs=mine.filter(r=>{const rh=new Date(r.ts).getHours();return rh>=hr&&rh<hr+2&&dkey(new Date(r.ts))===dkey(d);});
-      if(!recs.length)return `<td style="padding:8px;text-align:center;border:1px solid var(--line2);background:var(--paper)"></td>`;
-      const b=bMap[recs[0].bid]||{color:'#9aa'};
-      return `<td style="padding:8px;text-align:center;border:1px solid var(--line2);background:var(--paper)">
-        <div style="width:12px;height:12px;border-radius:50%;background:${b.color};margin:0 auto"></div>
-        ${recs.length>1?`<div style="font-size:9px;color:var(--sub)">${recs.length}</div>`:''}
-      </td>`;
-    }).join('');
-    return `<tr><td style="padding:6px 10px 6px 0;font-size:11.5px;color:var(--sub);font-weight:600;white-space:nowrap">${String(hr).padStart(2,'0')}:00</td>${cells}</tr>`;
-  }).join('');
-  const dayHeaders=days7.map(d=>`<th style="padding:6px 8px;font-size:11.5px;font-weight:700;color:${dkey(d)===dkey(now)?'var(--primary)':'var(--sub)'};background:#fff;border:1px solid var(--line2)">${d.getMonth()+1}/${d.getDate()}</th>`).join('');
-  const measurementHtml=renderMeasurementGraphs(s.id,{desktop:true});
-
+  const abcBody=renderAbcSection(s.id,en)||`<p class="acc-csub">${en?'No ABC records yet.':'아직 ABC 기록이 없어요.'}</p>`;
   body.innerHTML=`
-    <div class="st-section-title">${escHtml(localText(s.name))} ${appLang==='en'?'Analysis':'분석'} <span>${appLang==='en'?'Recent 7 days':'최근 7일'}</span></div>
-    <div class="analysis-panels">
-      <div class="analysis-panel">
-        <div class="ap-title">${appLang==='en'?'Function Hypothesis':'기능 가설'}</div>
-        ${hypHtml}
-      </div>
-      <div class="analysis-panel">
-        <div class="ap-title">${appLang==='en'?'Behavior Frequency':'행동별 빈도'}</div>
-        ${freqRows||`<p style="color:var(--sub);font-size:13px">${appLang==='en'?'No records yet.':'기록이 없어요'}</p>`}
+    <div class="st-section-title">${escHtml(localText(s.name))} ${en?'Analysis':'분석'} <span>${en?'Mobile order, expanded for desktop':'모바일 분석 순서 · 데스크톱 확장 보기'}</span></div>
+    <div class="analysis-panels st-analysis-flow">
+      <div class="analysis-panel wide">
+        <div class="ap-title">${en?'1. Behavior Definition':'1. 행동정의'}</div>
+        ${renderBehaviorDefCard(s.id,en)}
       </div>
       <div class="analysis-panel wide">
-        <div class="ap-title">${appLang==='en'?'Weekly Occurrence by Time':'주간 발생 현황 (시간대별)'}</div>
-        <div style="overflow-x:auto">
-          <table style="border-collapse:collapse;width:100%">
-            <tr><th style="border:1px solid var(--line2);background:#fff;padding:6px 8px"></th>${dayHeaders}</tr>
-            ${scatterRows}
-          </table>
-        </div>
+        <div class="ap-title">${en?'2. Indirect Assessment':'2. 간접평가'}</div>
+        ${renderIndirectCard(s.id,en)}
       </div>
-      ${measurementHtml}
+      <div class="analysis-panel wide">
+        <div class="ap-title">${en?'3. ABC Observation Record':'3. ABC 관찰기록'}</div>
+        ${abcBody}
+      </div>
+      <div class="analysis-panel wide">
+        <div class="ap-title">${en?'4. Analysis Results':'4. 분석결과'}</div>
+        ${renderAnalysisResults(s.id,en,mine)}
+      </div>
+      <div class="analysis-panel wide">
+        <div class="ap-title">${en?'5. Function Hypothesis':'5. 기능 가설'}</div>
+        ${renderHypothesisCard(s.id,{desktop:true})}
+      </div>
     </div>`;
   translateStaticDom(body);
 }
@@ -6405,7 +6502,7 @@ function renderStPdf(){
 }
 
 // ── 설정 ──
-function renderStSettings(){
+function renderStSettingsLegacy(){
   const body=$('#stBody'); if(!body) return;
 
   // A/C 칩
@@ -6480,6 +6577,134 @@ function renderStSettings(){
 }
 
 // ── 동기화 UI (데스크톱) ──
+function refreshDesktopSettingsIfOpen(){
+  if(typeof isDesktop==='function' && isDesktop() && stTab==='settings') renderStSettings();
+}
+
+function renderStSettings(){
+  const body=$('#stBody'); if(!body) return;
+  const en=appLang==='en';
+  const tr=(ko,enText)=>en?enText:ko;
+  const sub=$('#stSub'); if(sub) sub.textContent=tr('기록항목 편집 순서', 'Recording item editor order');
+  const empty=label=>`<div class="st-mini-empty">${label}</div>`;
+  const addLabel=tr('추가','Add');
+  const editLabel=tr('편집','Edit');
+  const firstChar=v=>escHtml((localText(v||'?').trim()[0]||'?'));
+  const listCount=(n,koUnit)=>en?`${n} item${n===1?'':'s'}`:`${koUnit} ${n}개`;
+
+  const studentItems=(db.students||[]).map(s=>`
+    <div class="st-set-item" data-edit-student="${s.id}">
+      <div style="width:34px;height:34px;border-radius:10px;background:${s.color};display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;font-weight:800;flex:none">${firstChar(s.name)}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13.5px;font-weight:800;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtml(localText(s.name))}</div>
+        <div style="font-size:11.5px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtml(localText(s.sub||tr('설명 없음','No description')))}</div>
+      </div>
+      <button class="st-set-edit" data-edit-student="${s.id}">${editLabel}</button>
+    </div>`).join('');
+
+  const settingItems=(db.settingEvents||[]).map(it=>`
+    <div class="st-set-item" data-edit-se="${it.id}">
+      <div class="func-dot" style="background:#8A6FB0;min-width:9px"></div>
+      <div style="flex:1;min-width:0;font-size:13.5px;font-weight:800;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtml(localText(it.name))}</div>
+      <button class="st-set-edit" data-edit-se="${it.id}">${editLabel}</button>
+    </div>`).join('');
+
+  const activityItems=(db.activities||[]).map(a=>`
+    <div class="st-set-item" data-edit-act="${a.id}">
+      <div class="func-dot" style="background:#5E7CA8;min-width:9px"></div>
+      <div style="flex:1;min-width:0;font-size:13.5px;font-weight:800;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtml(localText(a.name))}</div>
+      <button class="st-set-edit" data-edit-act="${a.id}">${editLabel}</button>
+    </div>`).join('');
+
+  const behaviorItems=(db.behaviors||[]).map(b=>`
+    <div class="st-set-item">
+      <button class="st-target-dot ${b.target?'on':''}" data-target-behavior="${b.id}" title="${tr('목표행동','Target behavior')}">★</button>
+      <div class="st-behavior-icon" style="background:${b.color}">${svg(b.icon)}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13.5px;font-weight:800;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtml(localText(b.name))}</div>
+        <div style="font-size:11.5px;color:var(--sub)">${b.type==='freq'?tr('빈도 기록','Count recording'):tr('시간 기록','Duration recording')}${b.def?` · ${tr('정의 작성됨','Definition written')}`:''}</div>
+      </div>
+      <button class="st-set-edit" data-edit-behavior="${b.id}">${editLabel}</button>
+    </div>`).join('');
+
+  const aChipsHtml=(db.aChips||[]).map(c=>`
+    <span class="st-chip" data-edit-chip="a:${c.id}">
+      ${c.fav?'<span class="star">★</span>':''}${escHtml(localText(c.text))}
+    </span>`).join('');
+  const cChipsHtml=(db.cChips||[]).map(c=>`
+    <span class="st-chip" data-edit-chip="c:${c.id}">
+      ${c.fav?'<span class="star">★</span>':''}${escHtml(localText(c.text))}
+    </span>`).join('');
+
+  body.innerHTML=`
+    <div class="st-section-title">${tr('설정','Settings')} <span>${tr('모바일 기록항목 순서에 맞춘 데스크톱 편집','Desktop editor aligned with the mobile order')}</span></div>
+    <div class="st-settings-grid st-settings-v2">
+      <div class="settings-panel st-wide">
+        <div class="st-set-head">
+          <h3>${tr('학생 명단','Student List')}</h3>
+          <button class="st-set-add" data-action="add-student">+ ${addLabel}</button>
+        </div>
+        <div class="st-set-desc">${tr('왼쪽 학생 목록과 같은 데이터입니다. 이름, 설명, 색상, 공유 설정을 편집할 수 있어요.','Same data as the left student list. Edit name, description, color, and sharing settings.')}</div>
+        <div class="st-student-mini-grid">${studentItems||empty(tr('등록된 학생이 없어요.','No students yet.'))}</div>
+      </div>
+
+      <div class="settings-panel">
+        <div class="st-set-head">
+          <h3>${tr('1. 배경사건 편집','1. Edit Setting Events')}</h3>
+          <button class="st-set-add" data-action="add-se-item">+ ${addLabel}</button>
+        </div>
+        <div class="st-set-desc">${tr('수면, 건강, 식사, 감각 부담처럼 행동 전에 영향을 줄 수 있는 느린 배경요인을 정리합니다.','Organize slower background factors such as sleep, health, meals, or sensory load.')}</div>
+        ${settingItems||empty(tr('배경사건 항목이 없어요.','No setting events yet.'))}
+      </div>
+
+      <div class="settings-panel">
+        <div class="st-set-head">
+          <h3>${tr('2. 활동·교시 편집','2. Edit Activities / Periods')}</h3>
+          <button class="st-set-add" data-action="add-act-item">+ ${addLabel}</button>
+        </div>
+        <div class="st-set-desc">${tr('기록 탭에서 선택해 이후 기록에 붙일 수 있는 수업, 활동, 상황 이름입니다.','Activities or periods selected on the Record tab and attached to later records.')}</div>
+        ${activityItems||empty(tr('활동 항목이 없어요.','No activities yet.'))}
+      </div>
+
+      <div class="settings-panel">
+        <div class="st-set-head">
+          <h3>${tr('3. 행동정의 편집','3. Edit Behavior Definitions')}</h3>
+          <button class="st-set-add" data-action="add-behavior">+ ${addLabel}</button>
+        </div>
+        <div class="st-set-desc">${tr('★는 기능평가의 목표행동입니다. 여러 행동 중 하나만 목표행동으로 지정됩니다.','★ marks the FBA target behavior. Only one behavior can be selected as the target.')}</div>
+        ${behaviorItems||empty(tr('행동 항목이 없어요.','No behaviors yet.'))}
+        <button class="st-set-add" style="background:#eef6f5;color:#0F6E6C;width:100%;justify-content:center;margin-top:12px" data-action="open-order">${tr('현재 학생 행동 순서 편집','Edit Current Student Behavior Order')}</button>
+      </div>
+
+      <div class="settings-panel">
+        <div class="st-set-head">
+          <h3>${tr('4. 선행사건 편집','4. Edit Antecedents')}</h3>
+          <button class="st-set-add" data-action="add-chip-manager-a">+ ${addLabel}</button>
+        </div>
+        <div class="st-set-desc">${tr('행동 직전에 일어난 사건이나 요구를 ABC 기록에서 빠르게 선택할 수 있게 정리합니다.','Quick choices for events or demands that happened right before the behavior.')}</div>
+        <div class="st-chip-row">${aChipsHtml||empty(tr('선행사건 항목이 없어요.','No antecedents yet.'))}</div>
+        <div class="st-add-chip-row">
+          <input id="stAddA" placeholder="${tr('새 선행사건','New antecedent')}" maxlength="20">
+          <button data-action="st-add-chip-a">${addLabel}</button>
+        </div>
+      </div>
+
+      <div class="settings-panel">
+        <div class="st-set-head">
+          <h3>${tr('5. 후속결과 편집','5. Edit Consequences')}</h3>
+          <button class="st-set-add" data-action="add-chip-manager-c">+ ${addLabel}</button>
+        </div>
+        <div class="st-set-desc">${tr('행동 직후 제공된 반응, 변화, 획득·회피 결과를 ABC 기록에서 빠르게 선택합니다.','Quick choices for responses, changes, access, or escape that followed the behavior.')}</div>
+        <div class="st-chip-row">${cChipsHtml||empty(tr('후속결과 항목이 없어요.','No consequences yet.'))}</div>
+        <div class="st-add-chip-row">
+          <input id="stAddC" placeholder="${tr('새 후속결과','New consequence')}" maxlength="20">
+          <button data-action="st-add-chip-c">${addLabel}</button>
+        </div>
+      </div>
+    </div>`;
+  translateStaticDom(body);
+}
+
 function updateStudioSync(){
   const dot=$('#stDot'), txt=$('#stSync');
   if(!dot||!txt) return;
@@ -7481,6 +7706,8 @@ document.addEventListener('contextmenu', e=>{
 // ============ tabs ============
 function switchTab(t){
   if(!db) return;
+  if(t==='plan'&&!SUPPORT_PLAN_ENABLED) t='analysis';
+  syncSupportPlanVisibility();
   if(state.sheetId) closeSheet();
   state.tab=t;
   document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('on',b.dataset.tab===t));
@@ -7527,6 +7754,7 @@ document.addEventListener('click',e=>{
   const mtag=t.closest('[data-mtag]'); if(mtag){state.memoTag=mtag.dataset.mtag;document.querySelectorAll('[data-mtag]').forEach(b=>b.classList.toggle('on',b.dataset.mtag===state.memoTag));return;}
   const masBtn=t.closest('[data-mas-item]'); if(masBtn){const mid=masBtn.dataset.masItem,val=parseInt(masBtn.dataset.masVal);state.masTemp[mid]=val;renderMasItems();return;}
   const delMemo=t.closest('[data-del-memo]'); if(delMemo){const id=delMemo.dataset.delMemo;db.notes=(db.notes||[]).filter(n=>n.id!==id);deleteSharedExtra('notes', state.sid, id);persist();renderMemoList();updateNoteBadge();toast('메모 삭제됨');return;}
+  const delIv=t.closest('[data-del-interview]'); if(delIv){const id=delIv.dataset.delInterview;db.interviews=(db.interviews||[]).filter(n=>n.id!==id);deleteSharedExtra('interviews', state.sid, id);persist();renderIvList();updateNoteBadge();toast(appLang==='en'?'Interview deleted':'면담 기록 삭제됨');return;}
   const editMas=t.closest('[data-edit-mas]'); if(editMas){openMasEditor(editMas.dataset.editMas);return;}
   const editIvq=t.closest('[data-edit-ivq]'); if(editIvq){openIvEditor(editIvq.dataset.editIvq);return;}
   const ivMode=t.closest('[data-iv-mode]'); if(ivMode){setIntervalMode(ivMode.dataset.ivMode);return;}
