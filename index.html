@@ -118,7 +118,7 @@
   .btn-ghost{background:none; border:none; color:var(--sub); font-weight:700; font-size:13.5px; padding:0 14px; cursor:pointer;}
 
   /* review */
-  .pagehead{padding:24px 22px 8px; display:flex; align-items:flex-end; justify-content:space-between;}
+  .pagehead{padding:24px 22px 8px; display:flex; align-items:flex-end; justify-content:space-between; gap:8px;}
   .pagehead h1{font-size:25px; font-weight:800; letter-spacing:-.02em; margin:0;}
   .pagehead p{color:var(--sub); font-size:13px; margin:6px 0 0;}
   .daystrip{display:flex; gap:7px; padding:14px 22px 4px; overflow-x:auto;}
@@ -399,18 +399,20 @@
   .tab.on{color:var(--primary); font-weight:900;}
   @media(min-width:500px){.tabbar{position:absolute;z-index:42;}}
 
-  .toast{position:fixed; bottom:calc(88px + env(safe-area-inset-bottom, 0px)); left:50%; transform:translateX(-50%) translateY(20px); background:var(--ink); color:#fff; font-size:13px; font-weight:600; padding:11px 18px; border-radius:13px; z-index:55; opacity:0; pointer-events:none; transition:.3s; white-space:nowrap; box-shadow:0 12px 30px -8px rgba(0,0,0,.4); max-width:80%;}
+  .toast{position:fixed; bottom:calc(88px + env(safe-area-inset-bottom, 0px)); left:50%; transform:translateX(-50%) translateY(20px); background:var(--ink); color:#fff; font-size:13px; font-weight:600; padding:11px 18px; border-radius:13px; z-index:55; opacity:0; pointer-events:none; transition:.3s; white-space:nowrap; box-shadow:0 12px 30px -8px rgba(0,0,0,.4); max-width:88%;}
   .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+  .toast.has-action{pointer-events:auto;display:flex;align-items:center;gap:12px;}
   .toast b{color:#7fd9c4;}
+  .toast-undo{border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.13);color:#fff;border-radius:10px;padding:5px 9px;font-size:12px;font-weight:900;font-family:inherit;cursor:pointer;white-space:nowrap;}
 
   /* 관찰 노트 버튼 */
   .hero-fabs{display:flex; gap:8px; margin:12px 20px 4px;}
-  .note-fab{display:flex; align-items:center; gap:8px; margin:0; flex:1; min-width:0; background:rgba(255,255,255,.18); border:1.5px solid rgba(255,255,255,.28); border-radius:14px; padding:11px 13px; cursor:pointer; color:#fff; font-size:13.5px; font-weight:700;}
+  .note-fab{display:flex; align-items:center; gap:8px; margin:0; flex:1; min-width:0; overflow:hidden; background:rgba(255,255,255,.18); border:1.5px solid rgba(255,255,255,.28); border-radius:14px; padding:11px 13px; cursor:pointer; color:#fff; font-size:13.5px; font-weight:700;}
   .note-fab svg{width:17px;height:17px;flex:none;opacity:.9;}
   .note-fab .nf-text{min-width:0; flex:1;}
   .note-fab .nf-text>div{white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
   .note-fab .nf-sub{font-size:11px; opacity:.75; margin-top:1px;}
-  .note-fab .nf-badge{margin-left:auto; flex:none; background:rgba(255,255,255,.25); border-radius:8px; padding:3px 8px; font-size:11px; font-weight:800;}
+  .note-fab .nf-badge{margin-left:auto; flex:0 1 auto; min-width:0; max-width:58%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; background:rgba(255,255,255,.25); border-radius:8px; padding:3px 8px; font-size:11px; font-weight:800;}
   .note-fab.set-on{background:rgba(255,255,255,.30); border-color:rgba(255,255,255,.55);}
 
   /* 관찰 노트 시트 탭 */
@@ -446,6 +448,18 @@
   .iv-item .iv-q{font-size:13px; font-weight:800; color:var(--ink); margin-bottom:9px; line-height:1.4;}
   .iv-item textarea{width:100%; border:1.5px solid var(--line); border-radius:10px; padding:9px 11px; font-size:13px; font-family:inherit; resize:none; color:var(--ink); background:#fafaf7; min-height:60px;}
   .iv-item textarea:focus{outline:none; border-color:var(--primary);}
+  .voice-row{display:flex;justify-content:flex-end;margin-top:7px;}
+  .voice-btn{display:inline-flex;align-items:center;gap:5px;border:1.5px solid var(--line);background:#fff;color:var(--sub);border-radius:999px;padding:5px 10px;font-size:11.5px;font-weight:900;font-family:inherit;cursor:pointer;}
+  .voice-btn svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;}
+  .voice-btn.listening{background:#eef6f5;border-color:var(--primary);color:var(--primary);}
+  .template-list{display:flex;flex-direction:column;gap:11px;}
+  .template-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px 15px;}
+  .template-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:9px;}
+  .template-head b{display:block;font-size:14px;font-weight:900;color:var(--ink);}
+  .template-head span{display:block;font-size:11.5px;color:var(--sub);line-height:1.45;margin-top:2px;}
+  .template-tags{display:flex;flex-wrap:wrap;gap:5px;margin:9px 0 12px;}
+  .template-tags span{font-size:10.5px;font-weight:800;color:#5b6b70;background:#f3f1eb;border-radius:999px;padding:3px 7px;}
+  .template-apply{border:none;background:var(--primary);color:#fff;border-radius:11px;padding:8px 12px;font-size:12px;font-weight:900;font-family:inherit;cursor:pointer;white-space:nowrap;}
   .iv-history{padding:4px 18px 14px;display:flex;flex-direction:column;gap:9px;}
   .iv-history-title{font-size:12px;font-weight:900;color:var(--sub);margin:4px 0 2px;}
   .iv-record{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 14px;position:relative;}
@@ -1287,6 +1301,10 @@
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V10z"/><polyline points="14 3 14 10 21 10"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="12" y2="17"/></svg>
             <span data-i18n="pdfReport">PDF 리포트</span>
           </button>
+          <button class="btn-prim" data-action="export-csv" style="flex:none;font-size:13px;padding:10px 14px;border-radius:13px;display:flex;align-items:center;gap:7px;background:#5E7CA8">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
+            <span>CSV</span>
+          </button>
         </div>
         <div id="analysisBody"></div>
       </div>
@@ -1312,6 +1330,13 @@
           <button class="addbtn" data-action="add-student">＋ 학생 추가</button>
 
           <div class="gh"><span>기록 항목</span></div>
+          <div class="row" style="cursor:pointer" data-action="open-template-sheet">
+            <div class="rdisc" style="background:#2A9D8F">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16M4 12h16M4 19h16"/><path d="M8 5v14"/></svg>
+            </div>
+            <div class="rmeta"><b>템플릿 / 빠른 시작 세트</b><span>자주 쓰는 행동·선행·후속 묶음 적용</span></div>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9aa6aa" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          </div>
           <div class="row" style="cursor:pointer" data-action="open-se-manager">
             <div class="rdisc" style="background:#8A6FB0">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
@@ -1382,6 +1407,20 @@
           <button class="addbtn" style="border-color:#f0d0c8;color:#c0392b" data-action="reset-all">기록 전체 초기화</button>
           <div style="height:24px"></div>
         </div>
+      </div>
+    </div>
+
+    <!-- 템플릿 / 빠른 시작 세트 -->
+    <div class="scrim" id="templateScrim" data-action="close-template-sheet"></div>
+    <div class="sheet" id="templateSheet" style="max-height:92%">
+      <div class="grab"></div>
+      <div class="sheet-head">
+        <div class="stit"><b id="templateTitle">템플릿 / 빠른 시작 세트</b><span id="templateSub">현재 학생의 기록항목에 병합됩니다</span></div>
+        <button class="ghostbtn" data-action="close-template-sheet">닫기</button>
+      </div>
+      <div style="overflow-y:auto;flex:1;padding:14px 18px 18px">
+        <p style="font-size:12.5px;color:var(--sub);line-height:1.55;margin:0 0 12px">새 교사가 빈 화면에서 시작하지 않도록 흔히 쓰는 행동·선행사건·후속결과·활동 묶음을 추가합니다. 기존 항목은 삭제하지 않고, 없는 항목만 보태요.</p>
+        <div id="templateList"></div>
       </div>
     </div>
 
@@ -1803,11 +1842,14 @@
         <div class="grp-tit" data-i18n-html="abcA"><span class="badge" style="background:#7a8a3a">A</span> 선행사건 <em>행동 직전 무슨 일이?</em></div>
         <div class="chips" id="chipsA"></div>
         <textarea class="notebox" id="noteA" rows="2" style="margin-top:8px" placeholder="선행사건 세부 내용 (선택)" data-i18n-placeholder="aNotePlaceholder"></textarea>
+        <div class="voice-row"><button class="voice-btn" data-action="voice-note" data-voice-target="noteA"><svg viewBox="0 0 24 24"><path d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v3"/><path d="M8 22h8"/></svg><span>음성입력</span></button></div>
         <div class="grp-tit" data-i18n-html="abcB"><span class="badge" style="background:#0F6E6C">B</span> 행동 <em>구체적으로 어떻게 행동했나?</em></div>
         <textarea class="notebox" id="noteB" rows="2" placeholder="문제행동 세부 내용 (선택)" data-i18n-placeholder="bNotePlaceholder"></textarea>
+        <div class="voice-row"><button class="voice-btn" data-action="voice-note" data-voice-target="noteB"><svg viewBox="0 0 24 24"><path d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v3"/><path d="M8 22h8"/></svg><span>음성입력</span></button></div>
         <div class="grp-tit" data-i18n-html="abcC"><span class="badge" style="background:#b4502f">C</span> 후속결과 <em>행동 직후 어떻게 됐나?</em></div>
         <div class="chips" id="chipsC"></div>
         <textarea class="notebox" id="noteC" rows="2" style="margin-top:8px" placeholder="후속결과 세부 내용 (선택)" data-i18n-placeholder="cNotePlaceholder"></textarea>
+        <div class="voice-row"><button class="voice-btn" data-action="voice-note" data-voice-target="noteC"><svg viewBox="0 0 24 24"><path d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v3"/><path d="M8 22h8"/></svg><span>음성입력</span></button></div>
         <div class="grp-tit" data-i18n-html="noteOptional">비고 <em>선택</em></div>
         <textarea class="notebox" id="note" rows="2" placeholder="예: 수학 학습지 제시 직후 발생" data-i18n-placeholder="recordNotePlaceholder"></textarea>
       </div>
@@ -2190,6 +2232,7 @@ const STATIC_EN={
   '등교·아침':'Arrival','수업':'Class','쉬는 시간':'Break','점심시간':'Lunch','전이·이동':'Transition','특별활동':'Special','하교':'Dismissal',
   '수면 부족':'Poor sleep','약물 변경':'Medication change','결식·식사 거름':'Skipped meal','컨디션 난조':'Feeling unwell','정서 불안':'Emotional distress','일과 변화':'Routine change',
   '오늘의 배경사건':'Today’s Setting Events','배경사건 편집':'Edit Setting Events','배경사건 항목 편집':'Edit Setting Events','＋ 배경사건 항목 편집':'+ Edit Setting Events','메모 (선택)':'Memo (optional)',
+  '템플릿 / 빠른 시작 세트':'Templates / Quick Start Sets','자주 쓰는 행동·선행·후속 묶음 적용':'Apply common behavior-A-C bundles','현재 학생의 기록항목에 병합됩니다':'Merged into the current student setup','음성입력':'Voice input',
   '해당하는 항목을 켜 두면 그날의 상태로 저장돼요. 수면·약물·식사처럼 행동에 영향을 주는 배경요인을 기록하세요.':'Toggle on what applies to save the day’s condition. Log background factors that affect behavior, such as sleep, medication, or meals.',
   '자주 쓰는 배경요인을 미리 등록해 두면, 매일 탭 한 번으로 그날의 상태를 기록할 수 있어요.':'Register common background factors in advance so you can log the day’s condition with a single tap.',
   '과제나 활동이 어려울 때 이 행동을 하는가?':'Does the behavior occur when tasks or activities are difficult?',
@@ -3520,6 +3563,7 @@ function resumeSharedListeners(){
 // ============ state ============
 const state={tab:'record',sid:'s1',timer:null,sheetId:null,sel:{a:new Set(),c:new Set()},date:null,ed:null,noteTab:'memo',memoTag:'before',masTemp:{},ivTemp:{},currentEnv:'school',currentAct:'',hypSid:null,hypDraft:null};
 try{state.currentAct=localStorage.getItem('fba_current_act')||'';}catch(_){}
+let lastUndo=null, voiceRec=null, voiceTargetId=null;
 let bMap={},sMap={};
 function reindex(){ bMap=Object.fromEntries(db.behaviors.map(b=>[b.id,b])); sMap=Object.fromEntries(db.students.map(s=>[s.id,s])); }
 function activeRecords(){ return (db.records||[]).filter(r=>!r.deleted); }
@@ -3619,13 +3663,209 @@ const Repository = {
   // 전체 기록 (동기화용 — deleted 포함)
   listAllRecords(){ return db.records||[]; },
 };
-function toast(html){const t=$('#toast');t.innerHTML=html;translateStaticDom(t);t.classList.add('show');clearTimeout(t._);t._=setTimeout(()=>t.classList.remove('show'),1900);}
+function toast(html){const t=$('#toast');t.classList.remove('has-action');t.innerHTML=html;translateStaticDom(t);t.classList.add('show');clearTimeout(t._);t._=setTimeout(()=>t.classList.remove('show'),1900);}
+function toastUndo(html, fn, label){
+  const t=$('#toast');
+  lastUndo=typeof fn==='function'?fn:null;
+  t.classList.add('has-action');
+  t.innerHTML=`<span>${html}</span><button class="toast-undo" data-action="undo-last">${label||(appLang==='en'?'Undo':'취소')}</button>`;
+  translateStaticDom(t);
+  t.classList.add('show');
+  clearTimeout(t._);
+  t._=setTimeout(()=>{t.classList.remove('show','has-action');lastUndo=null;},5200);
+}
+function runLastUndo(){
+  const fn=lastUndo; lastUndo=null;
+  const t=$('#toast'); if(t){t.classList.remove('show','has-action');}
+  if(fn) fn();
+}
 function shade(hex,p){let n=parseInt(hex.slice(1),16),r=(n>>16)+p*2,g=((n>>8)&255)+p*2,b=(n&255)+p*2;const c=x=>Math.max(0,Math.min(255,x));return '#'+((1<<24)+(c(r)<<16)+(c(g)<<8)+c(b)).toString(16).slice(1);}
 function to12(d){let h=d.getHours(),m=d.getMinutes();const ap=appLang==='en'?(h<12?'AM':'PM'):(h<12?'오전':'오후');h=h%12||12;return `${ap} ${h}:${String(m).padStart(2,'0')}`;}
 function dkey(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
 function fmtDur(s){const m=Math.floor(s/60),sec=s%60;return appLang==='en'?(m>0?`${m}m ${sec}s`:`${s}s`):(m>0?`${m}분 ${sec}초`:`${s}초`);}
 function fmtClock(s){return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');}
 function toClock(){const d=new Date();return `${d.getHours()%12||12}:${String(d.getMinutes()).padStart(2,'0')}`;}
+
+const QUICK_START_TEMPLATES=[
+  {
+    id:'adhd',
+    title:{ko:'주의·활동 조절 관찰 세트',en:'Attention / Activity Regulation Set'},
+    desc:{ko:'과제 지속, 전환, 기다림 상황에서 자주 쓰는 행동·선행·후속 항목을 추가합니다.',en:'Adds common items for task persistence, transitions, and waiting situations.'},
+    behaviors:[
+      {name:{ko:'자리 이탈',en:'Leaving seat'},color:'#2A9D8F',icon:'run',type:'dur',def:{ko:'수업 또는 과제 중 허락 없이 지정된 자리에서 1m 이상 벗어남',en:'Moves more than 1m away from assigned seat without permission during class or task.'}},
+      {name:{ko:'끼어들기',en:'Interrupting'},color:'#E0972F',icon:'talk',type:'freq',def:{ko:'차례가 아닐 때 말하거나 다른 사람의 활동을 중단시킴',en:'Talks out of turn or interrupts another person’s activity.'}},
+      {name:{ko:'과제 거부',en:'Task refusal'},color:'#7A5BB0',icon:'refuse',type:'freq',def:{ko:'과제 제시 후 시작하지 않거나 말·몸짓으로 거부 의사를 보임',en:'Does not begin after task presentation or rejects with words/gestures.'}}
+    ],
+    aChips:[{text:{ko:'과제 제시',en:'Task presented'},fav:true},{text:{ko:'전환 상황',en:'Transition'},fav:true},{text:{ko:'기다림 요구',en:'Waiting required'}},{text:{ko:'지시 반복',en:'Repeated direction'}},{text:{ko:'주의 환기 감소',en:'Attention reduced'}}],
+    cChips:[{text:{ko:'교사 관심',en:'Teacher attention'},fav:true},{text:{ko:'재지시',en:'Redirection'}},{text:{ko:'과제 미룸',en:'Task delayed'}},{text:{ko:'선택권 제공',en:'Choice offered'}},{text:{ko:'짧은 휴식',en:'Brief break'}}],
+    activities:[{name:{ko:'등교·아침',en:'Arrival'}},{name:{ko:'수업',en:'Class'}},{name:{ko:'전환',en:'Transition'}},{name:{ko:'쉬는 시간',en:'Break'}}],
+    settingEvents:[{name:{ko:'수면 부족',en:'Poor sleep'}},{name:{ko:'약 복용 변화',en:'Medication change'}},{name:{ko:'일과 변화',en:'Routine change'}}]
+  },
+  {
+    id:'autism',
+    title:{ko:'자폐 특성·감각/전환 관찰 세트',en:'Autism / Sensory-Transition Set'},
+    desc:{ko:'감각 부담, 선호활동 종료, 예측 어려움과 관련된 관찰 항목을 추가합니다.',en:'Adds items related to sensory load, ending preferred activities, and unpredictable transitions.'},
+    behaviors:[
+      {name:{ko:'소리지르기',en:'Screaming'},color:'#E0972F',icon:'shout',type:'freq',def:{ko:'대화 수준을 넘는 큰 소리를 2초 이상 냄',en:'Produces voice above conversational level for more than 2 seconds.'}},
+      {name:{ko:'반복 움직임',en:'Repetitive movement'},color:'#5E9A57',icon:'stim',type:'dur',def:{ko:'손 흔들기, 몸 흔들기 등 반복 움직임이 5초 이상 지속됨',en:'Repeats movements such as hand flapping or rocking for at least 5 seconds.'}},
+      {name:{ko:'물건 던지기',en:'Throwing objects'},color:'#7A5BB0',icon:'throw',type:'freq',def:{ko:'손에 든 물건을 의도적으로 공중이나 바닥으로 던짐',en:'Intentionally throws an object into the air or onto the floor.'}}
+    ],
+    aChips:[{text:{ko:'소음 증가',en:'Noise increased'},fav:true},{text:{ko:'선호활동 종료',en:'Preferred activity ended'},fav:true},{text:{ko:'전환 예고 부족',en:'Insufficient transition warning'}},{text:{ko:'감각 자극',en:'Sensory stimulus'}},{text:{ko:'예상과 다른 변화',en:'Unexpected change'}}],
+    cChips:[{text:{ko:'조용한 공간 제공',en:'Quiet space provided'},fav:true},{text:{ko:'감각 휴식',en:'Sensory break'}},{text:{ko:'요구 수준 낮춤',en:'Demand reduced'}},{text:{ko:'선호물 제공',en:'Preferred item provided'}},{text:{ko:'일정 다시 안내',en:'Schedule reviewed'}}],
+    activities:[{name:{ko:'개별학습',en:'Individual work'}},{name:{ko:'전환',en:'Transition'}},{name:{ko:'감각휴식',en:'Sensory break'}},{name:{ko:'점심시간',en:'Lunch'}}],
+    settingEvents:[{name:{ko:'감각 과부하',en:'Sensory overload'}},{name:{ko:'루틴 변경',en:'Routine change'}},{name:{ko:'컨디션 저조',en:'Feeling unwell'}}]
+  },
+  {
+    id:'communication',
+    title:{ko:'의사소통·요구표현 관찰 세트',en:'Communication / Requesting Set'},
+    desc:{ko:'도움 요청, 거절, 원하는 것 요구가 어려운 학생을 위한 기본 관찰 항목입니다.',en:'A starter set for students who struggle to ask for help, refuse, or request preferred items appropriately.'},
+    behaviors:[
+      {name:{ko:'울음',en:'Crying'},color:'#3E86C0',icon:'cry',type:'dur',def:{ko:'눈물, 흐느낌, 큰 울음소리가 10초 이상 지속됨',en:'Tears, sobbing, or loud crying continues for 10 seconds or longer.'}},
+      {name:{ko:'거부하기',en:'Refusal'},color:'#7A5BB0',icon:'refuse',type:'freq',def:{ko:'요구 후 “싫어”, 밀기, 고개 돌리기 등으로 거부함',en:'Rejects after a request by saying no, pushing away, or turning away.'}},
+      {name:{ko:'때리기',en:'Hitting'},color:'#E2603F',icon:'hit',type:'freq',def:{ko:'손이나 팔로 타인의 몸을 의도적으로 침',en:'Intentionally strikes another person’s body with hand or arm.'}}
+    ],
+    aChips:[{text:{ko:'어려운 과제',en:'Difficult task'},fav:true},{text:{ko:'도움 요청 실패',en:'Help request failed'}},{text:{ko:'원하는 것 지연',en:'Preferred item delayed'},fav:true},{text:{ko:'의사표현 어려움',en:'Communication difficulty'}},{text:{ko:'거절 경험',en:'Denied request'}}],
+    cChips:[{text:{ko:'도움 제공',en:'Help provided'},fav:true},{text:{ko:'원하는 것 제공',en:'Access provided'},fav:true},{text:{ko:'과제 제거',en:'Task removed'}},{text:{ko:'보호자/교사 위로',en:'Adult comfort'}},{text:{ko:'대체표현 촉구',en:'Prompted replacement request'}}],
+    activities:[{name:{ko:'수업',en:'Class'}},{name:{ko:'개별지도',en:'Individual teaching'}},{name:{ko:'놀이',en:'Play'}},{name:{ko:'점심시간',en:'Lunch'}}],
+    settingEvents:[{name:{ko:'피로',en:'Fatigue'}},{name:{ko:'배고픔',en:'Hunger'}},{name:{ko:'건강 불편',en:'Health discomfort'}}]
+  }
+];
+
+function tplText(v){return typeof v==='object'&&v?localText(appLang==='en'?(v.en||v.ko):(v.ko||v.en)):localText(v);}
+function sameLoose(a,b){return String(a||'').trim().toLowerCase()===String(b||'').trim().toLowerCase();}
+function hasTextItem(arr,key,val){
+  const want=tplText(val);
+  return (arr||[]).some(x=>sameLoose(x[key],want)||sameLoose(localText(x[key]),want));
+}
+function openTemplateSheet(){
+  const en=appLang==='en';
+  const title=$('#templateTitle'), sub=$('#templateSub');
+  if(title) title.textContent=en?'Templates / Quick Start Sets':'템플릿 / 빠른 시작 세트';
+  if(sub) sub.textContent=en?'Merged into the current student setup':'현재 학생의 기록항목에 병합됩니다';
+  renderTemplateList();
+  $('#templateScrim').classList.add('show');
+  $('#templateSheet').classList.add('open');
+}
+function closeTemplateSheet(){
+  $('#templateScrim').classList.remove('show');
+  $('#templateSheet').classList.remove('open');
+}
+function renderTemplateList(){
+  const el=$('#templateList'); if(!el) return;
+  const en=appLang==='en';
+  el.innerHTML=`<div class="template-list">${QUICK_START_TEMPLATES.map(t=>{
+    const tags=[
+      `${(t.behaviors||[]).length}${en?' behaviors':'개 행동'}`,
+      `${(t.aChips||[]).length}${en?' antecedents':'개 선행'}`,
+      `${(t.cChips||[]).length}${en?' consequences':'개 후속'}`
+    ];
+    return `<div class="template-card">
+      <div class="template-head">
+        <div><b>${escHtml(tplText(t.title))}</b><span>${escHtml(tplText(t.desc))}</span></div>
+        <button class="template-apply" data-template-apply="${t.id}">${en?'Apply':'적용'}</button>
+      </div>
+      <div class="template-tags">${tags.map(x=>`<span>${x}</span>`).join('')}</div>
+    </div>`;
+  }).join('')}</div>`;
+}
+function addTemplateItems(arr, items, makeItem, key='text'){
+  let added=0;
+  (items||[]).forEach(item=>{
+    const val=item[key]||item.name;
+    if(!hasTextItem(arr,key,val)){arr.push(makeItem(item));added++;}
+  });
+  return added;
+}
+function applyQuickTemplate(id){
+  const t=QUICK_START_TEMPLATES.find(x=>x.id===id); if(!t) return;
+  if(!db.behaviors)db.behaviors=[]; if(!db.aChips)db.aChips=[]; if(!db.cChips)db.cChips=[];
+  if(!db.activities)db.activities=[]; if(!db.settingEvents)db.settingEvents=[];
+  let added=0;
+  added+=addTemplateItems(db.behaviors,t.behaviors,b=>({id:uid('b'),name:tplText(b.name),color:b.color||'#0F6E6C',icon:b.icon||'hit',type:b.type||'freq',target:false,def:tplText(b.def||''),example:tplText(b.example||''),nonExample:tplText(b.nonExample||'')}),'name');
+  added+=addTemplateItems(db.aChips,t.aChips,c=>({id:uid('ch'),text:tplText(c.text),fav:!!c.fav}),'text');
+  added+=addTemplateItems(db.cChips,t.cChips,c=>({id:uid('ch'),text:tplText(c.text),fav:!!c.fav}),'text');
+  added+=addTemplateItems(db.activities,t.activities,a=>({id:uid('act'),name:tplText(a.name)}),'name');
+  added+=addTemplateItems(db.settingEvents,t.settingEvents,s=>({id:uid('se'),name:tplText(s.name)}),'name');
+  reindex();
+  syncActiveCaseFromDb();
+  persist();
+  renderSettings();renderGrid();renderActBar();renderTemplateList();refreshDesktopSettingsIfOpen();
+  toast(added?(appLang==='en'?`Added ${added} template items.`:`템플릿 항목 ${added}개를 추가했어요`):(appLang==='en'?'This set is already applied.':'이미 적용된 세트예요'));
+}
+
+function startVoiceInput(targetId, btn){
+  const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
+  const target=$('#'+targetId);
+  if(!SpeechRecognition||!target){toast(appLang==='en'?'Speech input is not supported in this browser.':'이 브라우저에서는 음성입력을 지원하지 않아요');return;}
+  if(voiceRec){try{voiceRec.stop();}catch(_){} voiceRec=null; document.querySelectorAll('.voice-btn.listening').forEach(b=>b.classList.remove('listening'));}
+  const rec=new SpeechRecognition();
+  voiceRec=rec; voiceTargetId=targetId;
+  rec.lang=appLang==='en'?'en-US':'ko-KR';
+  rec.interimResults=false; rec.continuous=false; rec.maxAlternatives=1;
+  if(btn)btn.classList.add('listening');
+  toast(appLang==='en'?'Listening... speak now.':'듣고 있어요. 내용을 말해주세요');
+  rec.onresult=e=>{
+    const text=Array.from(e.results).map(r=>r[0]?.transcript||'').join(' ').trim();
+    if(text){
+      const sep=target.value.trim()?'\n':'';
+      target.value+=sep+text;
+      target.dispatchEvent(new Event('input',{bubbles:true}));
+    }
+  };
+  rec.onerror=()=>toast(appLang==='en'?'Speech input failed. Please try again.':'음성입력에 실패했어요. 다시 시도해 주세요');
+  rec.onend=()=>{voiceRec=null;voiceTargetId=null;document.querySelectorAll('.voice-btn.listening').forEach(b=>b.classList.remove('listening'));};
+  try{rec.start();}catch(_){toast(appLang==='en'?'Speech input is already running.':'음성입력이 이미 실행 중이에요');}
+}
+
+function csvCell(v){return `"${String(v??'').replace(/\r?\n/g,' ').replace(/"/g,'""')}"`;}
+function downloadTextFile(name,text,type='text/plain;charset=utf-8'){
+  const blob=new Blob([text],{type});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob); a.download=name; document.body.appendChild(a); a.click();
+  setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},0);
+}
+function exportCsv(){
+  const s=cur(); if(!s){toast(localText('학생을 먼저 선택해 주세요'));return;}
+  const rows=activeRecords().filter(r=>r.sid===s.id).sort((a,b)=>new Date(a.ts)-new Date(b.ts));
+  const headers=['student','record_id','date','time','timestamp','behavior','measurement','duration_seconds','activity','antecedents','antecedent_note','behavior_note','consequences','consequence_note','remarks','recorder','created_by_uid','device_id'];
+  const lines=[headers.map(csvCell).join(',')];
+  rows.forEach(r=>{
+    const d=new Date(r.ts), b=bMap[r.bid]||{};
+    const row=[
+      localText(s.name),r.id,dkey(d),`${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`,r.ts,
+      localText(b.name||msg('deletedBehavior')),b.type==='dur'?'duration':'frequency',r.dur??'',localText(r.act||''),
+      (r.a||[]).map(localText).join('; '),r.aNote||'',r.bNote||'',(r.c||[]).map(localText).join('; '),r.cNote||'',r.note||'',
+      r.createdByName||r.observerId||'',r.createdByUid||'',r.deviceId||''
+    ];
+    lines.push(row.map(csvCell).join(','));
+  });
+  const safeName=String(localText(s.name)||'student').replace(/[\\/:*?"<>|]/g,'_');
+  downloadTextFile(`FBA_${safeName}_${dkey(new Date())}.csv`,'\ufeff'+lines.join('\r\n'),'text/csv;charset=utf-8');
+  toast(appLang==='en'?'CSV exported.':'CSV 원자료를 내보냈어요');
+}
+function cloneRecord(r){return JSON.parse(JSON.stringify(r||{}));}
+function refreshAfterRecordChange(){
+  renderGrid();paintStudent();
+  if(state.tab==='review')renderTimeline();
+  if(typeof isDesktop==='function'&&isDesktop()&&db){renderStudioSidebar();if(stTab==='dashboard'||stTab==='analysis')switchStTab(stTab);updateStudioSync();}
+}
+function offerCreatedRecordUndo(rec, html){
+  const snapshot=cloneRecord(rec);
+  toastUndo(html,()=>{
+    Repository.removeRecord(snapshot.id);
+    refreshAfterRecordChange();
+    toast(appLang==='en'?'Record undone.':'방금 기록을 취소했어요');
+  },appLang==='en'?'Undo':'취소');
+}
+function offerDeletedRecordUndo(snapshot){
+  if(!snapshot||!snapshot.id){toast(msg('recordDeleted'));return;}
+  toastUndo(msg('recordDeleted'),()=>{
+    const restored={...cloneRecord(snapshot),deleted:false,dirty:true,updatedAt:new Date().toISOString()};
+    Repository.putRecord(restored);
+    refreshAfterRecordChange();
+    toast(appLang==='en'?'Delete undone.':'삭제를 취소했어요');
+  },appLang==='en'?'Undo':'취소');
+}
 
 // ============ hero ============
 function paintStudent(){
@@ -3732,7 +3972,7 @@ function tapBehavior(bid,btn,e,opts={}){
       rec=captureLatency(rec); // 지연시간 자동 첨부
       Repository.putRecord(rec);renderGrid();paintStudent();
       if(openDetails) openSheet(rec.id);
-      else toast(msg('savedQuick',{name:b.name}));
+      else offerCreatedRecordUndo(rec,msg('savedQuick',{name:localText(b.name)}));
     }else{
       if(state.timer){clearInterval(state.timer.iv);}
       state.timer={bid,start:eventMs,iv:null};
@@ -3748,7 +3988,7 @@ function tapBehavior(bid,btn,e,opts={}){
   rec=captureLatency(rec); // 지연시간 자동 첨부
   Repository.putRecord(rec);renderGrid();paintStudent();
   if(openDetails) openSheet(rec.id);
-  else toast(msg('recordedQuick',{name:b.name}));
+  else offerCreatedRecordUndo(rec,msg('recordedQuick',{name:localText(b.name)}));
 }
 
 // ============ ABC sheet ============
@@ -3781,8 +4021,9 @@ function saveSheet(){
   toast(rec.a.length&&rec.c.length?msg('abcComplete'):msg('recordSavedReview'));
 }
 function delRecord(){
+  const snapshot=cloneRecord(db.records.find(r=>r.id===state.sheetId));
   Repository.removeRecord(state.sheetId); // tombstone (deleted:true)
-  closeSheet();renderGrid();paintStudent();renderTimeline();toast(msg('recordDeleted'));
+  closeSheet();renderGrid();paintStudent();renderTimeline();offerDeletedRecordUndo(snapshot);
 }
 
 // ============ review ============
@@ -3906,8 +4147,9 @@ function bindTimelineSwipe(){
   tl.addEventListener('pointercancel',finish);
 }
 function swipeDeleteRecord(id){
+  const snapshot=cloneRecord(db.records.find(r=>r.id===id));
   Repository.removeRecord(id); // tombstone (deleted:true)
-  renderGrid();paintStudent();renderTimeline();toast(msg('recordDeleted'));
+  renderGrid();paintStudent();renderTimeline();offerDeletedRecordUndo(snapshot);
 }
 
 // ============ analysis ============
@@ -6493,10 +6735,16 @@ function renderStPdf(){
           ? 'Generate a PDF with recent 7-day behavior data, function hypothesis, scatterplot, MAS scale, interview records, and observation memos.<br>After generating it, use the browser print feature to save as PDF.'
           : '최근 7일 행동 데이터, 기능 가설, 산점도, MAS 척도, 면담 기록, 관찰 메모를 포함한 PDF를 생성해요.<br>생성 후 브라우저 인쇄 기능으로 PDF 저장하세요.'}
       </div>
-      <button class="st-pdf-btn" onclick="exportPdf()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V10z"/><polyline points="14 3 14 10 21 10"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="12" y2="17"/></svg>
-        ${appLang==='en'?'Generate PDF Report':'PDF 리포트 생성'}
-      </button>
+      <div style="display:flex;flex-wrap:wrap;gap:10px">
+        <button class="st-pdf-btn" onclick="exportPdf()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V10z"/><polyline points="14 3 14 10 21 10"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="12" y2="17"/></svg>
+          ${appLang==='en'?'Generate PDF Report':'PDF 리포트 생성'}
+        </button>
+        <button class="st-pdf-btn" data-action="export-csv" style="background:#5E7CA8">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
+          CSV 원자료
+        </button>
+      </div>
     </div>`;
   translateStaticDom(body);
 }
@@ -6646,6 +6894,14 @@ function renderStSettings(){
         </div>
         <div class="st-set-desc">${tr('왼쪽 학생 목록과 같은 데이터입니다. 이름, 설명, 색상, 공유 설정을 편집할 수 있어요.','Same data as the left student list. Edit name, description, color, and sharing settings.')}</div>
         <div class="st-student-mini-grid">${studentItems||empty(tr('등록된 학생이 없어요.','No students yet.'))}</div>
+      </div>
+
+      <div class="settings-panel st-wide">
+        <div class="st-set-head">
+          <h3>${tr('템플릿 / 빠른 시작 세트','Templates / Quick Start Sets')}</h3>
+          <button class="st-set-add" data-action="open-template-sheet">${tr('열기','Open')}</button>
+        </div>
+        <div class="st-set-desc">${tr('ADHD·자폐 특성·의사소통처럼 현장에서 자주 쓰는 행동·선행·후속 묶음을 현재 학생 항목에 병합합니다.','Merge common behavior, antecedent, and consequence bundles into the current student setup.')}</div>
       </div>
 
       <div class="settings-panel">
@@ -7777,6 +8033,7 @@ document.addEventListener('click',e=>{
   const ioaCancel=t.closest('[data-ioa-cancel]'); if(ioaCancel){cancelIoaSession(ioaCancel.dataset.ioaCancel);return;}
   const ioaLeave=t.closest('[data-ioa-leave]'); if(ioaLeave){leaveIoaSession(ioaLeave.dataset.ioaLeave);return;}
   const ioaMark=t.closest('[data-ioa-mark]'); if(ioaMark){submitIoaMark(ioaMark.dataset.ioaMark);return;}
+  const templateApply=t.closest('[data-template-apply]'); if(templateApply){applyQuickTemplate(templateApply.dataset.templateApply);return;}
   const act=t.closest('[data-action]'); if(act){const a=act.dataset.action;
     if(a==='toggle-switcher')$('#switcher').classList.toggle('open');
     else if(a==='dismiss-sheet')saveSheet();
@@ -7834,6 +8091,11 @@ document.addEventListener('click',e=>{
     else if(a==='iv-editor-del')delIvEditor();
     else if(a==='iv-editor-cancel')closeIvEditor();
     else if(a==='export-pdf')exportPdf();
+    else if(a==='export-csv')exportCsv();
+    else if(a==='undo-last')runLastUndo();
+    else if(a==='voice-note')startVoiceInput(act.dataset.voiceTarget,act);
+    else if(a==='open-template-sheet')openTemplateSheet();
+    else if(a==='close-template-sheet')closeTemplateSheet();
     else if(a==='manual-migrate-v2'){
       if(!fbUser){toast('로그인 후 사용하세요');return;}
       migrateFromUserData().then(result=>{
