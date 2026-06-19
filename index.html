@@ -131,6 +131,12 @@
   .day.on .ndot{background:#fff;}
   .timeline{padding:6px 22px 0;}
   .tl-item{display:flex; gap:13px; padding:14px 0; border-bottom:1px solid var(--line2); position:relative; cursor:pointer;}
+  /* 검토 탭 스와이프-삭제 */
+  .tl-swipe{position:relative; overflow:hidden;}
+  .tl-swipe .tl-del{position:absolute; top:0; right:0; height:100%; width:84px; border:none; background:var(--rec); color:#fff; font-size:14px; font-weight:800; font-family:inherit; cursor:pointer; z-index:0; display:flex; align-items:center; justify-content:center;}
+  .tl-swipe .tl-item{background:var(--paper); position:relative; z-index:1; transition:transform .22s ease; touch-action:pan-y;}
+  .tl-swipe .tl-item.dragging{transition:none;}
+  .tl-swipe .tl-item.swiped{transform:translateX(-84px);}
   .tl-time{width:64px; flex:none; text-align:right; font-size:12.5px; color:var(--sub); font-weight:700; font-variant-numeric:tabular-nums; padding-top:2px;}
   .tl-dot{width:11px;height:11px;border-radius:50%; margin-top:5px; flex:none;}
   .tl-body{flex:1;}
@@ -221,6 +227,18 @@
   .abc-date-row::-webkit-scrollbar{display:none;}
   .abc-date-chip{flex:none; border:1.5px solid var(--line); background:#fff; color:var(--sub); border-radius:999px; padding:7px 13px; font-size:12.5px; font-weight:700; font-family:inherit; cursor:pointer; white-space:nowrap;}
   .abc-date-chip.on{background:var(--primary); border-color:var(--primary); color:#fff;}
+  /* 기록 화면 활동/교시 칩 바 */
+  .act-bar{display:flex; gap:7px; overflow-x:auto; padding:2px 20px 10px; margin:0; -webkit-overflow-scrolling:touch; scrollbar-width:none;}
+  .act-bar::-webkit-scrollbar{display:none;}
+  /* 가로 스크롤 끝에서도 우측 20px 여백이 보이도록 스페이서 */
+  .act-bar::after{content:""; flex:0 0 13px;}
+  .act-chip{flex:none; border:1.5px solid var(--line); background:#fff; color:var(--sub); border-radius:999px; padding:8px 14px; font-size:13px; font-weight:700; font-family:inherit; cursor:pointer; white-space:nowrap; transition:background .12s, border-color .12s, color .12s;}
+  .act-chip.on{background:var(--primary); border-color:var(--primary); color:#fff;}
+  .act-chip.act-edit{color:var(--primary); border-style:dashed;}
+  /* 배경사건 토글 칩 (시트 내부) */
+  .se-chiprow{display:flex; flex-wrap:wrap; gap:8px;}
+  .se-chip{border:1.5px solid var(--line); background:#fff; color:var(--ink); border-radius:999px; padding:9px 15px; font-size:13.5px; font-weight:700; font-family:inherit; cursor:pointer; transition:background .12s, border-color .12s, color .12s;}
+  .se-chip.on{background:var(--primary); border-color:var(--primary); color:#fff;}
   .measure-card .chart-wrap{background:#fbfaf6;border:1px solid var(--line2);border-radius:14px;padding:12px;margin-top:10px;overflow:hidden;}
   .measure-card .chart-wrap+.chart-wrap{margin-top:12px;}
   .measure-chart{width:100%;height:auto;display:block;overflow:visible;}
@@ -237,6 +255,21 @@
   .measure-table th{background:#f5f2ec;color:var(--sub);font-weight:800;}
   .measure-table td:first-child,.measure-table th:first-child{text-align:left;}
   .measure-empty{font-size:12.5px;color:var(--sub);line-height:1.5;background:#fbfaf6;border:1px dashed var(--line);border-radius:12px;padding:13px;}
+
+  /* ABC 관찰기록 표 (전역 — 모바일·데스크톱 공통) */
+  .abc-rec-wrap{overflow-x:auto;background:#fff;border-radius:14px;border:1px solid #d6cfbf;padding:0;-webkit-overflow-scrolling:touch;}
+  .abc-rec-table{width:100%;min-width:520px;border-collapse:collapse;font-size:11.5px;table-layout:fixed;word-break:keep-all;overflow-wrap:anywhere;}
+  .abc-rec-table th{background:#f0ece3;color:var(--sub);font-weight:800;font-size:10.5px;padding:7px 8px;text-align:left;border:1px solid #cfc7b6;white-space:normal;line-height:1.25;}
+  .abc-rec-table td{padding:7px 8px;border:1px solid #d6cfbf;vertical-align:top;color:var(--ink);line-height:1.4;}
+  .abc-rec-table tbody tr:nth-child(even) td{background:#faf8f4;}
+  .abc-rec-no{text-align:center;font-weight:800;color:var(--sub);font-variant-numeric:tabular-nums;}
+  .abc-rec-when{font-size:10.5px;color:var(--sub);white-space:nowrap;font-variant-numeric:tabular-nums;}
+  .abc-rec-act{display:inline-block;margin-top:4px;font-size:9.5px;font-weight:700;color:#3d566f;background:#eaf0f6;border-radius:5px;padding:1px 5px;white-space:nowrap;}
+  .abc-rec-chip{display:inline-block;font-size:10.5px;font-weight:700;color:#4a4a3a;padding:1px 6px;border-radius:6px;margin-bottom:4px;}
+  .abc-rec-note{font-size:11px;color:var(--ink);line-height:1.4;}
+  .abc-rec-bname{font-weight:800;margin-bottom:2px;}
+  .abc-rec-remark{font-size:11px;color:var(--sub);}
+  .abc-rec-empty{color:#c8cdd0;}
 
   /* settings */
   .setgrp{margin:0 18px;}
@@ -301,10 +334,14 @@
   .toast b{color:#7fd9c4;}
 
   /* 관찰 노트 버튼 */
-  .note-fab{display:flex; align-items:center; gap:8px; margin:12px 20px 4px; background:rgba(255,255,255,.18); border:1.5px solid rgba(255,255,255,.28); border-radius:14px; padding:11px 15px; cursor:pointer; color:#fff; font-size:13.5px; font-weight:700;}
+  .hero-fabs{display:flex; gap:8px; margin:12px 20px 4px;}
+  .note-fab{display:flex; align-items:center; gap:8px; margin:0; flex:1; min-width:0; background:rgba(255,255,255,.18); border:1.5px solid rgba(255,255,255,.28); border-radius:14px; padding:11px 13px; cursor:pointer; color:#fff; font-size:13.5px; font-weight:700;}
   .note-fab svg{width:17px;height:17px;flex:none;opacity:.9;}
+  .note-fab .nf-text{min-width:0; flex:1;}
+  .note-fab .nf-text>div{white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
   .note-fab .nf-sub{font-size:11px; opacity:.75; margin-top:1px;}
-  .note-fab .nf-badge{margin-left:auto; background:rgba(255,255,255,.25); border-radius:8px; padding:3px 8px; font-size:11px; font-weight:800;}
+  .note-fab .nf-badge{margin-left:auto; flex:none; background:rgba(255,255,255,.25); border-radius:8px; padding:3px 8px; font-size:11px; font-weight:800;}
+  .note-fab.set-on{background:rgba(255,255,255,.30); border-color:rgba(255,255,255,.55);}
 
   /* 관찰 노트 시트 탭 */
   .ntab-bar{display:flex; gap:4px; padding:10px 16px 0; border-bottom:1px solid var(--line2);}
@@ -578,19 +615,7 @@
   .note-memo-tag{display:inline-block;font-size:10px;font-weight:800;padding:2px 7px;border-radius:5px;margin-right:6px;}
   .note-memo-time{font-size:11px;color:var(--sub);margin-top:3px;}
 
-  /* ABC 관찰기록 표 */
-  .abc-rec-wrap{overflow-x:auto;background:#fff;border-radius:16px;border:1px solid var(--line);padding:6px;}
-  .abc-rec-table{width:100%;border-collapse:collapse;font-size:13px;}
-  .abc-rec-table th{background:#f5f2ec;color:var(--sub);font-weight:800;font-size:12px;padding:10px 12px;text-align:left;border:1px solid var(--line2);white-space:nowrap;}
-  .abc-rec-table td{padding:11px 12px;border:1px solid var(--line2);vertical-align:top;color:var(--ink);line-height:1.5;}
-  .abc-rec-table tbody tr:nth-child(even) td{background:#faf8f4;}
-  .abc-rec-no{text-align:center;font-weight:800;color:var(--sub);font-variant-numeric:tabular-nums;}
-  .abc-rec-when{font-size:12px;color:var(--sub);white-space:nowrap;font-variant-numeric:tabular-nums;}
-  .abc-rec-chip{display:inline-block;font-size:12px;font-weight:700;color:#4a4a3a;padding:2px 8px;border-radius:7px;margin-bottom:5px;}
-  .abc-rec-note{font-size:12.5px;color:var(--ink);line-height:1.5;}
-  .abc-rec-bname{font-weight:800;margin-bottom:3px;}
-  .abc-rec-remark{font-size:12.5px;color:var(--sub);}
-  .abc-rec-empty{color:#c8cdd0;}
+  /* ABC 관찰기록 표 — 전역(.abc-rec 글로벌 블록 참조) */
 
   /* PDF 버튼 */
   .st-pdf-btn{
@@ -1041,11 +1066,17 @@
             <div class="stat"><b id="stWeek">0</b><span data-i18n="thisWeek">이번 주 합계</span></div>
           </div>
           <div id="syncBadge"><div class="sb-dot" id="sbDot"></div><span id="sbText"></span></div>
-        <div class="note-fab" data-action="open-note">
+        <div class="hero-fabs">
+          <div class="note-fab" data-action="open-setting">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            <div class="nf-text"><div data-i18n="settingEventTitle">배경사건</div><div class="nf-sub" id="setFabSummary">기록 ＋</div></div>
+          </div>
+          <div class="note-fab" data-action="open-note">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-9"/><path d="M14 3l5 5"/><path d="M9 13h6M9 17h4"/></svg>
-            <div><div data-i18n="observationNotes">관찰 노트</div><div class="nf-sub" data-i18n="noteSub">면담 · 척도 · 메모</div></div>
+            <div class="nf-text"><div data-i18n="observationNotes">관찰 노트</div><div class="nf-sub" data-i18n="noteSub">면담 · 척도 · 메모</div></div>
             <span class="nf-badge" id="noteBadge">열기</span>
           </div>
+        </div>
         </div>
 
         <!-- 지연형 진행 띠 -->
@@ -1097,6 +1128,8 @@
             <div><div>IOA 공동관찰</div><div class="mb-sub">Interobserver Agreement</div></div>
           </button>
         </div>
+        <div class="sect-label" data-i18n-html="activityContext">지금 활동 <em>기록에 자동 첨부됩니다</em></div>
+        <div class="act-bar" id="actBar"></div>
         <div class="grid" id="behaviorGrid"></div>
       </div>
 
@@ -1143,6 +1176,20 @@
           <div class="row" style="cursor:pointer" data-action="open-c-manager">
             <div class="rdisc" style="background:#b4502f">C</div>
             <div class="rmeta"><b>후속결과 편집</b><span id="consequenceManagerSub">후속결과 0개</span></div>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9aa6aa" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          </div>
+          <div class="row" style="cursor:pointer" data-action="open-act-manager">
+            <div class="rdisc" style="background:#5E7CA8">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            </div>
+            <div class="rmeta"><b>활동·교시 편집</b><span id="actManagerSub">활동 0개</span></div>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9aa6aa" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          </div>
+          <div class="row" style="cursor:pointer" data-action="open-se-manager">
+            <div class="rdisc" style="background:#8A6FB0">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            </div>
+            <div class="rmeta"><b>배경사건 항목 편집</b><span id="seManagerSub">항목 0개</span></div>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9aa6aa" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
           </div>
           <div class="gh" style="padding-top:22px"><span>행동평정척도 (MAS)</span></div>
@@ -1198,6 +1245,57 @@
       <div style="overflow-y:auto;flex:1;padding:14px 18px 8px">
         <div id="masManagerList"></div>
         <button class="addbtn" style="margin-top:4px;margin-bottom:20px" data-action="add-mas-item">＋ 항목 추가</button>
+      </div>
+    </div>
+
+    <!-- 배경사건 일일 로그 시트 -->
+    <div class="scrim" id="settingScrim" data-action="close-setting"></div>
+    <div class="sheet" id="settingSheet" style="max-height:90%">
+      <div class="grab"></div>
+      <div class="sheet-head">
+        <div class="stit"><b id="settingSheetTitle">오늘의 배경사건</b><span id="settingSheetDate"></span></div>
+        <button class="ghostbtn" data-action="close-setting">닫기</button>
+      </div>
+      <div style="overflow-y:auto;flex:1;padding:14px 18px 8px">
+        <p style="font-size:12.5px;color:var(--sub);line-height:1.5;margin:0 0 14px" id="settingSheetSub">해당하는 항목을 켜 두면 그날의 상태로 저장돼요. 수면·약물·식사처럼 행동에 영향을 주는 배경요인을 기록하세요.</p>
+        <div class="se-chiprow" id="settingChips"></div>
+        <label style="display:block;font-size:12px;font-weight:800;color:var(--sub);margin:18px 0 8px" id="settingMemoLabel">메모 (선택)</label>
+        <textarea class="notebox" id="settingMemo" rows="3" placeholder="예: 어젯밤 늦게 잠, 아침 약 거름" style="font-size:14px;width:100%"></textarea>
+        <button class="addbtn" style="margin-top:14px" data-action="open-se-manager">＋ 배경사건 항목 편집</button>
+        <div style="height:8px"></div>
+      </div>
+      <div class="sheet-foot">
+        <button class="btn-prim" style="flex:1" data-action="save-setting">저장하고 닫기</button>
+      </div>
+    </div>
+
+    <!-- 배경사건 항목 관리 시트 -->
+    <div class="scrim" id="seManagerScrim" data-action="close-se-manager"></div>
+    <div class="sheet" id="seManagerSheet" style="max-height:92%">
+      <div class="grab"></div>
+      <div class="sheet-head">
+        <div class="stit"><b>배경사건 항목 편집</b><span id="seManagerCount"></span></div>
+        <button class="ghostbtn" data-action="close-se-manager">닫기</button>
+      </div>
+      <div style="overflow-y:auto;flex:1;padding:14px 18px 8px">
+        <p style="font-size:12.5px;color:var(--sub);line-height:1.5;margin:0 0 12px">자주 쓰는 배경요인을 미리 등록해 두면, 매일 탭 한 번으로 그날의 상태를 기록할 수 있어요.</p>
+        <div id="seManagerList"></div>
+        <button class="addbtn" style="margin-top:4px;margin-bottom:20px" data-action="add-se-item">＋ 항목 추가</button>
+      </div>
+    </div>
+
+    <!-- 활동·교시 관리 시트 -->
+    <div class="scrim" id="actManagerScrim" data-action="close-act-manager"></div>
+    <div class="sheet" id="actManagerSheet" style="max-height:92%">
+      <div class="grab"></div>
+      <div class="sheet-head">
+        <div class="stit"><b>활동·교시 편집</b><span id="actManagerCount"></span></div>
+        <button class="ghostbtn" data-action="close-act-manager">닫기</button>
+      </div>
+      <div style="overflow-y:auto;flex:1;padding:14px 18px 8px">
+        <p style="font-size:12.5px;color:var(--sub);line-height:1.5;margin:0 0 12px">기록 화면에서 활동을 고르면 이후 누르는 모든 기록에 자동으로 첨부돼요. 분석 탭에서 활동별 발생을 볼 수 있어요.</p>
+        <div id="actManagerList"></div>
+        <button class="addbtn" style="margin-top:4px;margin-bottom:20px" data-action="add-act-item">＋ 활동 추가</button>
       </div>
     </div>
 
@@ -1663,6 +1761,14 @@ function defaults(){
       {id:'c3',text:'Peer response',fav:false},{id:'c4',text:'Access provided',fav:false},
       {id:'c5',text:'Ignored',fav:false},{id:'c6',text:'Timeout',fav:false},
     ],
+    activities:[
+      {id:'act1',name:'Arrival'},{id:'act2',name:'Class'},{id:'act3',name:'Break'},
+      {id:'act4',name:'Lunch'},{id:'act5',name:'Transition'},{id:'act6',name:'Special'},{id:'act7',name:'Dismissal'},
+    ],
+    settingEvents:[
+      {id:'se1',name:'Poor sleep'},{id:'se2',name:'Medication change'},{id:'se3',name:'Skipped meal'},
+      {id:'se4',name:'Feeling unwell'},{id:'se5',name:'Emotional distress'},{id:'se6',name:'Routine change'},
+    ],
   }:{
     students:[
       {id:'s1',name:'김민준',color:'#0F6E6C',sub:'3학년 · 회피 행동 관찰 4주차'},
@@ -1687,12 +1793,23 @@ function defaults(){
       {id:'c3',text:'또래 반응',fav:false},{id:'c4',text:'원하는 것 제공',fav:false},
       {id:'c5',text:'무시함',fav:false},{id:'c6',text:'타임아웃',fav:false},
     ],
+    activities:[
+      {id:'act1',name:'등교·아침'},{id:'act2',name:'수업'},{id:'act3',name:'쉬는 시간'},
+      {id:'act4',name:'점심시간'},{id:'act5',name:'전이·이동'},{id:'act6',name:'특별활동'},{id:'act7',name:'하교'},
+    ],
+    settingEvents:[
+      {id:'se1',name:'수면 부족'},{id:'se2',name:'약물 변경'},{id:'se3',name:'결식·식사 거름'},
+      {id:'se4',name:'컨디션 난조'},{id:'se5',name:'정서 불안'},{id:'se6',name:'일과 변화'},
+    ],
   };
   return {
     students: localized.students.map(x=>({...x})),
     behaviors: localized.behaviors.map(x=>({...x})),
     aChips: localized.aChips.map(x=>({...x})),
     cChips: localized.cChips.map(x=>({...x})),
+    activities: localized.activities.map(x=>({...x})),
+    settingEvents: localized.settingEvents.map(x=>({...x})),
+    settingLogs: {},
     masItems: MAS_DEFAULTS.map(m=>({...m})),
     ivQuestions: defaultIvQuestions(),
     notes:[],        // {id,sid,ts,tag,text}
@@ -1771,6 +1888,8 @@ const I18N={
     latencyRunning:'지연시간 측정 중 — 행동 버튼을 눌러 종료', cancel:'취소',
     intervalObservingOx:'관찰 중 — 간격 종료 시 O/X 입력', intervalObservingSample:'관찰 중 — 간격 종료 시 코드 입력',
     withBehavior:'발생 간격', withoutBehavior:'미발생 간격', occurrence:'발생률', endObservation:'관찰 종료',
+    activityContext:'지금 활동 <em>기록에 자동 첨부됩니다</em>',
+    settingEventTitle:'배경사건',
     behaviorRecording:'행동 기록 <em>간격 · 지연 · 행동</em>', intervalRecording:'간격 기록', startAntecedent:'선행 시작',
     review:'검토', analysisSub:'최근 7일 패턴과 기능 가설입니다.', settingsSub:'미리 정의해 두면 현장에선 누르기만 하면 됩니다.',
     record:'기록', addStudent:'+ 학생', noStudent:'설정 탭에서 학생을 먼저 추가해 주세요', count:'빈도', duration:'시간', addBehavior:'행동 추가',
@@ -1815,6 +1934,8 @@ const I18N={
     latencyRunning:'Latency timer running - tap a behavior to stop', cancel:'Cancel',
     intervalObservingOx:'Observing - mark O/X at the end of each interval', intervalObservingSample:'Observing - choose a code at the end of each interval',
     withBehavior:'With behavior', withoutBehavior:'Without', occurrence:'Occurrence', endObservation:'End Observation',
+    activityContext:'Current activity <em>auto-attached to records</em>',
+    settingEventTitle:'Setting events',
     behaviorRecording:'Behavior Recording <em>Interval · Latency · Behavior</em>', intervalRecording:'Interval Recording', startAntecedent:'Start Antecedent',
     review:'Review', analysisSub:'Recent 7-day patterns and function hypothesis.', settingsSub:'Set up items in advance so field recording stays quick.',
     record:'Record', addStudent:'+ Student', noStudent:'Add a student in Settings first.', count:'Count', duration:'Duration', addBehavior:'Add behavior',
@@ -1859,6 +1980,8 @@ function msg(key, vars={}){
 const STATIC_EN={
   '학생 명단':'Student List','학생 추가':'Add Student','＋ 학생 추가':'+ Add Student','＋ 추가':'+ Add',
   '기록 항목':'Recording Items','행동정의 편집':'Edit Behavior Definitions','선행사건 편집':'Edit Antecedents','후속결과 편집':'Edit Consequences',
+  '활동·교시 편집':'Edit Activities / Periods','활동 추가':'Add Activity','＋ 활동 추가':'+ Add Activity',
+  '기록 화면에서 활동을 고르면 이후 누르는 모든 기록에 자동으로 첨부돼요. 분석 탭에서 활동별 발생을 볼 수 있어요.':'When you pick an activity on the Record screen, it is attached to every record you tap afterward. See occurrences by activity on the Analysis tab.',
   '행동평정척도 (MAS)':'Motivation Assessment Scale (MAS)','MAS 항목 편집 / 추가':'Edit / Add MAS Items','면담 질문':'Interview Questions','면담 질문 편집 / 추가':'Edit / Add Interview Questions',
   '계정':'Account','데이터':'Data','공유 코드로 참가 (다른 교사 학생)':'Join with Share Code (another teacher)','기록 전체 초기화':'Reset All Records',
   'MAS 항목 편집':'Edit MAS Items','항목 추가':'Add Item','＋ 항목 추가':'+ Add Item','면담 질문 편집':'Edit Interview Questions','＋ 질문 추가':'+ Add Question',
@@ -1898,6 +2021,11 @@ const STATIC_EN={
   '자리 이탈':'Leaving seat','때리기':'Hitting','소리지르기':'Screaming','물건 던지기':'Throwing objects','울음':'Crying','자기자극':'Self-stimulation',
   '과제 제시':'Task presented','전이 상황':'Transition','또래 접근':'Peer approach','관심 줄어듦':'Attention reduced','원하는 것 거부됨':'Denied access','시끄러운 환경':'Noisy setting',
   '과제 제거':'Task removed','교사 관심':'Teacher attention','또래 반응':'Peer response','원하는 것 제공':'Access provided','무시함':'Ignored','타임아웃':'Timeout',
+  '등교·아침':'Arrival','수업':'Class','쉬는 시간':'Break','점심시간':'Lunch','전이·이동':'Transition','특별활동':'Special','하교':'Dismissal',
+  '수면 부족':'Poor sleep','약물 변경':'Medication change','결식·식사 거름':'Skipped meal','컨디션 난조':'Feeling unwell','정서 불안':'Emotional distress','일과 변화':'Routine change',
+  '오늘의 배경사건':'Today’s Setting Events','배경사건 항목 편집':'Edit Setting Events','＋ 배경사건 항목 편집':'+ Edit Setting Events','메모 (선택)':'Memo (optional)',
+  '해당하는 항목을 켜 두면 그날의 상태로 저장돼요. 수면·약물·식사처럼 행동에 영향을 주는 배경요인을 기록하세요.':'Toggle on what applies to save the day’s condition. Log background factors that affect behavior, such as sleep, medication, or meals.',
+  '자주 쓰는 배경요인을 미리 등록해 두면, 매일 탭 한 번으로 그날의 상태를 기록할 수 있어요.':'Register common background factors in advance so you can log the day’s condition with a single tap.',
   '과제나 활동이 어려울 때 이 행동을 하는가?':'Does the behavior occur when tasks or activities are difficult?',
   '어렵거나 긴 과제가 제시될 때 이 행동이 더 자주 발생하는가?':'Does the behavior occur more often when difficult or lengthy tasks are presented?',
   '과제 중에 이 행동을 보인 후 과제가 중단되는가?':'After the behavior occurs during a task, is the task stopped or delayed?',
@@ -2163,6 +2291,9 @@ function caseDefaults(){
     behaviors: d.behaviors.map(x=>({...x})),
     aChips: d.aChips.map(x=>({...x})),
     cChips: d.cChips.map(x=>({...x})),
+    activities: d.activities.map(x=>({...x})),
+    settingEvents: d.settingEvents.map(x=>({...x})),
+    settingLogs: {},
     masItems: MAS_DEFAULTS.map(x=>({...x})),
     ivQuestions: d.ivQuestions.map(x=>({...x})),
     notes: [],
@@ -2188,6 +2319,9 @@ function normalizeCase(raw, id){
     behaviors: raw.behaviors || base.behaviors,
     aChips: raw.aChips || base.aChips,
     cChips: raw.cChips || base.cChips,
+    activities: raw.activities || base.activities,
+    settingEvents: raw.settingEvents || base.settingEvents,
+    settingLogs: raw.settingLogs || {},
     masItems: raw.masItems || base.masItems,
     ivQuestions: raw.ivQuestions || base.ivQuestions,
     notes: raw.notes || [],
@@ -2211,6 +2345,9 @@ function syncActiveCaseFromDb(){
   s.behaviors = db.behaviors || [];
   s.aChips = db.aChips || [];
   s.cChips = db.cChips || [];
+  s.activities = db.activities || [];
+  s.settingEvents = db.settingEvents || [];
+  s.settingLogs = db.settingLogs || {};
   s.masItems = db.masItems || [];
   s.ivQuestions = db.ivQuestions || [];
   s.notes = (db.notes || []).filter(n=>n.sid===s.id);
@@ -2223,6 +2360,9 @@ function applyCaseToDb(s){
   db.behaviors = (s.behaviors || caseDefaults().behaviors).map(x=>({...x}));
   db.aChips = (s.aChips || caseDefaults().aChips).map(x=>({...x}));
   db.cChips = (s.cChips || caseDefaults().cChips).map(x=>({...x}));
+  db.activities = (s.activities || caseDefaults().activities).map(x=>({...x}));
+  db.settingEvents = (s.settingEvents || caseDefaults().settingEvents).map(x=>({...x}));
+  db.settingLogs = {...(s.settingLogs || {})};
   db.masItems = (s.masItems || caseDefaults().masItems).map(x=>({...x}));
   db.ivQuestions = (s.ivQuestions || caseDefaults().ivQuestions).map(x=>({...x}));
 
@@ -2251,6 +2391,9 @@ function buildCasePayload(s){
     behaviors:   s.behaviors   || [],
     aChips:      s.aChips      || [],
     cChips:      s.cChips      || [],
+    activities:  s.activities  || [],
+    settingEvents: s.settingEvents || [],
+    settingLogs:   s.settingLogs   || {},
     masItems:    s.masItems    || [],
     ivQuestions: s.ivQuestions || [],
     notes:        s.notes      || [],
@@ -3162,6 +3305,9 @@ async function initApp(){
     if(!db.behaviors?.length) db.behaviors = defaults().behaviors;
     if(!db.aChips?.length)    db.aChips    = defaults().aChips;
     if(!db.cChips?.length)    db.cChips    = defaults().cChips;
+    if(!db.activities?.length) db.activities = defaults().activities;
+    if(!db.settingEvents?.length) db.settingEvents = defaults().settingEvents;
+    if(!db.settingLogs) db.settingLogs = {};
   } else {
     // 첫 로그인 — 기본값으로 시작
     db = defaults();
@@ -3203,7 +3349,8 @@ function resumeSharedListeners(){
 
 
 // ============ state ============
-const state={tab:'record',sid:'s1',timer:null,sheetId:null,sel:{a:new Set(),c:new Set()},date:null,ed:null,noteTab:'memo',memoTag:'before',masTemp:{},ivTemp:{},currentEnv:'school',hypSid:null,hypDraft:null};
+const state={tab:'record',sid:'s1',timer:null,sheetId:null,sel:{a:new Set(),c:new Set()},date:null,ed:null,noteTab:'memo',memoTag:'before',masTemp:{},ivTemp:{},currentEnv:'school',currentAct:'',hypSid:null,hypDraft:null};
+try{state.currentAct=localStorage.getItem('fba_current_act')||'';}catch(_){}
 let bMap={},sMap={};
 function reindex(){ bMap=Object.fromEntries(db.behaviors.map(b=>[b.id,b])); sMap=Object.fromEntries(db.students.map(s=>[s.id,s])); }
 function activeRecords(){ return (db.records||[]).filter(r=>!r.deleted); }
@@ -3328,6 +3475,7 @@ function paintStudent(){
   const weekAgo=Date.now()-7*864e5;
   $('#stWeek').textContent=mine.filter(r=>new Date(r.ts).getTime()>weekAgo).length;
   updateNoteBadge();
+  updateSettingFab();
 }
 function renderSwitcher(){
   $('#switcher').innerHTML=db.students.map(s=>`
@@ -3374,6 +3522,22 @@ function renderGrid(){
   }).join('')+`<button class="btn add" data-action="add-behavior">
       <span class="disc">${svg('add')}</span><span class="lab" style="color:var(--sub)">${msg('addBehavior')}</span></button>`;
   translateStaticDom($('#behaviorGrid'));
+  renderActBar();
+}
+
+// 기록 화면 활동/교시 칩 바 — 선택값이 이후 기록에 자동 첨부됨
+function renderActBar(){
+  const el=$('#actBar'); if(!el) return;
+  const acts=db?.activities||[];
+  const names=acts.map(a=>localText(a.name));
+  // 다른 학생으로 전환했을 때 현재 활동이 목록에 없으면 해제
+  if(state.currentAct && !names.includes(state.currentAct)) state.currentAct='';
+  const en=appLang==='en';
+  const noneOn=!state.currentAct;
+  let html=`<button class="act-chip ${noneOn?'on':''}" data-act-pick="">${en?'None':'없음'}</button>`;
+  html+=names.map(nm=>`<button class="act-chip ${state.currentAct===nm?'on':''}" data-act-pick="${escHtml(nm)}">${escHtml(nm)}</button>`).join('');
+  html+=`<button class="act-chip act-edit" data-action="open-act-manager">${en?'✎ Edit':'✎ 편집'}</button>`;
+  el.innerHTML=html;
 }
 
 // ============ record tap ============
@@ -3393,7 +3557,7 @@ function tapBehavior(bid,btn,e,opts={}){
       const sec=Math.max(0,Math.round((eventMs-state.timer.start)/1000));
       clearInterval(state.timer.iv);state.timer=null;
       const now=new Date().toISOString();
-      let rec={id:ulid(),sid:state.sid,bid,ts:eventIso,dur:sec,a:[],c:[],note:'',
+      let rec={id:ulid(),sid:state.sid,bid,ts:eventIso,dur:sec,a:[],c:[],note:'',act:state.currentAct||'',
         observerId:fbUser?.uid||OBSERVER_ID,createdByUid:fbUser?.uid||OBSERVER_ID,createdByName:fbUser?.displayName||fbUser?.email||msg('observer'),deviceId:DEVICE_ID,env:state.currentEnv,
         updatedAt:now,deleted:false,dirty:true};
       rec=captureLatency(rec); // 지연시간 자동 첨부
@@ -3409,7 +3573,7 @@ function tapBehavior(bid,btn,e,opts={}){
     return;
   }
   const now2=eventIso;
-  let rec={id:ulid(),sid:state.sid,bid,ts:now2,dur:null,a:[],c:[],note:'',
+  let rec={id:ulid(),sid:state.sid,bid,ts:now2,dur:null,a:[],c:[],note:'',act:state.currentAct||'',
     observerId:fbUser?.uid||OBSERVER_ID,createdByUid:fbUser?.uid||OBSERVER_ID,createdByName:fbUser?.displayName||fbUser?.email||msg('observer'),deviceId:DEVICE_ID,env:state.currentEnv,
     updatedAt:now2,deleted:false,dirty:true};
   rec=captureLatency(rec); // 지연시간 자동 첨부
@@ -3507,7 +3671,9 @@ function renderTimeline(){
     const b=bMap[r.bid]||{name:msg('deletedBehavior'),color:'#9aa6aa',type:'freq'};const incmp=!r.a.length&&!r.c.length;
     const observerName=escHtml(r.createdByName||r.observerName||msg('observer'));
     const pills=[...r.a.map(v=>`<span class="abc-pill a"><span class="k">A</span>${escHtml(localText(v))}</span>`),...r.c.map(v=>`<span class="abc-pill c"><span class="k">C</span>${escHtml(localText(v))}</span>`)].join('');
-    return `<div class="tl-item" data-rec="${r.id}">
+    return `<div class="tl-swipe">
+      <button class="tl-del" data-del-rec="${r.id}">${appLang==='en'?'Delete':'삭제'}</button>
+      <div class="tl-item" data-rec="${r.id}">
       <div class="tl-time" data-edit-time="${r.id}" title="${msg('editTimeTitle')}">
         ${to12(new Date(r.ts))}
         <div style="font-size:9.5px;color:var(--primary);margin-top:1px;opacity:.8">✏️ ${msg('edit')}</div>
@@ -3522,9 +3688,56 @@ function renderTimeline(){
         ${incmp?`<button class="fillbtn" data-rec="${r.id}">${msg('fillABC')}</button>`:''}
       </div>
       ${incmp?'<div class="pulse-dot"></div>':''}
+      </div>
     </div>`;
   }).join('');
   translateStaticDom(timelineEl);
+  bindTimelineSwipe();
+}
+
+// 검토 탭 스와이프-삭제 (왼쪽으로 끌면 오른쪽에 '삭제' 노출)
+let tlSwipe=null, suppressTlClickUntil=0;
+function bindTimelineSwipe(){
+  const tl=$('#timeline'); if(!tl||tl._swipeBound) return; tl._swipeBound=true;
+  tl.addEventListener('pointerdown',e=>{
+    if(e.target.closest('.tl-del')) return;
+    const item=e.target.closest('.tl-swipe .tl-item[data-rec]'); if(!item) return;
+    tlSwipe={el:item, startX:e.clientX, startY:e.clientY, base:item.classList.contains('swiped')?-84:0, active:false, decided:false, moved:false};
+  });
+  tl.addEventListener('pointermove',e=>{
+    if(!tlSwipe) return;
+    const dx=e.clientX-tlSwipe.startX, dy=e.clientY-tlSwipe.startY;
+    if(!tlSwipe.decided){
+      if(Math.abs(dx)>8 && Math.abs(dx)>Math.abs(dy)){ tlSwipe.decided=true; tlSwipe.active=true; tlSwipe.el.classList.add('dragging'); try{tlSwipe.el.setPointerCapture(e.pointerId);}catch(_){ } }
+      else if(Math.abs(dy)>10){ tlSwipe=null; return; }
+      else return;
+    }
+    if(tlSwipe.active){
+      e.preventDefault();
+      const tx=Math.max(-84, Math.min(0, tlSwipe.base+dx));
+      tlSwipe.el.style.transform=`translateX(${tx}px)`;
+      if(Math.abs(dx)>6) tlSwipe.moved=true;
+    }
+  });
+  const finish=e=>{
+    if(!tlSwipe) return;
+    const el=tlSwipe.el; el.classList.remove('dragging');
+    if(tlSwipe.active){
+      const tx=tlSwipe.base+((e.clientX||0)-tlSwipe.startX);
+      const open=tx<=-42;
+      document.querySelectorAll('#timeline .tl-item.swiped').forEach(x=>{if(x!==el){x.classList.remove('swiped');x.style.transform='';}});
+      el.classList.toggle('swiped',open);
+      el.style.transform=open?'translateX(-84px)':'';
+      if(tlSwipe.moved) suppressTlClickUntil=Date.now()+350;
+    }
+    tlSwipe=null;
+  };
+  tl.addEventListener('pointerup',finish);
+  tl.addEventListener('pointercancel',finish);
+}
+function swipeDeleteRecord(id){
+  Repository.removeRecord(id); // tombstone (deleted:true)
+  renderGrid();paintStudent();renderTimeline();toast(msg('recordDeleted'));
 }
 
 // ============ analysis ============
@@ -4154,16 +4367,35 @@ function renderAnalysis(){
     <div class="sc-grid">${colHTML}</div><div class="sc-days">${dayLabels}</div></div>
     <div class="legend">${legend}</div>`;
 
-  // ⑤ 관찰자 간 일치도(IOA)
+  // ④ 활동·교시별 발생
+  const unassigned=en?'Unassigned':'활동 미지정';
+  const byAct={}; mine.forEach(r=>{const k=r.act?localText(r.act):unassigned; byAct[k]=(byAct[k]||0)+1;});
+  const actKeys=Object.keys(byAct);
+  const onlyUnassigned=actKeys.length===0||(actKeys.length===1&&actKeys[0]===unassigned);
+  let actBody;
+  if(onlyUnassigned){
+    actBody=`<p class="acc-csub">${en?'No activity tagged yet. Pick an activity on the Record screen and it attaches to each record automatically.':'아직 활동이 기록되지 않았어요. 기록 화면에서 활동을 고르면 각 기록에 자동으로 첨부돼요.'}</p>`;
+  }else{
+    const amax=Math.max(...Object.values(byAct));
+    const abars=actKeys.sort((a,b)=>byAct[b]-byAct[a]).map(k=>`<div class="barrow"><div class="bl">${escHtml(k)}</div><div class="bt"><div class="bf" style="width:${byAct[k]/amax*100}%;background:${k===unassigned?'#b8bfc6':'#5E7CA8'}"></div></div><div class="bn">${byAct[k]}</div></div>`).join('');
+    actBody=`<p class="acc-csub">${en?'Recent 7-day occurrences by activity / period':'최근 7일 · 활동·교시별 발생'}</p>${abars}`;
+  }
+
+  // ⑥ 배경사건 영향
+  const setImpactBody=renderSettingImpact(state.sid,en);
+
+  // ⑦ 관찰자 간 일치도(IOA)
   const ioaBody=curStudent ? renderIOASection(curStudent.id) : '';
 
   body.innerHTML=
     accItem('hyp','1',en?'Function Hypothesis':'기능 가설',en?'Core conclusion · the answer':'핵심 결론',hypBody)
     +accItem('abc','2',en?'ABC Observation Record':'ABC 관찰기록',en?'Evidence behind the hypothesis':'가설의 직접 근거',abcBody)
     +accItem('freq','3',en?'Behavior Frequency':'행동별 빈도',en?'What & how often':'무엇이 · 얼마나',freqBody)
-    +accItem('scatter','4',en?'Weekly Scatterplot':'주간 산점도',en?'When it occurs':'언제 발생하나',scatterBody)
-    +accItem('measure','5',en?'Measurement Graphs':'측정 그래프',en?'Behavior change over time':'행동 변화 추이',measureBody)
-    +accItem('ioa','6',en?'Inter-Observer Agreement':'관찰자 간 일치도',en?'Data reliability':'데이터 신뢰도',ioaBody);
+    +accItem('act','4',en?'By Activity / Period':'활동·교시별 발생',en?'In which activity it occurs':'어떤 활동에서 발생하나',actBody)
+    +accItem('scatter','5',en?'Weekly Scatterplot':'주간 산점도',en?'When it occurs':'언제 발생하나',scatterBody)
+    +accItem('setimpact','6',en?'Setting Event Impact':'배경사건 영향',en?'Slow triggers behind behavior':'행동을 키우는 배경요인',setImpactBody)
+    +accItem('measure','7',en?'Measurement Graphs':'측정 그래프',en?'Behavior change over time':'행동 변화 추이',measureBody)
+    +accItem('ioa','8',en?'Inter-Observer Agreement':'관찰자 간 일치도',en?'Data reliability':'데이터 신뢰도',ioaBody);
   translateStaticDom(body);
 }
 
@@ -4193,7 +4425,7 @@ function renderAbcTableFor(sid,dateKey,en){
     const timeOnly=(r.when.split('\n')[1]||r.when);
     return `<tr>
       <td class="abc-rec-no">${i+1}</td>
-      <td class="abc-rec-when">${escHtml(timeOnly)}</td>
+      <td class="abc-rec-when">${escHtml(timeOnly)}${r.act?`<div class="abc-rec-act">${escHtml(r.act)}</div>`:''}</td>
       <td>${cell(r.aChips,r.aNote,'#eef3df')}</td>
       <td><div class="abc-rec-bname" style="color:${r.bcolor}">${escHtml(r.bname)}</div>${r.bNote?`<div class="abc-rec-note">${nl(r.bNote)}</div>`:''}</td>
       <td>${cell(r.cChips,r.cNote,'#fbe8de')}</td>
@@ -4202,12 +4434,12 @@ function renderAbcTableFor(sid,dateKey,en){
   }).join('');
   return `<div class="abc-rec-wrap"><table class="abc-rec-table">
     <thead><tr>
-      <th style="width:34px">${en?'No.':'번호'}</th>
-      <th style="width:62px">${en?'Time':'시각'}</th>
+      <th style="width:30px">${en?'No.':'번호'}</th>
+      <th style="width:50px">${en?'Time':'시각'}</th>
       <th>${en?'Antecedent (A)':'선행사건 (A)'}</th>
-      <th style="width:120px">${en?'Behavior (B)':'행동 (B)'}</th>
+      <th style="width:92px">${en?'Behavior (B)':'행동 (B)'}</th>
       <th>${en?'Consequence (C)':'후속결과 (C)'}</th>
-      <th style="width:110px">${en?'Remarks':'비고'}</th>
+      <th style="width:80px">${en?'Remarks':'비고'}</th>
     </tr></thead>
     <tbody>${trs}</tbody>
   </table></div>`;
@@ -4244,6 +4476,8 @@ function renderSettings(){
   setText('#behaviorManagerSub',countPhrase('behavior',(db.behaviors||[]).length));
   setText('#antecedentManagerSub',countPhrase('antecedent',(db.aChips||[]).length));
   setText('#consequenceManagerSub',countPhrase('consequence',(db.cChips||[]).length));
+  setText('#actManagerSub',(appLang==='en'?`${(db.activities||[]).length} item${(db.activities||[]).length===1?'':'s'}`:`활동 ${(db.activities||[]).length}개`));
+  setText('#seManagerSub',(appLang==='en'?`${(db.settingEvents||[]).length} item${(db.settingEvents||[]).length===1?'':'s'}`:`항목 ${(db.settingEvents||[]).length}개`));
   if($('#behaviorManagerSheet')?.classList.contains('open')) renderBehaviorManagerList();
   if($('#antecedentManagerSheet')?.classList.contains('open')) renderChipManager('a');
   if($('#consequenceManagerSheet')?.classList.contains('open')) renderChipManager('c');
@@ -4635,6 +4869,222 @@ function delIvEditor(){
   const ed=state.ivEd; if(!ed||!ed.id)return;
   db.ivQuestions=(db.ivQuestions||[]).filter(x=>x.id!==ed.id);
   persist();closeIvEditor();renderIvManagerList();renderIvQuestions();renderSettings();toast('면담 질문 삭제됐어요');
+}
+
+// ============ 활동·교시 관리 ============
+function openActManager(){
+  renderActManagerList();
+  $('#actManagerScrim').classList.add('show');$('#actManagerSheet').classList.add('open');
+}
+function closeActManager(){$('#actManagerScrim').classList.remove('show');$('#actManagerSheet').classList.remove('open');}
+function renderActManagerList(){
+  const acts=db.activities||[];
+  const el=$('#actManagerList'); if(!el)return;
+  const cnt=$('#actManagerCount'); if(cnt)cnt.textContent=(appLang==='en'?`${acts.length} item${acts.length===1?'':'s'}`:`활동 ${acts.length}개`);
+  el.innerHTML=acts.length
+    ? acts.map(a=>`<div class="mas-edit-item">
+        <div class="func-dot" style="background:#5E7CA8;min-width:9px"></div>
+        <div class="me-text">${escHtml(localText(a.name))}</div>
+        <button class="iconbtn" data-edit-act="${a.id}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4v16h16v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4z"/></svg></button>
+      </div>`).join('')
+    : `<div style="color:#9aa6aa;font-size:13px;padding:8px 0">${appLang==='en'?'No activities yet.':'아직 활동이 없어요'}</div>`;
+  translateStaticDom(el);
+}
+
+// ============ 활동·교시 편집기 ============
+function openActEditor(id){
+  const acts=db.activities||[];
+  const a=id?acts.find(x=>x.id===id):null;
+  state.actEd={id:id||null,name:a?a.name:''};
+  renderActEditor();
+  $('#edScrim').classList.add('show');$('#editor').classList.add('open');
+}
+function closeActEditor(){$('#edScrim').classList.remove('show');$('#editor').classList.remove('open');state.actEd=null;}
+function renderActEditor(){
+  const ed=state.actEd; if(!ed)return;
+  const en=appLang==='en';
+  $('#edDel').style.display=ed.id?'block':'none';
+  $('#edTitle').textContent=ed.id?(en?'Edit Activity':'활동 수정'):(en?'Add Activity':'활동 추가');
+  $('#edBody').innerHTML=`
+    <div class="field"><label>${en?'Activity / Period name':'활동·교시 이름'}</label>
+    <input class="tin" id="actEdName" placeholder="${en?'e.g., Math, Break, Lunch':'예: 수학, 쉬는 시간, 점심'}" value="${escHtml(localText(ed.name))}"></div>`;
+  setTimeout(()=>{const i=$('#actEdName');if(i)i.focus();},60);
+}
+function saveActEditor(){
+  const ed=state.actEd; if(!ed)return;
+  const name=(($('#actEdName')||{}).value||ed.name||'').trim();
+  if(!name){toast(appLang==='en'?'Enter a name':'이름을 입력하세요');return;}
+  if(!db.activities)db.activities=[];
+  let prevName='';
+  if(ed.id){const item=db.activities.find(x=>x.id===ed.id);if(item){prevName=localText(item.name);item.name=name;}}
+  else db.activities.push({id:uid('act'),name});
+  // 현재 선택값이 이름 변경된 활동이면 동기화
+  if(prevName && state.currentAct===prevName){state.currentAct=name;try{localStorage.setItem('fba_current_act',name);}catch(_){}}
+  persist();closeActEditor();renderActManagerList();renderSettings();renderActBar();toast(appLang==='en'?'Activity saved':'활동 저장됐어요');
+}
+function delActEditor(){
+  const ed=state.actEd; if(!ed||!ed.id)return;
+  const removed=(db.activities||[]).find(x=>x.id===ed.id);
+  db.activities=(db.activities||[]).filter(x=>x.id!==ed.id);
+  if(removed && state.currentAct===localText(removed.name)){state.currentAct='';try{localStorage.setItem('fba_current_act','');}catch(_){}}
+  persist();closeActEditor();renderActManagerList();renderSettings();renderActBar();toast(appLang==='en'?'Activity deleted':'활동 삭제됐어요');
+}
+
+// ============ 배경사건(Setting Event) 일일 로그 ============
+function todayLog(){ return (db.settingLogs||{})[dkey(new Date())]||null; }
+// hero 배경사건 버튼 요약 갱신
+function updateSettingFab(){
+  const fab=document.querySelector('[data-action="open-setting"]');
+  const sum=$('#setFabSummary'); if(!sum) return;
+  const en=appLang==='en';
+  const log=todayLog();
+  const names=((log&&log.events)||[]).map(id=>{const it=(db.settingEvents||[]).find(x=>x.id===id);return it?localText(it.name):null;}).filter(Boolean);
+  let txt;
+  if(names.length) txt=names.join(' · ');
+  else if(log&&log.memo) txt=en?'Memo':'메모';
+  else txt=en?'Add ＋':'기록 ＋';
+  sum.textContent=txt;
+  if(fab) fab.classList.toggle('set-on', names.length>0 || !!(log&&log.memo));
+}
+function openSettingSheet(){
+  const log=todayLog();
+  state.setTemp={events:new Set((log&&log.events)||[]), memo:(log&&log.memo)||''};
+  const en=appLang==='en';
+  const d=new Date();
+  const wd=en?['Sun','Mon','Tue','Wed','Thu','Fri','Sat']:['일','월','화','수','목','금','토'];
+  const dateEl=$('#settingSheetDate'); if(dateEl) dateEl.textContent=`${d.getMonth()+1}/${d.getDate()} (${wd[d.getDay()]})`;
+  renderSettingChips();
+  const memo=$('#settingMemo'); if(memo) memo.value=state.setTemp.memo;
+  $('#settingScrim').classList.add('show');$('#settingSheet').classList.add('open');
+}
+function closeSettingSheet(){$('#settingScrim').classList.remove('show');$('#settingSheet').classList.remove('open');state.setTemp=null;}
+function renderSettingChips(){
+  const el=$('#settingChips'); if(!el||!state.setTemp)return;
+  const items=db.settingEvents||[];
+  el.innerHTML=items.length
+    ? items.map(it=>`<button class="se-chip ${state.setTemp.events.has(it.id)?'on':''}" data-se-toggle="${it.id}">${escHtml(localText(it.name))}</button>`).join('')
+    : `<div style="color:#9aa6aa;font-size:13px;padding:4px 0">${appLang==='en'?'No items yet. Tap “Edit items” below.':'항목이 없어요. 아래 “항목 편집”을 눌러 추가하세요.'}</div>`;
+}
+function toggleSettingChip(id){
+  if(!state.setTemp)return;
+  if(state.setTemp.events.has(id)) state.setTemp.events.delete(id);
+  else state.setTemp.events.add(id);
+  renderSettingChips();
+}
+function saveSettingLog(){
+  if(!state.setTemp)return;
+  const memo=(($('#settingMemo')||{}).value||'').trim();
+  const events=[...state.setTemp.events];
+  if(!db.settingLogs) db.settingLogs={};
+  const key=dkey(new Date());
+  if(events.length||memo){ db.settingLogs[key]={events,memo,updatedAt:new Date().toISOString()}; }
+  else { delete db.settingLogs[key]; }
+  persist();closeSettingSheet();updateSettingFab();
+  toast(appLang==='en'?'Setting events saved':'배경사건 저장됐어요');
+}
+
+// ============ 배경사건 항목 관리 ============
+function openSeManager(){
+  renderSeManagerList();
+  $('#seManagerScrim').classList.add('show');$('#seManagerSheet').classList.add('open');
+}
+function closeSeManager(){$('#seManagerScrim').classList.remove('show');$('#seManagerSheet').classList.remove('open');}
+function renderSeManagerList(){
+  const items=db.settingEvents||[];
+  const el=$('#seManagerList'); if(!el)return;
+  const cnt=$('#seManagerCount'); if(cnt)cnt.textContent=(appLang==='en'?`${items.length} item${items.length===1?'':'s'}`:`항목 ${items.length}개`);
+  el.innerHTML=items.length
+    ? items.map(it=>`<div class="mas-edit-item">
+        <div class="func-dot" style="background:#8A6FB0;min-width:9px"></div>
+        <div class="me-text">${escHtml(localText(it.name))}</div>
+        <button class="iconbtn" data-edit-se="${it.id}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4v16h16v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4z"/></svg></button>
+      </div>`).join('')
+    : `<div style="color:#9aa6aa;font-size:13px;padding:8px 0">${appLang==='en'?'No items yet.':'아직 항목이 없어요'}</div>`;
+  translateStaticDom(el);
+}
+
+// ============ 배경사건 항목 편집기 ============
+function openSeEditor(id){
+  const items=db.settingEvents||[];
+  const it=id?items.find(x=>x.id===id):null;
+  state.seEd={id:id||null,name:it?it.name:''};
+  renderSeEditor();
+  $('#edScrim').classList.add('show');$('#editor').classList.add('open');
+}
+function closeSeEditor(){$('#edScrim').classList.remove('show');$('#editor').classList.remove('open');state.seEd=null;}
+function renderSeEditor(){
+  const ed=state.seEd; if(!ed)return;
+  const en=appLang==='en';
+  $('#edDel').style.display=ed.id?'block':'none';
+  $('#edTitle').textContent=ed.id?(en?'Edit Setting Event':'배경사건 수정'):(en?'Add Setting Event':'배경사건 추가');
+  $('#edBody').innerHTML=`
+    <div class="field"><label>${en?'Setting event name':'배경사건 이름'}</label>
+    <input class="tin" id="seEdName" placeholder="${en?'e.g., Poor sleep, Skipped meal':'예: 수면 부족, 결식'}" value="${escHtml(localText(ed.name))}"></div>`;
+  setTimeout(()=>{const i=$('#seEdName');if(i)i.focus();},60);
+}
+function saveSeEditor(){
+  const ed=state.seEd; if(!ed)return;
+  const name=(($('#seEdName')||{}).value||ed.name||'').trim();
+  if(!name){toast(appLang==='en'?'Enter a name':'이름을 입력하세요');return;}
+  if(!db.settingEvents)db.settingEvents=[];
+  if(ed.id){const item=db.settingEvents.find(x=>x.id===ed.id);if(item)item.name=name;}
+  else db.settingEvents.push({id:uid('se'),name});
+  persist();closeSeEditor();renderSeManagerList();renderSettings();
+  if(state.setTemp) renderSettingChips();
+  updateSettingFab();
+  toast(appLang==='en'?'Saved':'저장됐어요');
+}
+function delSeEditor(){
+  const ed=state.seEd; if(!ed||!ed.id)return;
+  db.settingEvents=(db.settingEvents||[]).filter(x=>x.id!==ed.id);
+  persist();closeSeEditor();renderSeManagerList();renderSettings();
+  if(state.setTemp){state.setTemp.events.delete(ed.id);renderSettingChips();}
+  updateSettingFab();
+  toast(appLang==='en'?'Deleted':'삭제됐어요');
+}
+
+// 배경사건 영향 분석 — 각 요인이 있는 날 vs 없는 날의 하루 평균 행동 수 비교 (최근 14일·관찰일 기준)
+function renderSettingImpact(sid,en){
+  const since=Date.now()-14*864e5;
+  const recs=activeRecords().filter(r=>r.sid===sid && new Date(r.ts).getTime()>since);
+  const dayCount={};
+  recs.forEach(r=>{const k=dkey(new Date(r.ts)); dayCount[k]=(dayCount[k]||0)+1;});
+  const obsDays=Object.keys(dayCount);
+  const logs=db.settingLogs||{};
+  const items=db.settingEvents||[];
+  const sum=ks=>ks.reduce((a,k)=>a+dayCount[k],0);
+  const rows=[];
+  items.forEach(it=>{
+    const withDays=obsDays.filter(k=>logs[k]&&(logs[k].events||[]).includes(it.id));
+    if(!withDays.length) return;
+    const withoutDays=obsDays.filter(k=>!(logs[k]&&(logs[k].events||[]).includes(it.id)));
+    rows.push({
+      name:localText(it.name),
+      avgWith:sum(withDays)/withDays.length,
+      avgWithout:withoutDays.length?sum(withoutDays)/withoutDays.length:null,
+      wd:withDays.length, wod:withoutDays.length
+    });
+  });
+  if(!obsDays.length || !rows.length){
+    return `<p class="acc-csub">${en?'No setting-event data in the last 14 days. Tap the 🌙 button on the Record screen to log the day’s condition — patterns like “more behavior on poor-sleep days” will appear here.':'최근 14일간 배경사건 기록이 없어요. 기록 화면의 🌙 버튼으로 그날의 상태를 남기면 “수면 부족한 날 문제행동 ↑” 같은 패턴이 여기 나타나요.'}</p>`;
+  }
+  rows.sort((a,b)=>{const ra=a.avgWithout?a.avgWith/a.avgWithout:99; const rb=b.avgWithout?b.avgWith/b.avgWithout:99; return rb-ra;});
+  const f=n=>n.toFixed(1);
+  const body=rows.map(r=>{
+    let badge;
+    if(r.avgWithout===null) badge=`<span style="font-size:11.5px;font-weight:800;color:#637277">${en?'no comparison day':'비교일 없음'}</span>`;
+    else if(r.avgWithout===0) badge=`<span style="font-size:12px;font-weight:800;color:#c0392b">${en?'only on these days':'있는 날만 발생'}</span>`;
+    else{const ratio=r.avgWith/r.avgWithout;const up=ratio>=1.2,down=ratio<=0.83;const col=up?'#c0392b':(down?'#0F6E6C':'#637277');const arr=up?'↑':(down?'↓':'≈');badge=`<span style="font-size:12.5px;font-weight:800;color:${col}">×${f(ratio)} ${arr}</span>`;}
+    const wTxt=en?`with <b style="color:var(--ink)">${f(r.avgWith)}</b>/day (${r.wd}d)`:`있는 날 <b style="color:var(--ink)">${f(r.avgWith)}</b>회/일 (${r.wd}일)`;
+    const woTxt=r.avgWithout===null?'':(en?`without <b style="color:var(--ink)">${f(r.avgWithout)}</b>/day (${r.wod}d)`:`없는 날 <b style="color:var(--ink)">${f(r.avgWithout)}</b>회/일 (${r.wod}일)`);
+    return `<div style="margin-bottom:13px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:4px">
+        <span style="font-size:13px;font-weight:800;color:var(--ink)">${escHtml(r.name)}</span>${badge}
+      </div>
+      <div style="font-size:11.5px;color:var(--sub)">${wTxt}${woTxt?' · '+woTxt:''}</div>
+    </div>`;
+  }).join('');
+  return `<p class="acc-csub">${en?'Avg behaviors/day with vs. without each factor (last 14 days · observed days only)':'배경요인이 있는 날 vs 없는 날의 하루 평균 행동 수 (최근 14일·관찰일 기준)'}</p>${body}`;
 }
 
 
@@ -5374,7 +5824,7 @@ function getAbcRows(sid){
     const b=bMap[r.bid]||{name:appLang==='en'?'(deleted behavior)':'(삭제된 행동)',color:'#9aa6aa'};
     const when=`${d.getFullYear()}.${p2(d.getMonth()+1)}.${p2(d.getDate())} (${wkd[d.getDay()]})\n${p2(d.getHours())}:${p2(d.getMinutes())}${r.dur?' · '+fmtDur(r.dur):''}`;
     return {
-      num:i+1, when, tsMs:d.getTime(),
+      num:i+1, when, tsMs:d.getTime(), act:r.act?localText(r.act):'',
       bname:localText(b.name), bcolor:b.color||'#0F6E6C',
       aChips:(r.a||[]).map(localText).join(', '), aNote:r.aNote||'',
       bNote:r.bNote||'',
@@ -5400,7 +5850,7 @@ function renderStAbc(){
   };
   const trs=rows.map(r=>`<tr>
     <td class="abc-rec-no">${r.num}</td>
-    <td class="abc-rec-when">${nl(r.when)}</td>
+    <td class="abc-rec-when">${nl(r.when)}${r.act?`<div class="abc-rec-act">${escHtml(r.act)}</div>`:''}</td>
     <td>${acCell(r.aChips,r.aNote,'#eef3df')}</td>
     <td><div class="abc-rec-bname" style="color:${r.bcolor}">${escHtml(r.bname)}</div>${r.bNote?`<div class="abc-rec-note">${nl(r.bNote)}</div>`:''}</td>
     <td>${acCell(r.cChips,r.cNote,'#fbe8de')}</td>
@@ -6248,7 +6698,7 @@ function stopInterval(){
   const rec={
     id:ulid(), sid:state.sid, bid:iv.mode==='sample'?(iv.codes[0]?.bid||iv.bid):iv.bid,
     ts:now, dur:iv.elapsed,
-    a:[], c:[], note:iv.mode==='sample'
+    a:[], c:[], act:state.currentAct||'', note:iv.mode==='sample'
       ? msg('timeSamplingNote',{summary:labelSummary,pct,sec:iv.intervalSec})
       : msg('intervalNote',{summary:labelSummary,pct,sec:iv.intervalSec}),
     observerId:fbUser?.uid||OBSERVER_ID, createdByUid:fbUser?.uid||OBSERVER_ID, createdByName:fbUser?.displayName||fbUser?.email||msg('observer'), deviceId:DEVICE_ID, env:state.currentEnv,
@@ -6408,7 +6858,12 @@ document.addEventListener('click',e=>{
   if(orderUp){ const i=parseInt(orderUp.dataset.orderUp); if(i>0){[orderTemp[i-1],orderTemp[i]]=[orderTemp[i],orderTemp[i-1]];renderOrderList();} return; }
   const orderDown=t.closest('[data-order-down]');
   if(orderDown){ const i=parseInt(orderDown.dataset.orderDown); if(i<orderTemp.length-1){[orderTemp[i],orderTemp[i+1]]=[orderTemp[i+1],orderTemp[i]];renderOrderList();} return; }
-  const rec=t.closest('[data-rec]'); if(rec){openSheet(rec.dataset.rec);return;}
+  const delRec=t.closest('[data-del-rec]'); if(delRec){swipeDeleteRecord(delRec.dataset.delRec);return;}
+  const rec=t.closest('[data-rec]'); if(rec){
+    if(Date.now()<suppressTlClickUntil)return;
+    const swItem=rec.closest('.tl-item.swiped'); if(swItem){swItem.classList.remove('swiped');swItem.style.transform='';return;}
+    openSheet(rec.dataset.rec);return;
+  }
   const dt=t.closest('[data-date]'); if(dt){state.date=dt.dataset.date;renderTimeline();return;}
   const shareSid=t.closest('[data-share-sid]');
   if(shareSid){ openShareModal(shareSid.dataset.shareSid); return; }
@@ -6430,6 +6885,10 @@ document.addEventListener('click',e=>{
   const ivMark=t.closest('[data-iv-mark]'); if(ivMark){markInterval(ivMark.dataset.ivMark);return;}
   const accToggle=t.closest('[data-acc-toggle]'); if(accToggle){const acc=accToggle.closest('.acc');if(acc){const k=acc.dataset.accKey;const willOpen=!acc.classList.contains('open');acc.classList.toggle('open',willOpen);accToggle.setAttribute('aria-expanded',willOpen?'true':'false');if(k){if(willOpen)analysisOpenKeys.add(k);else analysisOpenKeys.delete(k);}}return;}
   const abcDateBtn=t.closest('[data-abc-date]'); if(abcDateBtn){abcSelDate=abcDateBtn.dataset.abcDate;const host=$('#abcTableHost');if(host)host.innerHTML=renderAbcTableFor(state.sid,abcSelDate,appLang==='en');document.querySelectorAll('[data-abc-date]').forEach(b=>b.classList.toggle('on',b.dataset.abcDate===abcSelDate));return;}
+  const actPick=t.closest('[data-act-pick]'); if(actPick){state.currentAct=actPick.dataset.actPick||'';try{localStorage.setItem('fba_current_act',state.currentAct);}catch(_){}document.querySelectorAll('[data-act-pick]').forEach(b=>b.classList.toggle('on',(b.dataset.actPick||'')===state.currentAct));return;}
+  const editAct=t.closest('[data-edit-act]'); if(editAct){openActEditor(editAct.dataset.editAct);return;}
+  const seToggle=t.closest('[data-se-toggle]'); if(seToggle){toggleSettingChip(seToggle.dataset.seToggle);return;}
+  const editSe=t.closest('[data-edit-se]'); if(editSe){openSeEditor(editSe.dataset.editSe);return;}
   const hypEdit=t.closest('[data-hyp-edit]'); if(hypEdit){openHypothesisEditor(hypEdit.dataset.hypEdit);return;}
   const hypStatus=t.closest('[data-hyp-status]'); if(hypStatus){setHypStatus(hypStatus.dataset.hypStatus);return;}
   const hypFunc=t.closest('[data-hyp-func]'); if(hypFunc){setHypFunction(hypFunc.dataset.hypFunc);return;}
@@ -6451,9 +6910,9 @@ document.addEventListener('click',e=>{
     else if(a==='add-chip-a'){const i=$('#addA');if(i&&i.value.trim()){db.aChips.push({id:uid('ch'),text:i.value.trim(),fav:false});i.value='';persist();renderSettings();renderChips();}}
     else if(a==='add-chip-c'){const i=$('#addC');if(i&&i.value.trim()){db.cChips.push({id:uid('ch'),text:i.value.trim(),fav:false});i.value='';persist();renderSettings();renderChips();}}
     else if(a==='toggle-fav'){state.ed.fav=!state.ed.fav;renderEditor();}
-    else if(a==='editor-save'){if(state.masEd)saveMasEditor();else if(state.ivEd)saveIvEditor();else saveEditor();}
-    else if(a==='editor-del'){if(state.masEd)delMasEditor();else if(state.ivEd)delIvEditor();else delEditor();}
-    else if(a==='editor-cancel'){if(state.masEd)closeMasEditor();else if(state.ivEd)closeIvEditor();else closeEditor();}
+    else if(a==='editor-save'){if(state.masEd)saveMasEditor();else if(state.ivEd)saveIvEditor();else if(state.actEd)saveActEditor();else if(state.seEd)saveSeEditor();else saveEditor();}
+    else if(a==='editor-del'){if(state.masEd)delMasEditor();else if(state.ivEd)delIvEditor();else if(state.actEd)delActEditor();else if(state.seEd)delSeEditor();else delEditor();}
+    else if(a==='editor-cancel'){if(state.masEd)closeMasEditor();else if(state.ivEd)closeIvEditor();else if(state.actEd)closeActEditor();else if(state.seEd)closeSeEditor();else closeEditor();}
     else if(a==='open-note')openNoteSheet();
     else if(a==='close-note')closeNoteSheet();
     else if(a==='add-memo')addMemo();
@@ -6467,6 +6926,15 @@ document.addEventListener('click',e=>{
     else if(a==='close-mas-manager')closeMasManager();
     else if(a==='open-iv-manager')openIvManager();
     else if(a==='close-iv-manager')closeIvManager();
+    else if(a==='open-act-manager')openActManager();
+    else if(a==='close-act-manager')closeActManager();
+    else if(a==='add-act-item')openActEditor(null);
+    else if(a==='open-setting')openSettingSheet();
+    else if(a==='close-setting')closeSettingSheet();
+    else if(a==='save-setting')saveSettingLog();
+    else if(a==='open-se-manager')openSeManager();
+    else if(a==='close-se-manager')closeSeManager();
+    else if(a==='add-se-item')openSeEditor(null);
     else if(a==='open-behavior-manager')openBehaviorManager();
     else if(a==='close-behavior-manager')closeBehaviorManager();
     else if(a==='open-a-manager')openChipManager('a');
