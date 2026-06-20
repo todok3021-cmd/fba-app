@@ -49,7 +49,7 @@
   .coach-scrim{position:absolute;inset:0;background:rgba(10,28,31,.58);pointer-events:auto;}
   .coach-hole{position:absolute;border-radius:22px;box-shadow:0 0 0 9999px rgba(10,28,31,.58),0 0 0 3px rgba(255,255,255,.95),0 14px 42px -20px rgba(0,0,0,.65);pointer-events:none;transition:.22s;}
   .coach-card{position:absolute;left:22px;right:22px;background:#fff;color:var(--ink);border-radius:20px;padding:16px 16px 14px;box-shadow:0 24px 60px -28px rgba(0,0,0,.55);pointer-events:auto;transition:.22s;}
-  .coach-card::before{content:"";position:absolute;left:28px;width:16px;height:16px;background:#fff;transform:rotate(45deg);}
+  .coach-card::before{content:"";position:absolute;left:var(--coach-arrow-left,28px);width:16px;height:16px;background:#fff;transform:rotate(45deg);}
   .coach-card.below::before{top:-7px;}
   .coach-card.above::before{bottom:-7px;}
   .coach-kicker{font-size:11px;font-weight:950;color:var(--primary);letter-spacing:.08em;text-transform:uppercase;margin-bottom:5px;}
@@ -608,6 +608,18 @@
   .auth-guest:hover{border-color:var(--primary);background:#f7faf9;}
   .auth-guest:disabled{opacity:.6;cursor:not-allowed;}
   .auth-guest-note{font-size:11.5px;color:var(--sub);line-height:1.5;margin-top:11px;text-align:center;}
+  .auth-mini-row{display:flex;justify-content:flex-end;margin:-4px 0 10px;}
+  .auth-link{border:none;background:transparent;color:var(--primary);font-family:inherit;font-size:12px;font-weight:850;padding:0;cursor:pointer;}
+  .auth-link:hover{text-decoration:underline;}
+  .auth-help{font-size:11.5px;color:var(--sub);line-height:1.5;margin:-5px 0 10px;}
+  .verify-banner{position:fixed;left:50%;top:12px;transform:translateX(-50%);z-index:9998;width:min(560px,calc(100vw - 24px));display:none;align-items:center;justify-content:space-between;gap:12px;background:#fffaf0;border:1.5px solid #ead38a;border-radius:16px;padding:12px 14px;box-shadow:0 18px 46px -26px rgba(0,0,0,.45);color:var(--ink);}
+  .verify-banner.show{display:flex;}
+  .verify-copy{min-width:0;}
+  .verify-copy b{display:block;font-size:12.5px;font-weight:950;margin-bottom:2px;color:#8A5B00;}
+  .verify-copy span{display:block;font-size:11.5px;font-weight:700;line-height:1.45;color:var(--sub);word-break:keep-all;}
+  .verify-actions{display:flex;gap:7px;flex:none;}
+  .verify-actions button{border:1px solid #ead38a;background:#fff;color:#8A5B00;border-radius:10px;padding:8px 9px;font-family:inherit;font-size:11.5px;font-weight:900;cursor:pointer;white-space:nowrap;}
+  .verify-actions button.primary{background:#E0972F;border-color:#E0972F;color:#fff;}
   .auth-loading{text-align:center;padding:20px;color:var(--sub);font-size:14px;}
   .auth-lang{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#f8f6ef;border:1px solid var(--line);border-radius:12px;padding:9px 11px;margin:-8px 0 18px;}
   .auth-lang label{font-size:12px;font-weight:800;color:var(--sub);}
@@ -1140,6 +1152,93 @@
     }
   }
 
+  /* prototype10은 앱 출시용: 화면 폭과 관계없이 항상 모바일 UI만 사용 */
+  #studio{display:none!important;}
+  @media(min-width:1024px){
+    body{
+      background:#d8d4cc!important;
+      display:flex!important;
+      align-items:center!important;
+      justify-content:center!important;
+      overflow:hidden!important;
+    }
+    .wrap{
+      display:block!important;
+      position:relative!important;
+      inset:auto!important;
+      width:100%!important;
+      max-width:430px!important;
+      height:min(900px,100dvh)!important;
+      border-radius:32px!important;
+      box-shadow:0 30px 80px rgba(0,0,0,.3)!important;
+      background:var(--paper)!important;
+      pointer-events:auto!important;
+      z-index:auto!important;
+      overflow:hidden!important;
+    }
+    .wrap .phone{
+      position:relative!important;
+      inset:auto!important;
+      width:100%!important;
+      height:100%!important;
+      overflow:hidden!important;
+      background:var(--paper)!important;
+      pointer-events:auto!important;
+    }
+    .wrap .app{
+      position:absolute!important;
+      inset:0!important;
+      width:auto!important;
+      height:auto!important;
+      overflow:hidden!important;
+      background:transparent!important;
+      display:flex!important;
+      flex-direction:column!important;
+      pointer-events:auto!important;
+    }
+    .wrap .screen{display:none!important;}
+    .wrap .screen.active{display:block!important;}
+    .wrap .tabbar{display:flex!important;}
+    .wrap .toast{display:block!important;}
+    .wrap .scrim{
+      position:absolute!important;
+      inset:0!important;
+      z-index:70!important;
+    }
+    .wrap .sheet{
+      position:absolute!important;
+      left:0!important;
+      right:0!important;
+      top:auto!important;
+      bottom:0!important;
+      width:auto!important;
+      max-height:86%!important;
+      border-radius:24px 24px 0 0!important;
+      transform:translateY(105%)!important;
+      z-index:80!important;
+    }
+    .wrap .sheet.open{
+      transform:translateY(0)!important;
+    }
+    .wrap .sheet .grab{display:block!important;}
+  }
+
+  @media(max-width:499px){
+    body{display:block!important;background:var(--paper)!important;overflow:hidden!important;}
+    .wrap{
+      max-width:none!important;
+      height:100vh!important;
+      height:100dvh!important;
+      border-radius:0!important;
+      box-shadow:none!important;
+    }
+  }
+  @media(max-width:540px){
+    .verify-banner{left:10px;right:10px;top:calc(env(safe-area-inset-top,0px) + 8px);width:auto;transform:none;align-items:flex-start;flex-direction:column;}
+    .verify-actions{width:100%;}
+    .verify-actions button{flex:1;}
+  }
+
 </style>
 <!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -1201,6 +1300,7 @@
       <div id="formLogin">
         <div class="auth-field"><label data-i18n="email">이메일</label><input id="liEmail" type="email" placeholder="teacher@school.kr" data-i18n-placeholder="emailPlaceholder" autocomplete="email"></div>
         <div class="auth-field"><label data-i18n="password">비밀번호</label><input id="liPw" type="password" placeholder="비밀번호 입력" data-i18n-placeholder="passwordPlaceholder" autocomplete="current-password"></div>
+        <div class="auth-mini-row"><button type="button" class="auth-link" onclick="doPasswordReset()" data-i18n="forgotPassword">비밀번호를 잊으셨나요?</button></div>
         <div class="auth-err" id="liErr"></div>
         <button class="auth-submit" id="liBtn" onclick="doLogin()" data-i18n="loginSubmit">로그인</button>
       </div>
@@ -1209,6 +1309,8 @@
         <div class="auth-field"><label data-i18n="name">이름</label><input id="suName" type="text" placeholder="홍길동" data-i18n-placeholder="namePlaceholder" maxlength="20"></div>
         <div class="auth-field"><label data-i18n="email">이메일</label><input id="suEmail" type="email" placeholder="teacher@school.kr" data-i18n-placeholder="emailPlaceholder" autocomplete="email"></div>
         <div class="auth-field"><label data-i18n="signupPassword">비밀번호 (6자 이상)</label><input id="suPw" type="password" placeholder="비밀번호 입력" data-i18n-placeholder="passwordPlaceholder" autocomplete="new-password"></div>
+        <div class="auth-field"><label data-i18n="signupPasswordConfirm">비밀번호 확인</label><input id="suPw2" type="password" placeholder="비밀번호 다시 입력" data-i18n-placeholder="passwordConfirmPlaceholder" autocomplete="new-password"></div>
+        <div class="auth-help" data-i18n="signupSecurityHelp">비밀번호는 6자 이상이어야 하며, 가입 후 인증 메일을 보내드립니다.</div>
         <div class="auth-err" id="suErr"></div>
         <button class="auth-submit" id="suBtn" onclick="doSignup()" data-i18n="signupSubmit">가입하기</button>
       </div>
@@ -1216,6 +1318,16 @@
       <button class="auth-guest" id="guestBtn" onclick="doGuest()" data-i18n="guestStart">비회원으로 시작</button>
       <div class="auth-err" id="guestErr"></div>
       <div class="auth-guest-note" data-i18n="guestNote">웹에서의 분석 조회·데이터 영구 보관은 회원만 가능해요. 비회원으로 기록한 자료는 나중에 가입하면 그대로 이어집니다.</div>
+    </div>
+  </div>
+  <div class="verify-banner" id="verifyBanner" role="status">
+    <div class="verify-copy">
+      <b data-i18n="emailVerificationTitle">이메일 인증을 완료해 주세요</b>
+      <span id="verifyBannerText">가입한 이메일로 보낸 인증 링크를 눌러 주세요.</span>
+    </div>
+    <div class="verify-actions">
+      <button type="button" data-action="resend-verification" data-i18n="resendVerification">재전송</button>
+      <button type="button" class="primary" data-action="refresh-verification" data-i18n="checkVerification">인증 확인</button>
     </div>
   </div>
 
@@ -1980,6 +2092,7 @@
         <div class="field"><label data-i18n="name">이름</label><input class="tin" id="upName" type="text" placeholder="홍길동" data-i18n-placeholder="namePlaceholder" maxlength="20"></div>
         <div class="field"><label data-i18n="email">이메일</label><input class="tin" id="upEmail" type="email" placeholder="teacher@school.kr" data-i18n-placeholder="emailPlaceholder" autocomplete="email"></div>
         <div class="field"><label data-i18n="signupPassword">비밀번호 (6자 이상)</label><input class="tin" id="upPw" type="password" placeholder="비밀번호 입력" data-i18n-placeholder="passwordPlaceholder" autocomplete="new-password"></div>
+        <div class="field"><label data-i18n="signupPasswordConfirm">비밀번호 확인</label><input class="tin" id="upPw2" type="password" placeholder="비밀번호 다시 입력" data-i18n-placeholder="passwordConfirmPlaceholder" autocomplete="new-password"></div>
         <div class="auth-err" id="upErr"></div>
       </div>
       <div class="sheet-foot">
@@ -2195,19 +2308,25 @@ let db=null, fbUser=null, saveT=null, unsubSync=null;
 const I18N={
   ko:{
     appTitle:'FBA 기록·분석', appSub:'특수교육 현장용 기능평가 앱', language:'언어', languageSettingSub:'앱 화면 언어',
-    loginTab:'로그인', signupTab:'회원가입', email:'이메일', password:'비밀번호', signupPassword:'비밀번호 (6자 이상)',
-    name:'이름', loginSubmit:'로그인', signupSubmit:'가입하기', emailPlaceholder:'teacher@school.kr', passwordPlaceholder:'비밀번호 입력', namePlaceholder:'홍길동',
+    loginTab:'로그인', signupTab:'회원가입', email:'이메일', password:'비밀번호', signupPassword:'비밀번호 (6자 이상)', signupPasswordConfirm:'비밀번호 확인',
+    name:'이름', loginSubmit:'로그인', signupSubmit:'가입하기', emailPlaceholder:'teacher@school.kr', passwordPlaceholder:'비밀번호 입력', passwordConfirmPlaceholder:'비밀번호 다시 입력', namePlaceholder:'홍길동',
     orText:'또는', guestStart:'비회원으로 시작', guestNote:'웹에서의 분석 조회·데이터 영구 보관은 회원만 가능해요. 비회원으로 기록한 자료는 나중에 가입하면 그대로 이어집니다.',
+    forgotPassword:'비밀번호를 잊으셨나요?', signupSecurityHelp:'비밀번호는 6자 이상이어야 하며, 가입 후 인증 메일을 보내드립니다.',
+    passwordResetSent:'비밀번호 재설정 메일을 보냈어요. 메일함을 확인해 주세요.', enterEmailForReset:'재설정 메일을 받을 이메일을 입력해 주세요.',
+    emailVerificationTitle:'이메일 인증을 완료해 주세요', emailVerificationText:'{email} 주소로 보낸 인증 링크를 눌러 주세요. 인증 후 아래 확인 버튼을 누르면 상태가 갱신됩니다.',
+    verificationSent:'인증 메일을 보냈어요. 메일함을 확인해 주세요.', verificationSendFailed:'인증 메일 전송에 실패했어요. 잠시 후 다시 시도해 주세요.',
+    resendVerification:'재전송', checkVerification:'인증 확인', emailVerifiedDone:'이메일 인증이 확인됐어요.', emailStillUnverified:'아직 인증이 확인되지 않았어요. 메일의 인증 링크를 먼저 눌러 주세요.',
     guestMode:'비회원 이용 중', guestUpgradeTitle:'가입하고 데이터 지키기', guestUpgradeSub:'지금까지 기록한 자료가 그대로 이어져요 · 웹에서 조회 가능', guestUpgradeBtn:'가입하고 이어받기',
     guestSaved:'가입 완료 · 데이터가 안전하게 연결됐어요', guestErrEmailUsed:'이미 가입된 이메일이에요. 로그아웃 후 그 계정으로 로그인하세요.', guestSignout:'비회원 종료 (기록 사라짐)',
     guestSignoutConfirm:'비회원으로 기록한 자료는 이 기기에서 사라질 수 있어요. 그래도 종료할까요? (가입하면 안전하게 보관됩니다)',
     pleaseWait:'잠시만요…', errUserNotFound:'등록되지 않은 이메일이에요', errWrongPassword:'비밀번호가 틀렸어요', errInvalidCredential:'이메일 또는 비밀번호가 올바르지 않아요',
-    errEmailInUse:'이미 사용 중인 이메일이에요', errWeakPassword:'비밀번호는 6자 이상이어야 해요', errInvalidEmail:'이메일 형식이 올바르지 않아요', errTooMany:'잠시 후 다시 시도해 주세요',
+    errEmailInUse:'이미 사용 중인 이메일이에요', errWeakPassword:'비밀번호는 6자 이상이어야 해요', errPasswordMismatch:'비밀번호가 서로 일치하지 않아요', errInvalidEmail:'이메일 형식이 올바르지 않아요', errTooMany:'잠시 후 다시 시도해 주세요',
+    errMissingEmail:'이메일을 입력해 주세요', errNetwork:'네트워크 연결을 확인해 주세요',
     errGeneric:'오류가 발생했어요 ({code})', enterName:'이름을 입력해 주세요',
     studioLogo:'FBA 작업실<span>데스크톱 분석 환경</span>', students:'학생', dashboard:'대시보드', analysis:'분석', notesShort:'관찰 노트', pdfReport:'PDF 리포트',
     settings:'설정', signout:'로그아웃', user:'사용자', synced:'동기화됨', savePdf:'PDF 저장',
     recording:'기록 중', todayRecords:'오늘 기록', abcIncomplete:'ABC 미완성', thisWeek:'이번 주 합계', todayShort:'오늘', abcShort:'ABC', weekShort:'주간',
-    observationNotes:'관찰 노트', noteSub:'면담 · 척도 · 메모', open:'열기', closeView:'화면 닫기', memoCount:'메모 {n}', scaleDone:'척도 ✓', interviewDone:'면담 ✓',
+    observationNotes:'관찰 노트', noteSub:'면담 · 척도 · 메모', open:'열기', close:'닫기', closeView:'화면 닫기', memoCount:'메모 {n}', scaleDone:'척도 ✓', interviewDone:'면담 ✓',
     latencyRunning:'지연시간 측정 중 — 행동 버튼을 눌러 종료', cancel:'취소',
     intervalObservingOx:'관찰 중 — 간격 종료 시 O/X 입력', intervalObservingSample:'관찰 중 — 간격 종료 시 코드 입력',
     withBehavior:'발생 간격', withoutBehavior:'미발생 간격', occurrence:'발생률', endObservation:'관찰 종료',
@@ -2246,19 +2365,25 @@ const I18N={
   },
   en:{
     appTitle:'FBA Record & Analysis', appSub:'Functional assessment for special education teams', language:'Language', languageSettingSub:'App display language',
-    loginTab:'Log in', signupTab:'Sign up', email:'Email', password:'Password', signupPassword:'Password (6+ characters)',
-    name:'Name', loginSubmit:'Log in', signupSubmit:'Create account', emailPlaceholder:'teacher@school.edu', passwordPlaceholder:'Enter password', namePlaceholder:'Your name',
+    loginTab:'Log in', signupTab:'Sign up', email:'Email', password:'Password', signupPassword:'Password (6+ characters)', signupPasswordConfirm:'Confirm password',
+    name:'Name', loginSubmit:'Log in', signupSubmit:'Create account', emailPlaceholder:'teacher@school.edu', passwordPlaceholder:'Enter password', passwordConfirmPlaceholder:'Enter password again', namePlaceholder:'Your name',
     orText:'or', guestStart:'Continue as guest', guestNote:'Web analysis viewing & permanent backup require an account. Records made as a guest carry over when you sign up.',
+    forgotPassword:'Forgot password?', signupSecurityHelp:'Passwords must be at least 6 characters. A verification email will be sent after signup.',
+    passwordResetSent:'Password reset email sent. Please check your inbox.', enterEmailForReset:'Enter the email address for password reset.',
+    emailVerificationTitle:'Please verify your email', emailVerificationText:'Open the verification link sent to {email}. After verifying, tap Check verification below.',
+    verificationSent:'Verification email sent. Please check your inbox.', verificationSendFailed:'Could not send the verification email. Please try again later.',
+    resendVerification:'Resend', checkVerification:'Check verification', emailVerifiedDone:'Email verification confirmed.', emailStillUnverified:'Email is not verified yet. Please open the verification link first.',
     guestMode:'Using as guest', guestUpgradeTitle:'Sign up & keep your data', guestUpgradeSub:'Your records carry over · viewable on the web', guestUpgradeBtn:'Sign up & carry over',
     guestSaved:'Account created · your data is safely linked', guestErrEmailUsed:'That email already has an account. Sign out and log in with it.', guestSignout:'Exit guest (records may be lost)',
     guestSignoutConfirm:'Records made as a guest may be lost on this device. Exit anyway? (Sign up to keep them safely.)',
     pleaseWait:'Please wait...', errUserNotFound:'No account was found for this email.', errWrongPassword:'The password is incorrect.', errInvalidCredential:'The email or password is incorrect.',
-    errEmailInUse:'This email is already in use.', errWeakPassword:'Use a password with at least 6 characters.', errInvalidEmail:'Enter a valid email address.', errTooMany:'Too many attempts. Please try again later.',
+    errEmailInUse:'This email is already in use.', errWeakPassword:'Use a password with at least 6 characters.', errPasswordMismatch:'Passwords do not match.', errInvalidEmail:'Enter a valid email address.', errTooMany:'Too many attempts. Please try again later.',
+    errMissingEmail:'Enter your email address.', errNetwork:'Check your network connection.',
     errGeneric:'An error occurred ({code})', enterName:'Enter your name.',
     studioLogo:'FBA Studio<span>Desktop analysis workspace</span>', students:'Students', dashboard:'Dashboard', analysis:'Analysis', notesShort:'Notes', pdfReport:'PDF Report',
     settings:'Settings', signout:'Sign out', user:'User', synced:'Synced', savePdf:'Save PDF',
     recording:'Recording', todayRecords:'Today', abcIncomplete:'ABC incomplete', thisWeek:'This week', todayShort:'Today', abcShort:'ABC', weekShort:'Week',
-    observationNotes:'Observation Notes', noteSub:'Interview · Scale · Memo', open:'Open', closeView:'Close View', memoCount:'Memo {n}', scaleDone:'Scale ✓', interviewDone:'Interview ✓',
+    observationNotes:'Observation Notes', noteSub:'Interview · Scale · Memo', open:'Open', close:'Close', closeView:'Close View', memoCount:'Memo {n}', scaleDone:'Scale ✓', interviewDone:'Interview ✓',
     latencyRunning:'Latency timer running - tap a behavior to stop', cancel:'Cancel',
     intervalObservingOx:'Observing - mark O/X at the end of each interval', intervalObservingSample:'Observing - choose a code at the end of each interval',
     withBehavior:'With behavior', withoutBehavior:'Without', occurrence:'Occurrence', endObservation:'End Observation',
@@ -2524,17 +2649,73 @@ function errMsg(code){
     'auth/email-already-in-use':msg('errEmailInUse'),
     'auth/weak-password':msg('errWeakPassword'),
     'auth/invalid-email':msg('errInvalidEmail'),
+    'auth/missing-email':msg('errMissingEmail'),
     'auth/too-many-requests':msg('errTooMany'),
+    'auth/network-request-failed':msg('errNetwork'),
   }[code]||msg('errGeneric',{code});
+}
+
+function updateVerificationBanner(){
+  const banner=$('#verifyBanner');
+  if(!banner) return;
+  const needs=!!(fbUser && !fbUser.isAnonymous && !fbUser.emailVerified);
+  banner.classList.toggle('show',needs);
+  const text=$('#verifyBannerText');
+  if(text&&needs) text.textContent=msg('emailVerificationText',{email:fbUser.email||''});
+}
+
+async function sendVerificationEmail(user=fbAuth.currentUser,{quiet=false}={}){
+  if(!user || user.isAnonymous || user.emailVerified) return true;
+  try{
+    await user.sendEmailVerification();
+    if(!quiet) toast(msg('verificationSent'));
+    return true;
+  }catch(e){
+    console.warn('이메일 인증 메일 전송 실패:', e.code || e.message || e);
+    if(!quiet) toast(e.code?errMsg(e.code):msg('verificationSendFailed'));
+    return false;
+  }
+}
+
+async function resendVerificationEmail(){
+  await sendVerificationEmail(fbAuth.currentUser);
+  updateVerificationBanner();
+}
+
+async function refreshEmailVerification(){
+  const user=fbAuth.currentUser;
+  if(!user) return;
+  try{
+    await user.reload();
+    fbUser=fbAuth.currentUser;
+    updateVerificationBanner();
+    toast(fbUser?.emailVerified?msg('emailVerifiedDone'):msg('emailStillUnverified'));
+  }catch(e){
+    toast(e.code?errMsg(e.code):msg('errGeneric',{code:e.message||'verify'}));
+  }
 }
 
 // ── 로그인 ──
 async function doLogin(){
   const email=document.getElementById('liEmail').value.trim();
   const pw=document.getElementById('liPw').value;
+  if(!email){authErr('liErr',msg('errMissingEmail'));return;}
+  if(!pw){authErr('liErr',msg('errInvalidCredential'));return;}
   authErr('liErr',''); authBtnState('liBtn',true,msg('loginSubmit'));
   try{ await fbAuth.signInWithEmailAndPassword(email,pw); }
   catch(e){ authErr('liErr',errMsg(e.code)); authBtnState('liBtn',false,msg('loginSubmit')); }
+}
+
+async function doPasswordReset(){
+  const email=document.getElementById('liEmail').value.trim();
+  if(!email){authErr('liErr',msg('enterEmailForReset'));return;}
+  authErr('liErr','');
+  try{
+    await fbAuth.sendPasswordResetEmail(email);
+    authErr('liErr',msg('passwordResetSent'));
+  }catch(e){
+    authErr('liErr',errMsg(e.code));
+  }
 }
 
 // ── 회원가입 ──
@@ -2542,12 +2723,18 @@ async function doSignup(){
   const name=document.getElementById('suName').value.trim();
   const email=document.getElementById('suEmail').value.trim();
   const pw=document.getElementById('suPw').value;
+  const pw2=document.getElementById('suPw2').value;
   if(!name){authErr('suErr',msg('enterName'));return;}
+  if(!email){authErr('suErr',msg('errMissingEmail'));return;}
+  if(pw.length<6){authErr('suErr',msg('errWeakPassword'));return;}
+  if(pw!==pw2){authErr('suErr',msg('errPasswordMismatch'));return;}
   authErr('suErr',''); authBtnState('suBtn',true,msg('signupSubmit'));
   try{
     const cred=await fbAuth.createUserWithEmailAndPassword(email,pw);
     await cred.user.updateProfile({displayName:name});
     await fbStore.collection('users').doc(cred.user.uid).set({name,email,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+    await sendVerificationEmail(cred.user,{quiet:true});
+    toast(msg('verificationSent'));
   }catch(e){ authErr('suErr',errMsg(e.code)); authBtnState('suBtn',false,msg('signupSubmit')); }
 }
 
@@ -2571,7 +2758,11 @@ async function doUpgrade(){
   const name=($('#upName')||{}).value?.trim()||'';
   const email=($('#upEmail')||{}).value?.trim()||'';
   const pw=($('#upPw')||{}).value||'';
+  const pw2=($('#upPw2')||{}).value||'';
   if(!name){authErr('upErr',msg('enterName'));return;}
+  if(!email){authErr('upErr',msg('errMissingEmail'));return;}
+  if(pw.length<6){authErr('upErr',msg('errWeakPassword'));return;}
+  if(pw!==pw2){authErr('upErr',msg('errPasswordMismatch'));return;}
   if(!fbUser||!fbUser.isAnonymous){authErr('upErr',appLang==='en'?'Not in guest mode.':'비회원 상태가 아니에요.');return;}
   authErr('upErr',''); authBtnState('upBtn',true,msg('guestUpgradeBtn'));
   try{
@@ -2580,9 +2771,10 @@ async function doUpgrade(){
     await result.user.updateProfile({displayName:name});
     await fbStore.collection('users').doc(result.user.uid).set({name,email,createdAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});
     fbUser=result.user;
+    await sendVerificationEmail(result.user,{quiet:true});
     closeUpgradeSheet();
     renderSettings();
-    toast(msg('guestSaved'));
+    toast(msg('guestSaved')+' · '+msg('verificationSent'));
   }catch(e){
     authBtnState('upBtn',false,msg('guestUpgradeBtn'));
     const m=e.code==='auth/email-already-in-use'?msg('guestErrEmailUsed'):errMsg(e.code);
@@ -2593,6 +2785,7 @@ function openUpgradeSheet(){
   const nm=$('#upName'); if(nm)nm.value=fbUser?.displayName||'';
   const em=$('#upEmail'); if(em)em.value='';
   const pw=$('#upPw'); if(pw)pw.value='';
+  const pw2=$('#upPw2'); if(pw2)pw2.value='';
   authErr('upErr','');
   $('#upgradeScrim').classList.add('show');$('#upgradeSheet').classList.add('open');
 }
@@ -2606,19 +2799,6 @@ function updateAccountUI(){
   const ue=document.getElementById('settingUserEmail');
   if(un) un.textContent = guest ? (msg('guestMode')+' · '+msg('guestSignout')) : ((fbUser?.displayName||fbUser?.email||msg('user'))+' · '+msg('signout'));
   if(ue) ue.textContent = guest ? '' : (fbUser?.email||'');
-}
-
-// ── 로그아웃 ──
-async function doSignout(){
-  if(!confirm(localText('로그아웃 하시겠어요?'))) return;
-  // 모든 리스너 해제
-  if(unsubSync){unsubSync();unsubSync=null;}
-  Object.values(sharedListeners).forEach(u=>u());
-  sharedListeners={};
-  sharedStudentIds=[];
-  // db 초기화 (다음 로그인 시 깨끗하게 시작)
-  db=null;
-  await fbAuth.signOut();
 }
 
 // ── Firestore 문서 경로 ──
@@ -3602,35 +3782,6 @@ async function joinByCode(inputCode){
 
 // ── 공유 코드 미리보기 ──
 let joinPreviewTimer = null;
-async function previewJoinCode(val){
-  const clean = normalizeShareCode(val);
-  const preview = document.getElementById('joinPreview');
-  if(clean.length < 7){ if(preview) preview.classList.remove('show'); return; }
-  clearTimeout(joinPreviewTimer);
-  joinPreviewTimer = setTimeout(async()=>{
-    try{
-      const snap = await FS.code(clean).get();
-      if(!preview) return;
-      if(snap.exists){
-        const data = snap.data();
-        const exp = shareCodeExpiry(data);
-        const expired = !exp || exp < new Date();
-        document.getElementById('joinPreviewName').textContent = expired ? '만료된 코드예요' : (data.caseName || data.studentName || '공유 관찰');
-        const expStr = exp ? exp.toLocaleString('ko-KR') : '';
-        document.getElementById('joinPreviewSub').textContent = expired
-          ? '새 코드를 요청하세요'
-          : `참가 가능 ✓  만료: ${expStr}`;
-        preview.classList.add('show');
-        preview.style.background = expired ? '#fdf0ec' : '#eef6f5';
-      } else {
-        document.getElementById('joinPreviewName').textContent = '코드를 찾을 수 없어요';
-        document.getElementById('joinPreviewSub').textContent  = '코드를 다시 확인해 주세요';
-        preview.classList.add('show');
-        preview.style.background = '#fdf0ec';
-      }
-    }catch(e){}
-  }, 500);
-}
 
 // ── 공유 학생 나가기 ──
 async function leaveShared(sid){
@@ -3653,6 +3804,8 @@ async function doSignout(){
   else { if(!confirm(localText('로그아웃 하시겠어요?'))) return; }
   try{ await persistNow(); }catch(e){ console.warn('로그아웃 전 저장 실패:', e); }
   clearClientSession();
+  fbUser=null;
+  updateVerificationBanner();
   await fbAuth.signOut();
 }
 
@@ -3662,6 +3815,7 @@ fbAuth.onAuthStateChanged(async user => {
   if(!user){
     clearClientSession();
     fbUser = null;
+    updateVerificationBanner();
     if(wall) wall.classList.remove('hidden');
     authBtnState('liBtn', false, msg('loginSubmit'));
     authBtnState('suBtn', false, msg('signupSubmit'));
@@ -3674,6 +3828,7 @@ fbAuth.onAuthStateChanged(async user => {
   await initApp();
   if(wall) wall.classList.add('hidden');
   startSync();
+  updateVerificationBanner();
 });
 
 async function initApp(){
@@ -6638,7 +6793,7 @@ function saveTimeEdit(){
 // ═══════════════════════════════════════
 let stTab='dashboard', stSid=null;
 
-function isDesktop(){ return window.innerWidth>=1024; }
+function isDesktop(){ return false; }
 
 // 작업실 진입점 — initApp 후 호출
 function initStudio(){
@@ -6952,80 +7107,6 @@ function renderStPdf(){
 }
 
 // ── 설정 ──
-function renderStSettingsLegacy(){
-  const body=$('#stBody'); if(!body) return;
-
-  // A/C 칩
-  const aChipsHtml=(db.aChips||[]).map(c=>`
-    <span class="st-chip" data-edit-chip="a:${c.id}">
-      ${c.fav?'<span class="star">★</span>':''}${escHtml(localText(c.text))}
-    </span>`).join('');
-  const cChipsHtml=(db.cChips||[]).map(c=>`
-    <span class="st-chip" data-edit-chip="c:${c.id}">
-      ${c.fav?'<span class="star">★</span>':''}${escHtml(localText(c.text))}
-    </span>`).join('');
-
-  body.innerHTML=`
-    <div class="st-section-title">${appLang==='en'?'Settings':'설정'}</div>
-    <div class="st-settings-grid">
-
-      <!-- 학생 명단 -->
-      <div class="settings-panel">
-        <div class="st-set-head">
-          <h3>${appLang==='en'?'Student List':'학생 명단'}</h3>
-          <button class="st-set-add" data-action="add-student">${appLang==='en'?'+ Add':'＋ 추가'}</button>
-        </div>
-        ${(db.students||[]).map(s=>`
-          <div class="st-set-item" data-edit-student="${s.id}">
-            <div style="width:34px;height:34px;border-radius:10px;background:${s.color};display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;font-weight:800;flex:none">${s.name[0]}</div>
-            <div style="flex:1;min-width:0">
-              <div style="font-size:13.5px;font-weight:700;color:var(--ink)">${escHtml(localText(s.name))}</div>
-              <div style="font-size:11.5px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtml(localText(s.sub||''))}</div>
-            </div>
-            <button class="st-set-edit" data-edit-student="${s.id}">${appLang==='en'?'Edit':'수정'}</button>
-          </div>`).join('')}
-      </div>
-
-      <!-- 행동 정의 -->
-      <div class="settings-panel">
-        <div class="st-set-head">
-          <h3>${appLang==='en'?'Behavior Definitions':'행동 정의'}</h3>
-          <button class="st-set-add" data-action="add-behavior">${appLang==='en'?'+ Add':'＋ 추가'}</button>
-        </div>
-        ${(db.behaviors||[]).map(b=>`
-          <div class="st-set-item" data-edit-behavior="${b.id}">
-            <div style="width:34px;height:34px;border-radius:10px;background:${b.color};display:flex;align-items:center;justify-content:center;flex:none">${svg(b.icon).replace('stroke="currentColor"','stroke="#fff"')}</div>
-            <div style="flex:1;min-width:0">
-              <div style="font-size:13.5px;font-weight:700;color:var(--ink)">${escHtml(localText(b.name))}</div>
-              <div style="font-size:11.5px;color:var(--sub)">${b.type==='freq'?(appLang==='en'?'Count':'빈도형'):(appLang==='en'?'Duration':'시간형')}</div>
-            </div>
-            <button class="st-set-edit" data-edit-behavior="${b.id}">${appLang==='en'?'Edit':'수정'}</button>
-          </div>`).join('')}
-        <div style="margin-top:12px">
-          <button class="st-set-add" style="background:#eef6f5;color:#0F6E6C;width:100%;justify-content:center" data-action="open-order">${appLang==='en'?'↕ Edit Student Behavior Order':'↕ 학생별 행동 순서 편집'}</button>
-        </div>
-      </div>
-
-      <!-- 선행사건 / 후속결과 칩 -->
-      <div class="settings-panel">
-        <div class="st-set-head"><h3>${appLang==='en'?'Antecedents (A)':'선행사건 (A)'}</h3></div>
-        <div class="st-chip-row">${aChipsHtml||`<span style="font-size:12.5px;color:var(--sub)">${appLang==='en'?'None':'없음'}</span>`}</div>
-        <div class="st-add-chip-row">
-          <input id="stAddA" placeholder="${appLang==='en'?'New antecedent':'새 선행사건'}" maxlength="20">
-          <button data-action="st-add-chip-a">${appLang==='en'?'Add':'추가'}</button>
-        </div>
-        <div class="st-set-head" style="margin-top:18px"><h3>${appLang==='en'?'Consequences (C)':'후속결과 (C)'}</h3></div>
-        <div class="st-chip-row">${cChipsHtml||`<span style="font-size:12.5px;color:var(--sub)">${appLang==='en'?'None':'없음'}</span>`}</div>
-        <div class="st-add-chip-row">
-          <input id="stAddC" placeholder="${appLang==='en'?'New consequence':'새 후속결과'}" maxlength="20">
-          <button data-action="st-add-chip-c">${appLang==='en'?'Add':'추가'}</button>
-        </div>
-      </div>
-
-    </div>`;
-  translateStaticDom(body);
-}
-
 // ── 동기화 UI (데스크톱) ──
 function refreshDesktopSettingsIfOpen(){
   if(typeof isDesktop==='function' && isDesktop() && stTab==='settings') renderStSettings();
@@ -8142,14 +8223,14 @@ function coachSteps(){
   return en?[
     {tab:'record',selector:'.hero-stats',kicker:'Record',title:'Watch today at a glance',text:'Today, incomplete ABC, and weekly totals update for the selected student.'},
     {tab:'record',selector:'.hero-fabs',kicker:'Context',title:'Add background and notes',text:'Use setting events for daily context and observation notes for interviews, scales, and memos.'},
-    {tab:'record',selector:'#behaviorGrid .btn',kicker:'Fast tap',title:'Tap or long-press behaviors',text:'Tap once to record quickly. Long-press for 1.5 seconds to open ABC entry.'},
+    {tab:'record',selector:'#behaviorGrid .btn .disc',shape:'circle',kicker:'Fast tap',title:'Tap or long-press behaviors',text:'Tap once to record quickly. Long-press for 1.5 seconds to open ABC entry.'},
     {tab:'review',selector:'#s-review .daystrip',kicker:'Review',title:'Complete ABC later',text:'Choose a day and tap an incomplete record to fill in antecedents and consequences.'},
     {tab:'analysis',selector:'#analysisBody',kicker:'Analysis',title:'Use records as evidence',text:'Patterns, indirect assessment data, IOA, and hypotheses collect here as records build up.'},
     {tab:'settings',selector:'#s-settings .setgrp',kicker:'Settings',title:'Prepare the recording items',text:'Edit students, background events, activities, behaviors, antecedents, consequences, MAS, and interviews here.'}
   ]:[
     {tab:'record',selector:'.hero-stats',kicker:'기록',title:'오늘 상태를 한눈에 봅니다',text:'선택한 학생의 오늘 기록, ABC 미완성, 주간 합계가 바로 갱신됩니다.'},
     {tab:'record',selector:'.hero-fabs',kicker:'맥락',title:'배경사건과 관찰노트를 남깁니다',text:'배경사건은 그날의 컨디션, 관찰노트는 면담·척도·메모 같은 간접평가 근거입니다.'},
-    {tab:'record',selector:'#behaviorGrid .btn',kicker:'빠른 기록',title:'짧게 누르고, 길게 눌러요',text:'짧게 누르면 바로 기록됩니다. 1.5초 길게 누르면 ABC 입력창이 열립니다.'},
+    {tab:'record',selector:'#behaviorGrid .btn .disc',shape:'circle',kicker:'빠른 기록',title:'짧게 누르고, 길게 눌러요',text:'짧게 누르면 바로 기록됩니다. 1.5초 길게 누르면 ABC 입력창이 열립니다.'},
     {tab:'review',selector:'#s-review .daystrip',kicker:'검토',title:'ABC는 나중에 완성할 수 있어요',text:'날짜를 고르고 미완성 기록을 누르면 선행사건과 후속결과를 보완할 수 있습니다.'},
     {tab:'analysis',selector:'#analysisBody',kicker:'분석',title:'기록을 근거로 가설을 세웁니다',text:'기록이 쌓이면 패턴, 간접평가 자료, IOA, 기능가설을 한 흐름으로 확인합니다.'},
     {tab:'settings',selector:'#s-settings .setgrp',kicker:'설정',title:'기록 항목을 미리 준비합니다',text:'학생, 배경사건, 활동, 행동정의, 선행사건, 후속결과, MAS와 면담 질문을 편집합니다.'}
@@ -8184,7 +8265,7 @@ function ensureCoachTab(tab,stab){
 }
 function findCoachTarget(selector){
   let el=document.querySelector(selector);
-  if(selector==='#behaviorGrid .btn'&&!el)el=$('#behaviorGrid');
+  if((selector==='#behaviorGrid .btn .disc'||selector==='#behaviorGrid .btn')&&!el)el=$('#behaviorGrid .btn')||$('#behaviorGrid');
   if(selector==='#analysisBody'&&(!el||!el.children.length))el=$('#s-analysis .pagehead');
   if(selector==='#s-settings .setgrp'&&!el)el=$('#s-settings .pagehead');
   return el;
@@ -8197,31 +8278,35 @@ function renderCoachStep(){
   window.setTimeout(()=>{
     const target=findCoachTarget(step.selector);
     if(!target){nextCoach();return;}
-    target.scrollIntoView({block:'center',inline:'nearest',behavior:'smooth'});
-    window.setTimeout(()=>placeCoach(step,target,steps.length),180);
+    target.scrollIntoView({block:'center',inline:'nearest',behavior:'auto'});
+    window.setTimeout(()=>placeCoach(step,target,steps.length),120);
   },80);
 }
 function placeCoach(step,target,total){
   const overlay=$('#coachOverlay'), hole=$('#coachHole'), card=$('#coachCard');
   if(!overlay||!hole||!card)return;
   const r=target.getBoundingClientRect();
-  const pad=8;
+  const pad=step.shape==='circle'?10:8;
   const vw=window.innerWidth, vh=window.innerHeight;
   const left=Math.max(12,r.left-pad), top=Math.max(12,r.top-pad);
   const right=Math.min(vw-12,r.right+pad), bottom=Math.min(vh-12,r.bottom+pad);
   hole.style.left=left+'px'; hole.style.top=top+'px'; hole.style.width=Math.max(40,right-left)+'px'; hole.style.height=Math.max(40,bottom-top)+'px';
+  hole.style.borderRadius=step.shape==='circle'?'999px':'22px';
   $('#coachKicker').textContent=step.kicker;
   $('#coachTitle').textContent=step.title;
   $('#coachText').textContent=step.text;
   $('#coachSkip').textContent=appLang==='en'?'Close':'닫기';
   $('#coachNext').textContent=coachIndex===total-1?(appLang==='en'?'Done':'완료'):(appLang==='en'?'Next':'다음');
   $('#coachDots').innerHTML=Array.from({length:total},(_,i)=>`<span class="coach-dot ${i===coachIndex?'on':''}"></span>`).join('');
+  overlay.classList.add('show');
   const cardH=card.offsetHeight||170;
   const below=bottom+16+cardH<vh-12;
   card.classList.toggle('below',below);
   card.classList.toggle('above',!below);
   card.style.top=(below?bottom+16:Math.max(12,top-16-cardH))+'px';
-  overlay.classList.add('show');
+  const cardRect=card.getBoundingClientRect();
+  const arrowLeft=Math.max(24,Math.min(cardRect.width-40,((left+right)/2)-cardRect.left-8));
+  card.style.setProperty('--coach-arrow-left',arrowLeft+'px');
 }
 
 // ============ behavior long press ============
@@ -8347,8 +8432,6 @@ document.addEventListener('click',e=>{
     else if(a==='del-record')delRecord();
     else if(a==='add-student'){$('#switcher').classList.remove('open');openEditor('student',null);}
     else if(a==='add-behavior')openEditor('behavior',null);
-    else if(a==='add-chip-a'){const i=$('#addA');if(i&&i.value.trim()){db.aChips.push({id:uid('ch'),text:i.value.trim(),fav:false});i.value='';persist();renderSettings();renderChips();}}
-    else if(a==='add-chip-c'){const i=$('#addC');if(i&&i.value.trim()){db.cChips.push({id:uid('ch'),text:i.value.trim(),fav:false});i.value='';persist();renderSettings();renderChips();}}
     else if(a==='toggle-fav'){state.ed.fav=!state.ed.fav;renderEditor();}
     else if(a==='toggle-target'){syncEd();state.ed.target=!state.ed.target;renderEditor();}
     else if(a==='editor-save'){if(state.masEd)saveMasEditor();else if(state.ivEd)saveIvEditor();else if(state.actEd)saveActEditor();else if(state.seEd)saveSeEditor();else saveEditor();}
@@ -8359,6 +8442,8 @@ document.addEventListener('click',e=>{
     else if(a==='open-coach')openCoach({manual:true});
     else if(a==='close-coach')closeCoach(true);
     else if(a==='next-coach')nextCoach();
+    else if(a==='resend-verification')resendVerificationEmail();
+    else if(a==='refresh-verification')refreshEmailVerification();
     else if(a==='add-memo')addMemo();
     else if(a==='close-hypothesis')closeHypothesisEditor();
     else if(a==='save-hypothesis')saveHypothesis();
@@ -8456,8 +8541,6 @@ document.addEventListener('input',e=>{
 });
 document.addEventListener('keydown',e=>{
   if(e.key!=='Enter')return;
-  if(e.target.id==='addA'){const i=e.target;if(i.value.trim()){db.aChips.push({id:uid('ch'),text:i.value.trim(),fav:false});i.value='';persist();renderSettings();}}
-  if(e.target.id==='addC'){const i=e.target;if(i.value.trim()){db.cChips.push({id:uid('ch'),text:i.value.trim(),fav:false});i.value='';persist();renderSettings();}}
 });
 
 // ============ init ============
