@@ -109,7 +109,7 @@
   .sect-label em{font-style:normal; font-weight:500; font-size:11.5px; color:#9aa6aa;}
   .grid{display:grid; grid-template-columns:repeat(3,1fr); gap:13px; padding:12px 20px 10px;}
   .btn{position:relative; aspect-ratio:1/1.06; border-radius:22px; border:1px solid var(--line); cursor:pointer; background:#fff; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:9px; transition:transform .08s, box-shadow .2s; padding:6px; user-select:none; -webkit-user-select:none; touch-action:manipulation;}
-  .btn[data-bh]{touch-action:none;}
+  .btn[data-bh]{touch-action:pan-y;}
   .btn:active{transform:scale(.94);}
   .btn .disc{width:54px; height:54px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; position:relative; transition:box-shadow .2s;}
   .btn .disc svg{width:27px;height:27px;}
@@ -131,14 +131,6 @@
   @keyframes rip{to{transform:scale(2.6); opacity:0;}}
 
   /* behavior intensity */
-  .intensity-hud{position:fixed;z-index:10040;left:50%;top:50%;width:min(300px,calc(100vw - 40px));transform:translate(-50%,-50%) scale(.96);opacity:0;pointer-events:none;background:#fff;border:1px solid rgba(15,110,108,.18);border-radius:20px;padding:14px 16px 13px;box-shadow:0 18px 52px -22px rgba(14,40,45,.45);transition:opacity .12s ease,transform .12s ease;}
-  .intensity-hud.show{opacity:1;transform:translate(-50%,-50%) scale(1);}
-  .intensity-hud .ih-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:9px;}
-  .intensity-hud .ih-k{font-size:11.5px;font-weight:900;color:var(--sub);}
-  .intensity-hud .ih-v{font-size:23px;font-weight:950;color:var(--primary);font-variant-numeric:tabular-nums;line-height:1;}
-  .intensity-hud .ih-track{height:13px;border-radius:999px;background:#ebe8df;overflow:hidden;}
-  .intensity-hud .ih-fill{height:100%;width:50%;border-radius:999px;background:linear-gradient(90deg,#30B8B0,#E0972F,#E2603F);transition:width .05s linear;}
-  .intensity-hud .ih-help{font-size:10.8px;color:#8d989b;font-weight:750;margin-top:8px;text-align:center;}
   .intensity-card{border:1.5px solid var(--line);border-radius:17px;background:#fff;padding:13px 14px 12px;margin:8px 0 14px;}
   .intensity-card-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px;}
   .intensity-card-title{font-size:13px;font-weight:900;color:var(--ink);display:flex;align-items:center;gap:7px;}
@@ -578,6 +570,21 @@
   .mas-edit-item .func-dot{width:9px;height:9px;border-radius:50%;flex:none;}
   .mas-edit-item .me-text{flex:1; font-size:13px; font-weight:600; color:var(--ink); line-height:1.4;}
   .mas-edit-item .me-func{font-size:10.5px; font-weight:800; padding:3px 8px; border-radius:7px; flex:none;}
+  .widget-help{font-size:12.5px;color:var(--sub);line-height:1.55;margin:0 0 12px;}
+  .widget-picked{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+  .widget-rank-chip{border:1px solid #cfe5e2;background:#eef6f5;color:var(--primary);border-radius:999px;padding:5px 9px;font-size:11px;font-weight:900;}
+  .widget-rank-chip.empty{border-color:var(--line);background:#fbfaf6;color:#9aa6aa;}
+  .widget-beh-item{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:10px;background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:11px 12px;margin-bottom:8px;cursor:pointer;}
+  .widget-beh-item.on{border-color:var(--primary);background:#eef6f5;}
+  .widget-beh-icon{width:36px;height:36px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#fff;flex:none;}
+  .widget-beh-icon svg{width:20px;height:20px;}
+  .widget-beh-main{min-width:0;}
+  .widget-beh-main b{display:block;font-size:13.5px;color:var(--ink);font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .widget-beh-main span{display:block;font-size:11px;color:var(--sub);font-weight:750;margin-top:2px;}
+  .widget-rank{min-width:30px;height:30px;border-radius:10px;background:#0F6E6C;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:950;}
+  .widget-rank.off{background:#f3f0e8;color:#9aa6aa;}
+  .widget-order{display:flex;gap:4px;margin-top:8px;}
+  .widget-order button{border:1px solid var(--line);background:#fff;color:var(--sub);border-radius:8px;padding:5px 9px;font-size:11px;font-weight:900;font-family:inherit;cursor:pointer;}
   /* 목표행동 ★ 지정 */
   .starbtn{width:30px;height:30px;border:none;background:none;cursor:pointer;font-size:18px;line-height:1;color:#cdd3d6;flex:none;font-family:inherit;padding:0;}
   .starbtn.on{color:#E0972F;}
@@ -1300,15 +1307,6 @@
     </div>
   </div>
 
-  <div id="intensityHud" class="intensity-hud" aria-hidden="true">
-    <div class="ih-top">
-      <span class="ih-k" id="intensityHudTitle">행동 강도</span>
-      <b class="ih-v" id="intensityHudValue">5/10</b>
-    </div>
-    <div class="ih-track"><div class="ih-fill" id="intensityHudFill"></div></div>
-    <div class="ih-help" id="intensityHudHelp">좌우로 드래그해 강도를 정하세요</div>
-  </div>
-
   <!-- 로그인 화면 -->
   <div id="authWall">
     <div class="auth-card">
@@ -1624,9 +1622,9 @@
           </div>
 
           <div class="gh" style="padding-top:22px"><span>홈 화면 위젯</span></div>
-          <div class="row" style="cursor:pointer" data-action="save-widget-config">
+          <div class="row" style="cursor:pointer" data-action="open-widget-settings">
             <div class="rdisc" style="background:#5E9A57">W</div>
-            <div class="rmeta"><b>위젯 설정 저장</b><span id="widgetConfigSub">현재 학생 · 앞 4개 행동</span></div>
+            <div class="rmeta"><b>위젯 설정</b><span id="widgetConfigSub">위젯 행동 1~4순위 선택</span></div>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9aa6aa" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
           </div>
 
@@ -2054,6 +2052,25 @@
           </div>
           <button class="btn-prim" style="width:100%;padding:13px;font-size:15px;border-radius:14px" data-action="create-ioa-session">세션 만들기</button>
         </div>
+      </div>
+    </div>
+
+    <!-- 홈 화면 위젯 설정 시트 -->
+    <div class="scrim" id="widgetScrim" data-action="close-widget-settings"></div>
+    <div class="sheet" id="widgetSheet" style="max-height:85%">
+      <div class="grab"></div>
+      <div class="sheet-head">
+        <div class="stit"><b>위젯 설정</b><span id="widgetSheetSub">현재 학생의 행동 중 최대 4개를 고르세요</span></div>
+        <button class="ghostbtn" data-action="close-widget-settings">닫기</button>
+      </div>
+      <div class="sheet-body">
+        <p class="widget-help">홈 화면 위젯에 표시할 행동을 1순위부터 4순위까지 지정합니다. 선택한 행동은 앱을 열지 않아도 위젯에서 바로 기록할 수 있어요.</p>
+        <div class="widget-picked" id="widgetPicked"></div>
+        <div id="widgetBehaviorList"></div>
+      </div>
+      <div class="sheet-foot">
+        <button class="btn-ghost" data-action="close-widget-settings">취소</button>
+        <button class="btn-prim" data-action="save-widget-config">저장</button>
       </div>
     </div>
 
@@ -2498,7 +2515,7 @@ const STATIC_EN={
   '활동·교시 편집':'Edit Activities / Periods','활동 추가':'Add Activity','＋ 활동 추가':'+ Add Activity',
   '기록 화면에서 활동을 고르면 이후 누르는 모든 기록에 자동으로 첨부돼요. 분석 탭에서 활동별 발생을 볼 수 있어요.':'When you pick an activity on the Record screen, it is attached to every record you tap afterward. See occurrences by activity on the Analysis tab.',
   '행동평정척도 (MAS)':'Motivation Assessment Scale (MAS)','MAS 항목 편집 / 추가':'Edit / Add MAS Items','면담 질문':'Interview Questions','면담 질문 편집 / 추가':'Edit / Add Interview Questions',
-  '계정':'Account','도움말':'Help','홈 화면 위젯':'Home Screen Widget','위젯 설정 저장':'Save Widget Setup','현재 학생 · 앞 4개 행동':'Current student · first 4 behaviors','화면 안내 다시 보기':'Show Screen Guide','탭별 핵심 기능을 코치마크로 확인':'Review key features by tab with coach marks',
+  '계정':'Account','도움말':'Help','홈 화면 위젯':'Home Screen Widget','위젯 설정':'Widget Setup','위젯 설정 저장':'Save Widget Setup','현재 학생 · 앞 4개 행동':'Current student · first 4 behaviors','위젯 행동 1~4순위 선택':'Choose widget behaviors 1-4','현재 학생의 행동 중 최대 4개를 고르세요':'Choose up to 4 behaviors for this student','홈 화면 위젯에 표시할 행동을 1순위부터 4순위까지 지정합니다. 선택한 행동은 앱을 열지 않아도 위젯에서 바로 기록할 수 있어요.':'Choose the behavior buttons shown on the home-screen widget. You can record them directly without opening the app.','비어 있음':'Empty','화면 안내 다시 보기':'Show Screen Guide','탭별 핵심 기능을 코치마크로 확인':'Review key features by tab with coach marks',
   '데이터':'Data','공유 코드로 참가 (다른 교사 학생)':'Join with Share Code (another teacher)','기록 전체 초기화':'Reset All Records',
   'MAS 항목 편집':'Edit MAS Items','항목 추가':'Add Item','＋ 항목 추가':'+ Add Item','면담 질문 편집':'Edit Interview Questions','＋ 질문 추가':'+ Add Question',
   '행동정의 편집':'Edit Behavior Definitions','＋ 행동 추가':'+ Add Behavior','현재 학생 행동 순서 편집':'Edit Current Student Behavior Order',
@@ -3972,7 +3989,7 @@ function resumeSharedListeners(){
 
 
 // ============ state ============
-const state={tab:'record',sid:'s1',timer:null,sheetId:null,sel:{a:new Set(),c:new Set()},sheetIntensity:5,sheetIntensityMax:10,lastIntensity:{},date:null,ed:null,noteTab:'memo',memoTag:'before',masTemp:{},ivTemp:{},currentEnv:'school',currentAct:'',hypSid:null,hypDraft:null};
+const state={tab:'record',sid:'s1',timer:null,sheetId:null,sel:{a:new Set(),c:new Set()},sheetIntensity:5,sheetIntensityMax:10,lastIntensity:{},date:null,ed:null,noteTab:'memo',memoTag:'before',masTemp:{},ivTemp:{},currentEnv:'school',currentAct:'',hypSid:null,hypDraft:null,widgetTemp:[]};
 try{state.currentAct=localStorage.getItem('fba_current_act')||'';}catch(_){}
 let lastUndo=null, voiceRec=null, voiceTargetId=null;
 let bMap={},sMap={};
@@ -4361,8 +4378,9 @@ function tapBehavior(bid,btn,e,opts={}){
   const eventMs=opts.eventTime||Date.now();
   const eventIso=new Date(eventMs).toISOString();
   const b=bMap[bid]; if(!b)return;
-  const recIntensityMax=clampIntensityMax(opts.intensityMax || getIntensityMax());
-  const recIntensity=opts.intensity==null?defaultIntensity(recIntensityMax,bid):clampIntensity(opts.intensity,recIntensityMax);
+  const hasExplicitIntensity=opts.intensity!=null;
+  const recIntensityMax=hasExplicitIntensity?clampIntensityMax(opts.intensityMax || getIntensityMax()):null;
+  const recIntensity=hasExplicitIntensity?clampIntensity(opts.intensity,recIntensityMax):null;
   const rip=document.createElement('span');rip.className='ripple';
   const rect=btn.getBoundingClientRect();const sz=Math.max(rect.width,rect.height);
   rip.style.width=rip.style.height=sz+'px';rip.style.left=(e.clientX-rect.left-sz/2)+'px';rip.style.top=(e.clientY-rect.top-sz/2)+'px';
@@ -4374,13 +4392,14 @@ function tapBehavior(bid,btn,e,opts={}){
       const sec=Math.max(0,Math.round((eventMs-state.timer.start)/1000));
       clearInterval(state.timer.iv);state.timer=null;
       const now=new Date().toISOString();
-      let rec={id:ulid(),sid:state.sid,bid,ts:eventIso,dur:sec,intensity:recIntensity,intensityMax:recIntensityMax,a:[],c:[],note:'',act:state.currentAct||'',
+      let rec={id:ulid(),sid:state.sid,bid,ts:eventIso,dur:sec,a:[],c:[],note:'',act:state.currentAct||'',
         observerId:fbUser?.uid||OBSERVER_ID,createdByUid:fbUser?.uid||OBSERVER_ID,createdByName:fbUser?.displayName||fbUser?.email||msg('observer'),deviceId:DEVICE_ID,env:state.currentEnv,
         updatedAt:now,deleted:false,dirty:true};
+      if(hasExplicitIntensity){rec.intensity=recIntensity;rec.intensityMax=recIntensityMax;}
       rec=captureLatency(rec); // 지연시간 자동 첨부
       Repository.putRecord(rec);renderGrid();paintStudent();
       if(openDetails) openSheet(rec.id);
-      else offerCreatedRecordUndo(rec,msg('savedQuickIntensity',{name:localText(b.name),value:recIntensity,max:recIntensityMax}));
+      else offerCreatedRecordUndo(rec,msg('savedQuick',{name:localText(b.name)}));
     }else{
       if(state.timer){clearInterval(state.timer.iv);}
       state.timer={bid,start:eventMs,iv:null};
@@ -4390,13 +4409,14 @@ function tapBehavior(bid,btn,e,opts={}){
     return;
   }
   const now2=eventIso;
-  let rec={id:ulid(),sid:state.sid,bid,ts:now2,dur:null,intensity:recIntensity,intensityMax:recIntensityMax,a:[],c:[],note:'',act:state.currentAct||'',
+  let rec={id:ulid(),sid:state.sid,bid,ts:now2,dur:null,a:[],c:[],note:'',act:state.currentAct||'',
     observerId:fbUser?.uid||OBSERVER_ID,createdByUid:fbUser?.uid||OBSERVER_ID,createdByName:fbUser?.displayName||fbUser?.email||msg('observer'),deviceId:DEVICE_ID,env:state.currentEnv,
     updatedAt:now2,deleted:false,dirty:true};
+  if(hasExplicitIntensity){rec.intensity=recIntensity;rec.intensityMax=recIntensityMax;}
   rec=captureLatency(rec); // 지연시간 자동 첨부
   Repository.putRecord(rec);renderGrid();paintStudent();
   if(openDetails) openSheet(rec.id);
-  else offerCreatedRecordUndo(rec,msg('recordedQuickIntensity',{name:localText(b.name),value:recIntensity,max:recIntensityMax}));
+  else offerCreatedRecordUndo(rec,msg('recordedQuick',{name:localText(b.name)}));
 }
 
 // ============ ABC sheet ============
@@ -5701,7 +5721,9 @@ function renderSettings(){
   setText('#consequenceManagerSub',countPhrase('consequence',(db.cChips||[]).length));
   setText('#actManagerSub',(appLang==='en'?`${(db.activities||[]).length} item${(db.activities||[]).length===1?'':'s'}`:`활동 ${(db.activities||[]).length}개`));
   setText('#seManagerSub',(appLang==='en'?`${(db.settingEvents||[]).length} item${(db.settingEvents||[]).length===1?'':'s'}`:`항목 ${(db.settingEvents||[]).length}개`));
-  setText('#widgetConfigSub',appLang==='en'?`${localText(cur()?.name||'Student')} · first ${Math.min(4,(db.behaviors||[]).length)} behaviors`:`${localText(cur()?.name||'학생')} · 앞 ${Math.min(4,(db.behaviors||[]).length)}개 행동`);
+  const widgetNames=loadWidgetSelection().map(id=>getBehaviorOrder(state.sid).find(b=>b.id===id)).filter(Boolean).map(b=>localText(b.name));
+  const widgetSub=widgetNames.length?widgetNames.join(' · '):(appLang==='en'?'Choose up to 4 widget behaviors':'위젯 행동 1~4순위 선택');
+  setText('#widgetConfigSub',widgetSub);
   if($('#behaviorManagerSheet')?.classList.contains('open')) renderBehaviorManagerList();
   if($('#antecedentManagerSheet')?.classList.contains('open')) renderChipManager('a');
   if($('#consequenceManagerSheet')?.classList.contains('open')) renderChipManager('c');
@@ -5887,8 +5909,28 @@ function refreshAll(){
 function widgetBridge(){
   return window.Capacitor?.Plugins?.WidgetBridge || null;
 }
-function widgetBehaviorConfig(){
-  return getBehaviorOrder(state.sid).slice(0,4).map(b=>({
+function widgetSelectionKey(sid=state.sid){
+  return `touchaba_widget_behaviors_${sid||'default'}`;
+}
+function loadWidgetSelection(sid=state.sid){
+  const valid=new Set(getBehaviorOrder(sid).map(b=>b.id));
+  let ids=[];
+  try{
+    const raw=localStorage.getItem(widgetSelectionKey(sid));
+    ids=raw?JSON.parse(raw):[];
+  }catch(_){ids=[];}
+  ids=Array.isArray(ids)?ids.filter(id=>valid.has(id)).slice(0,4):[];
+  return ids.length?ids:getBehaviorOrder(sid).slice(0,4).map(b=>b.id);
+}
+function saveWidgetSelection(ids,sid=state.sid){
+  const valid=new Set(getBehaviorOrder(sid).map(b=>b.id));
+  const clean=[...new Set((ids||[]).filter(id=>valid.has(id)))].slice(0,4);
+  try{localStorage.setItem(widgetSelectionKey(sid),JSON.stringify(clean));}catch(_){}
+  return clean;
+}
+function widgetBehaviorConfig(ids=loadWidgetSelection()){
+  const byId=new Map(getBehaviorOrder(state.sid).map(b=>[b.id,b]));
+  return ids.map(id=>byId.get(id)).filter(Boolean).slice(0,4).map(b=>({
     id:b.id,
     name:localText(b.name),
     icon:b.icon||'',
@@ -5896,11 +5938,75 @@ function widgetBehaviorConfig(){
     color:b.color||'#0F6E6C'
   }));
 }
+function openWidgetSettings(){
+  state.widgetTemp=loadWidgetSelection();
+  renderWidgetSettings();
+  $('#widgetScrim').classList.add('show');$('#widgetSheet').classList.add('open');
+}
+function closeWidgetSettings(){
+  $('#widgetScrim').classList.remove('show');$('#widgetSheet').classList.remove('open');
+}
+function renderWidgetSettings(){
+  const behaviors=getBehaviorOrder(state.sid);
+  const selected=state.widgetTemp||[];
+  const picked=$('#widgetPicked');
+  if(picked){
+    picked.innerHTML=Array.from({length:4},(_,i)=>{
+      const b=behaviors.find(x=>x.id===selected[i]);
+      return b?`<span class="widget-rank-chip">${i+1}. ${escHtml(localText(b.name))}</span>`:`<span class="widget-rank-chip empty">${i+1}. ${appLang==='en'?'Empty':'비어 있음'}</span>`;
+    }).join('');
+  }
+  const sub=$('#widgetSheetSub');
+  if(sub)sub.textContent=appLang==='en'?'Choose up to 4 behaviors for this student':'현재 학생의 행동 중 최대 4개를 고르세요';
+  const help=$('#widgetSheet .widget-help');
+  if(help)help.textContent=appLang==='en'
+    ?'Choose the behavior buttons shown on the home-screen widget. The order here becomes widget slot order.'
+    :'홈 화면 위젯에 표시할 행동을 1순위부터 4순위까지 지정합니다. 선택한 순서가 위젯 슬롯 순서가 됩니다.';
+  const list=$('#widgetBehaviorList'); if(!list)return;
+  if(!behaviors.length){
+    list.innerHTML=`<div class="empty" style="padding:26px 12px">${appLang==='en'?'No behaviors are available.':'위젯에 넣을 행동이 없어요.'}</div>`;
+    return;
+  }
+  list.innerHTML=behaviors.map(b=>{
+    const rank=selected.indexOf(b.id);
+    const on=rank>=0;
+    return `<div class="widget-beh-item ${on?'on':''}" data-widget-toggle="${b.id}">
+      <div class="widget-beh-icon" style="background:${b.color||'#0F6E6C'}">${svg(b.icon).replace('stroke="currentColor"','stroke="#fff"')}</div>
+      <div class="widget-beh-main">
+        <b>${escHtml(localText(b.name))}</b>
+        <span>${b.type==='dur'?(appLang==='en'?'Duration recording':'시간 기록'):(appLang==='en'?'Frequency recording':'빈도 기록')}</span>
+        ${on?`<div class="widget-order"><button data-action="widget-rank-up" data-widget-id="${b.id}">▲</button><button data-action="widget-rank-down" data-widget-id="${b.id}">▼</button></div>`:''}
+      </div>
+      <div class="widget-rank ${on?'':'off'}">${on?(rank+1):'+'}</div>
+    </div>`;
+  }).join('');
+}
+function toggleWidgetBehavior(id){
+  const arr=state.widgetTemp||[];
+  const idx=arr.indexOf(id);
+  if(idx>=0) arr.splice(idx,1);
+  else{
+    if(arr.length>=4){toast(appLang==='en'?'You can choose up to 4 behaviors.':'위젯 행동은 최대 4개까지 선택할 수 있어요.');return;}
+    arr.push(id);
+  }
+  state.widgetTemp=arr;
+  renderWidgetSettings();
+}
+function moveWidgetBehavior(id,dir){
+  const arr=state.widgetTemp||[];
+  const idx=arr.indexOf(id);
+  const next=idx+dir;
+  if(idx<0 || next<0 || next>=arr.length)return;
+  [arr[idx],arr[next]]=[arr[next],arr[idx]];
+  state.widgetTemp=arr;
+  renderWidgetSettings();
+}
 async function saveWidgetConfig(){
   const bridge=widgetBridge();
   if(!bridge?.configure){toast(localText('Android 앱에서만 위젯 설정을 저장할 수 있어요'));return;}
   const s=cur();
-  const behaviors=widgetBehaviorConfig();
+  const selected=saveWidgetSelection(Array.isArray(state.widgetTemp)?state.widgetTemp:loadWidgetSelection());
+  const behaviors=widgetBehaviorConfig(selected);
   if(!s || !behaviors.length){toast(localText('위젯에 넣을 행동이 없어요'));return;}
   const max=clampIntensityMax(db?.intensityMax || activeCase()?.intensityMax || 10);
   await bridge.configure({
@@ -5913,6 +6019,8 @@ async function saveWidgetConfig(){
     defaultIntensity:Math.ceil(max/2),
     behaviors
   });
+  closeWidgetSettings();
+  renderSettings();
   toast(localText('위젯 설정을 저장했어요'));
 }
 async function importWidgetRecords(){
@@ -8455,14 +8563,14 @@ function coachSteps(){
   return en?[
     {tab:'record',selector:'.hero-stats',kicker:'Record',title:'Watch today at a glance',text:'Today, incomplete ABC, and weekly totals update for the selected student.'},
     {tab:'record',selector:'.hero-fabs',kicker:'Context',title:'Add background and notes',text:'Use setting events for daily context and observation notes for interviews, scales, and memos.'},
-    {tab:'record',selector:'#behaviorGrid .btn .disc',shape:'circle',kicker:'Fast tap',title:'Tap or long-press behaviors',text:'Tap once to record quickly. Long-press for 1.5 seconds to open ABC entry.'},
+    {tab:'record',selector:'#behaviorGrid .btn .disc',shape:'circle',kicker:'Fast tap',title:'Tap or long-press',text:'Tap once to record quickly. Long-press for 1.5 seconds to open ABC entry. If your finger moves while scrolling, it will not be recorded.'},
     {tab:'review',selector:'#s-review .daystrip',kicker:'Review',title:'Complete ABC later',text:'Choose a day and tap an incomplete record to fill in antecedents and consequences.'},
     {tab:'analysis',selector:'#analysisBody',kicker:'Analysis',title:'Use records as evidence',text:'Patterns, indirect assessment data, IOA, and hypotheses collect here as records build up.'},
     {tab:'settings',selector:'#s-settings .setgrp',kicker:'Settings',title:'Prepare the recording items',text:'Edit students, background events, activities, behaviors, antecedents, consequences, MAS, and interviews here.'}
   ]:[
     {tab:'record',selector:'.hero-stats',kicker:'기록',title:'오늘 상태를 한눈에 봅니다',text:'선택한 학생의 오늘 기록, ABC 미완성, 주간 합계가 바로 갱신됩니다.'},
     {tab:'record',selector:'.hero-fabs',kicker:'맥락',title:'배경사건과 관찰노트를 남깁니다',text:'배경사건은 그날의 컨디션, 관찰노트는 면담·척도·메모 같은 간접평가 근거입니다.'},
-    {tab:'record',selector:'#behaviorGrid .btn .disc',shape:'circle',kicker:'빠른 기록',title:'짧게 누르고, 길게 눌러요',text:'짧게 누르면 바로 기록됩니다. 1.5초 길게 누르면 ABC 입력창이 열립니다.'},
+    {tab:'record',selector:'#behaviorGrid .btn .disc',shape:'circle',kicker:'빠른 기록',title:'짧게 누르고, 길게 눌러요',text:'짧게 누르면 바로 기록됩니다. 1.5초 길게 누르면 ABC 입력창이 열립니다. 스크롤하려고 손가락이 움직이면 기록되지 않아요.'},
     {tab:'review',selector:'#s-review .daystrip',kicker:'검토',title:'ABC는 나중에 완성할 수 있어요',text:'날짜를 고르고 미완성 기록을 누르면 선행사건과 후속결과를 보완할 수 있습니다.'},
     {tab:'analysis',selector:'#analysisBody',kicker:'분석',title:'기록을 근거로 가설을 세웁니다',text:'기록이 쌓이면 패턴, 간접평가 자료, IOA, 기능가설을 한 흐름으로 확인합니다.'},
     {tab:'settings',selector:'#s-settings .setgrp',kicker:'설정',title:'기록 항목을 미리 준비합니다',text:'학생, 배경사건, 활동, 행동정의, 선행사건, 후속결과, MAS와 면담 질문을 편집합니다.'}
@@ -8543,57 +8651,19 @@ function placeCoach(step,target,total){
 
 // ============ behavior long press ============
 const BEHAVIOR_LONG_PRESS_MS = 1500;
+const BEHAVIOR_MOVE_CANCEL_PX = 18;
 let behaviorPress = null;
 let suppressBehaviorClickUntil = 0;
-function shouldRecordIntensityFor(bid){
-  const b=bMap[bid];
-  return !!b && (b.type!=='dur' || (state.timer && state.timer.bid===bid));
-}
-function intensityFromClientX(btn,clientX,max){
-  const rect=btn.getBoundingClientRect();
-  const ratio=Math.max(0,Math.min(1,(clientX-rect.left)/Math.max(1,rect.width)));
-  return clampIntensity(1+ratio*(clampIntensityMax(max)-1),max);
-}
-function updateIntensityHud(press){
-  const hud=$('#intensityHud'); if(!hud||!press) return;
-  const max=clampIntensityMax(press.intensityMax);
-  const val=clampIntensity(press.intensity,max);
-  const rect=press.btn.getBoundingClientRect();
-  const vw=window.innerWidth, vh=window.innerHeight, w=Math.min(300,vw-40);
-  const left=Math.max(20+w/2,Math.min(vw-20-w/2,rect.left+rect.width/2));
-  const topAbove=rect.top-72;
-  const top=topAbove>24?topAbove:Math.min(vh-84,rect.bottom+72);
-  hud.style.left=left+'px';
-  hud.style.top=top+'px';
-  $('#intensityHudTitle').textContent=msg('behaviorIntensity');
-  $('#intensityHudValue').textContent=msg('intensityScore',{value:val,max});
-  $('#intensityHudHelp').textContent=msg('intensityDragHint');
-  const fill=$('#intensityHudFill');
-  if(fill) fill.style.width=((val-1)/Math.max(1,max-1)*100)+'%';
-}
-function showIntensityHud(press){
-  const hud=$('#intensityHud'); if(!hud) return;
-  updateIntensityHud(press);
-  hud.classList.add('show');
-  hud.setAttribute('aria-hidden','false');
-}
-function hideIntensityHud(){
-  const hud=$('#intensityHud'); if(!hud) return;
-  hud.classList.remove('show');
-  hud.setAttribute('aria-hidden','true');
-}
 function clearBehaviorPress(){
   if(!behaviorPress) return;
   clearTimeout(behaviorPress.timer);
   if(behaviorPress.btn) behaviorPress.btn.classList.remove('holding');
-  hideIntensityHud();
   behaviorPress = null;
 }
 document.addEventListener('pointerdown', e=>{
   const btn=e.target.closest('[data-bh]');
-  if(!btn || e.button>0) return;
+  if(!btn || e.button>0 || behaviorPress) return;
   const bid=btn.dataset.bh;
-  const max=getIntensityMax();
   btn.classList.add('holding');
   behaviorPress={
     btn,
@@ -8604,22 +8674,19 @@ document.addEventListener('pointerdown', e=>{
     lastX:e.clientX,
     lastY:e.clientY,
     moved:false,
+    canceled:false,
     longFired:false,
-    willRecord:shouldRecordIntensityFor(bid),
-    intensityMax:max,
-    intensity:defaultIntensity(max,bid),
     downAt:Date.now(),
     timer:setTimeout(()=>{
       if(!behaviorPress || behaviorPress.bid!==bid) return;
       behaviorPress.longFired=true;
       suppressBehaviorClickUntil=Date.now()+900;
       if(navigator.vibrate) navigator.vibrate([35,35,35]);
-      tapBehavior(bid, btn, {clientX:behaviorPress.lastX, clientY:behaviorPress.lastY}, {openDetails:true,eventTime:behaviorPress.downAt,intensity:behaviorPress.intensity,intensityMax:behaviorPress.intensityMax});
+      tapBehavior(bid, btn, {clientX:behaviorPress.lastX, clientY:behaviorPress.lastY}, {openDetails:true,eventTime:behaviorPress.downAt});
       clearBehaviorPress();
-    }, BEHAVIOR_LONG_PRESS_MS)
+    }, BEHAVIOR_LONG_PRESS_MS),
   };
   try{btn.setPointerCapture?.(e.pointerId);}catch(_){}
-  if(behaviorPress.willRecord) showIntensityHud(behaviorPress);
 }, {passive:true});
 document.addEventListener('pointerup', e=>{
   if(!behaviorPress || e.pointerId!==behaviorPress.pointerId) return;
@@ -8627,31 +8694,29 @@ document.addEventListener('pointerup', e=>{
   clearTimeout(press.timer);
   if(press.btn) press.btn.classList.remove('holding');
   behaviorPress=null;
-  hideIntensityHud();
   suppressBehaviorClickUntil=Date.now()+900;
+  if(press.canceled) return;
   if(press.longFired) return;
   const point={clientX:e.clientX||press.lastX,clientY:e.clientY||press.lastY};
-  if(press.willRecord){
-    state.lastIntensity[press.bid]=press.intensity;
-    tapBehavior(press.bid, press.btn, point, {openDetails:false,eventTime:press.downAt,intensity:press.intensity,intensityMax:press.intensityMax});
-  }else{
-    tapBehavior(press.bid, press.btn, point, {openDetails:false,eventTime:press.downAt});
-  }
+  tapBehavior(press.bid, press.btn, point, {openDetails:false,eventTime:press.downAt});
 }, {passive:true});
-document.addEventListener('pointercancel', clearBehaviorPress, {passive:true});
+document.addEventListener('pointercancel', e=>{
+  if(behaviorPress && e.pointerId===behaviorPress.pointerId) suppressBehaviorClickUntil=Date.now()+900;
+  clearBehaviorPress();
+}, {passive:true});
 document.addEventListener('pointermove', e=>{
   if(!behaviorPress || e.pointerId!==behaviorPress.pointerId) return;
   behaviorPress.lastX=e.clientX;
   behaviorPress.lastY=e.clientY;
-  const moved=Math.abs(e.clientX-behaviorPress.x)>12 || Math.abs(e.clientY-behaviorPress.y)>12;
-  if(moved && !behaviorPress.moved){
-    behaviorPress.moved=true;
+  const dx=e.clientX-behaviorPress.x;
+  const dy=e.clientY-behaviorPress.y;
+  const absX=Math.abs(dx);
+  const absY=Math.abs(dy);
+  if(Math.hypot(absX,absY)>BEHAVIOR_MOVE_CANCEL_PX){
+    behaviorPress.canceled=true;
     clearTimeout(behaviorPress.timer);
-    behaviorPress.timer=null;
-  }
-  if(behaviorPress.willRecord){
-    behaviorPress.intensity=intensityFromClientX(behaviorPress.btn,e.clientX,behaviorPress.intensityMax);
-    updateIntensityHud(behaviorPress);
+    if(behaviorPress.btn) behaviorPress.btn.classList.remove('holding');
+    return;
   }
 }, {passive:true});
 document.addEventListener('contextmenu', e=>{
@@ -8704,6 +8769,8 @@ document.addEventListener('click',e=>{
   const col=t.closest('[data-color]'); if(col){state.ed.color=col.dataset.color;renderEditor();return;}
   const ic=t.closest('[data-icon]'); if(ic){state.ed.icon=ic.dataset.icon;renderEditor();return;}
   const ty=t.closest('[data-type]'); if(ty){state.ed.type=ty.dataset.type;renderEditor();return;}
+  const widgetToggle=t.closest('[data-widget-toggle]');
+  if(widgetToggle&&!t.closest('[data-action]')){toggleWidgetBehavior(widgetToggle.dataset.widgetToggle);return;}
   // 관찰 노트 이벤트
   const ntab=t.closest('[data-ntab]'); if(ntab){switchNoteTab(ntab.dataset.ntab);return;}
   const mtag=t.closest('[data-mtag]'); if(mtag){state.memoTag=mtag.dataset.mtag;document.querySelectorAll('[data-mtag]').forEach(b=>b.classList.toggle('on',b.dataset.mtag===state.memoTag));return;}
@@ -8778,6 +8845,10 @@ document.addEventListener('click',e=>{
     else if(a==='add-se-item')openSeEditor(null);
     else if(a==='open-behavior-manager')openBehaviorManager();
     else if(a==='close-behavior-manager')closeBehaviorManager();
+    else if(a==='open-widget-settings')openWidgetSettings();
+    else if(a==='close-widget-settings')closeWidgetSettings();
+    else if(a==='widget-rank-up')moveWidgetBehavior(act.dataset.widgetId,-1);
+    else if(a==='widget-rank-down')moveWidgetBehavior(act.dataset.widgetId,1);
     else if(a==='save-widget-config')saveWidgetConfig();
     else if(a==='open-a-manager')openChipManager('a');
     else if(a==='close-a-manager')closeChipManager('a');
