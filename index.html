@@ -109,6 +109,7 @@
   .sect-label em{font-style:normal; font-weight:500; font-size:11.5px; color:#9aa6aa;}
   .grid{display:grid; grid-template-columns:repeat(3,1fr); gap:13px; padding:12px 20px 10px;}
   .btn{position:relative; aspect-ratio:1/1.06; border-radius:22px; border:1px solid var(--line); cursor:pointer; background:#fff; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:9px; transition:transform .08s, box-shadow .2s; padding:6px; user-select:none; -webkit-user-select:none; touch-action:manipulation;}
+  .btn[data-bh]{touch-action:none;}
   .btn:active{transform:scale(.94);}
   .btn .disc{width:54px; height:54px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; position:relative; transition:box-shadow .2s;}
   .btn .disc svg{width:27px;height:27px;}
@@ -128,6 +129,27 @@
   .btn.add .disc{background:#EFece3; color:var(--sub);}
   .ripple{position:absolute; border-radius:50%; background:currentColor; opacity:.32; transform:scale(0); pointer-events:none; animation:rip .55s ease-out forwards;}
   @keyframes rip{to{transform:scale(2.6); opacity:0;}}
+
+  /* behavior intensity */
+  .intensity-hud{position:fixed;z-index:10040;left:50%;top:50%;width:min(300px,calc(100vw - 40px));transform:translate(-50%,-50%) scale(.96);opacity:0;pointer-events:none;background:#fff;border:1px solid rgba(15,110,108,.18);border-radius:20px;padding:14px 16px 13px;box-shadow:0 18px 52px -22px rgba(14,40,45,.45);transition:opacity .12s ease,transform .12s ease;}
+  .intensity-hud.show{opacity:1;transform:translate(-50%,-50%) scale(1);}
+  .intensity-hud .ih-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:9px;}
+  .intensity-hud .ih-k{font-size:11.5px;font-weight:900;color:var(--sub);}
+  .intensity-hud .ih-v{font-size:23px;font-weight:950;color:var(--primary);font-variant-numeric:tabular-nums;line-height:1;}
+  .intensity-hud .ih-track{height:13px;border-radius:999px;background:#ebe8df;overflow:hidden;}
+  .intensity-hud .ih-fill{height:100%;width:50%;border-radius:999px;background:linear-gradient(90deg,#30B8B0,#E0972F,#E2603F);transition:width .05s linear;}
+  .intensity-hud .ih-help{font-size:10.8px;color:#8d989b;font-weight:750;margin-top:8px;text-align:center;}
+  .intensity-card{border:1.5px solid var(--line);border-radius:17px;background:#fff;padding:13px 14px 12px;margin:8px 0 14px;}
+  .intensity-card-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px;}
+  .intensity-card-title{font-size:13px;font-weight:900;color:var(--ink);display:flex;align-items:center;gap:7px;}
+  .intensity-card-value{font-size:13px;font-weight:950;color:var(--primary);font-variant-numeric:tabular-nums;}
+  .intensity-edit{border:1px solid var(--line);background:#fafaf7;color:var(--sub);border-radius:10px;padding:6px 9px;font-size:11px;font-weight:900;font-family:inherit;cursor:pointer;white-space:nowrap;}
+  .intensity-range{--pct:50%;width:100%;height:24px;margin:2px 0 0;-webkit-appearance:none;appearance:none;background:transparent;touch-action:none;}
+  .intensity-range::-webkit-slider-runnable-track{height:12px;border-radius:999px;background:linear-gradient(90deg,#30B8B0 0%,#E0972F 55%,#E2603F 100%) 0/var(--pct) 100% no-repeat,#ebe8df;}
+  .intensity-range::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:28px;height:28px;border-radius:50%;background:#fff;border:4px solid var(--primary);box-shadow:0 8px 22px -12px rgba(14,40,45,.6);margin-top:-8px;}
+  .intensity-range::-moz-range-track{height:12px;border-radius:999px;background:linear-gradient(90deg,#30B8B0 0%,#E0972F 55%,#E2603F 100%) 0/var(--pct) 100% no-repeat,#ebe8df;}
+  .intensity-range::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:#fff;border:4px solid var(--primary);box-shadow:0 8px 22px -12px rgba(14,40,45,.6);}
+  .intensity-scale-row{display:flex;align-items:center;justify-content:space-between;color:#a1aaad;font-size:10.5px;font-weight:850;margin-top:2px;}
 
   /* sheet (shared) */
   .scrim{position:absolute; inset:0; background:rgba(251,250,246,.68); opacity:0; pointer-events:none; transition:opacity .3s; z-index:9997; backdrop-filter:none!important; -webkit-backdrop-filter:none!important;}
@@ -195,6 +217,7 @@
   .tag{font-size:10px; font-weight:800; padding:2px 7px; border-radius:7px;}
   .tag.freq{background:#eef3f1; color:#3a6f63;}
   .tag.dur{background:#fbeee9; color:#b4502f;}
+  .tag.intensity{background:#fff4d8; color:#a36a10;}
   .observer-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:800;padding:2px 7px;border-radius:7px;background:#f3f0e8;color:#6f777a;}
   .abc-line{display:flex; gap:6px; flex-wrap:wrap; margin-top:7px;}
   .abc-pill{font-size:11.5px; padding:4px 9px; border-radius:8px; background:#f3f0e8; color:var(--sub); font-weight:600; display:flex; gap:5px; align-items:center;}
@@ -1277,6 +1300,15 @@
     </div>
   </div>
 
+  <div id="intensityHud" class="intensity-hud" aria-hidden="true">
+    <div class="ih-top">
+      <span class="ih-k" id="intensityHudTitle">행동 강도</span>
+      <b class="ih-v" id="intensityHudValue">5/10</b>
+    </div>
+    <div class="ih-track"><div class="ih-fill" id="intensityHudFill"></div></div>
+    <div class="ih-help" id="intensityHudHelp">좌우로 드래그해 강도를 정하세요</div>
+  </div>
+
   <!-- 로그인 화면 -->
   <div id="authWall">
     <div class="auth-card">
@@ -1588,6 +1620,13 @@
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 4H4v12h4v4l5-4h7z" stroke-linejoin="round"/></svg>
             </div>
             <div class="rmeta"><b>면담 질문 편집 / 추가</b><span id="ivManagerSub">질문 8개</span></div>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9aa6aa" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          </div>
+
+          <div class="gh" style="padding-top:22px"><span>홈 화면 위젯</span></div>
+          <div class="row" style="cursor:pointer" data-action="save-widget-config">
+            <div class="rdisc" style="background:#5E9A57">W</div>
+            <div class="rmeta"><b>위젯 설정 저장</b><span id="widgetConfigSub">현재 학생 · 앞 4개 행동</span></div>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9aa6aa" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
           </div>
 
@@ -2049,6 +2088,17 @@
         <textarea class="notebox" id="noteA" rows="2" style="margin-top:8px" placeholder="선행사건 세부 내용 (선택)" data-i18n-placeholder="aNotePlaceholder"></textarea>
         <div class="voice-row"><button class="voice-btn" data-action="voice-note" data-voice-target="noteA"><svg viewBox="0 0 24 24"><path d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v3"/><path d="M8 22h8"/></svg><span>음성입력</span></button></div>
         <div class="grp-tit" data-i18n-html="abcB"><span class="badge" style="background:#0F6E6C">B</span> 행동 <em>구체적으로 어떻게 행동했나?</em></div>
+        <div class="intensity-card">
+          <div class="intensity-card-head">
+            <div>
+              <div class="intensity-card-title" id="intensityTitle">행동 강도</div>
+              <div class="intensity-card-value" id="intensityValue">5/10점</div>
+            </div>
+            <button class="intensity-edit" type="button" data-action="edit-intensity-scale" id="intensityScaleEdit">척도편집</button>
+          </div>
+          <input class="intensity-range" id="intensityRange" type="range" min="1" max="10" step="1" value="5" aria-label="행동 강도">
+          <div class="intensity-scale-row"><span>1</span><span id="intensityMaxText">10</span></div>
+        </div>
         <textarea class="notebox" id="noteB" rows="2" placeholder="문제행동 세부 내용 (선택)" data-i18n-placeholder="bNotePlaceholder"></textarea>
         <div class="voice-row"><button class="voice-btn" data-action="voice-note" data-voice-target="noteB"><svg viewBox="0 0 24 24"><path d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v3"/><path d="M8 22h8"/></svg><span>음성입력</span></button></div>
         <div class="grp-tit" data-i18n-html="abcC"><span class="badge" style="background:#b4502f">C</span> 후속결과 <em>행동 직후 어떻게 됐나?</em></div>
@@ -2241,6 +2291,7 @@ function defaults(){
     cChips: localized.cChips.map(x=>({...x})),
     activities: localized.activities.map(x=>({...x})),
     settingEvents: localized.settingEvents.map(x=>({...x})),
+    intensityMax: 10,
     settingLogs: {},
     masItems: MAS_DEFAULTS.map(m=>({...m})),
     ivQuestions: defaultIvQuestions(),
@@ -2338,6 +2389,11 @@ const I18N={
     record:'기록', addStudent:'+ 학생', noStudent:'설정 탭에서 학생을 먼저 추가해 주세요', count:'빈도', duration:'시간', addBehavior:'행동 추가',
     observer:'관찰자', savedQuick:'<b>{name}</b> 저장됨 · ABC는 검토에서 채울 수 있어요', timerStarted:'<b>{name}</b> 측정 시작 — 끝나면 다시 누르세요',
     recordedQuick:'<b>{name}</b> 기록됨 · ABC는 검토에서 채울 수 있어요',
+    intensity:'강도', behaviorIntensity:'행동 강도', editIntensityScale:'척도편집', intensityScore:'{value}/{max}점',
+    intensityDragHint:'좌우로 드래그해 강도를 정하세요', intensityScalePrompt:'행동강도 척도는 몇 점 만점으로 할까요? (2~20)',
+    intensityScaleSaved:'행동강도 척도를 {max}점 만점으로 바꿨어요', intensityScaleInvalid:'2~20 사이의 숫자를 입력해 주세요',
+    recordedQuickIntensity:'<b>{name}</b> 강도 {value}/{max}로 기록됨 · ABC는 검토에서 채울 수 있어요',
+    savedQuickIntensity:'<b>{name}</b> 강도 {value}/{max}로 저장됨 · ABC는 검토에서 채울 수 있어요',
     saveFailed:'저장 실패', offline:'오프라인', recordsToUpload:'올릴 기록 {n}건', savedJustNow:'방금 저장', savedSeconds:'{n}초 전 저장', savedMinutes:'{n}분 전 저장',
     intervalSetup:'간격 기록 설정', recordingMethod:'기록 방식', oxSingle:'O/X 단일<span class="sd">한 행동 발생 여부</span>', timeSampling:'시간표집<span class="sd">여러 행동 코드</span>',
     targetBehavior:'관찰 대상 행동', timeSamplingCodes:'시간표집 코드', timeSamplingHelp:'체크한 행동만 간격 종료 시 버튼으로 나타납니다. 코드 칸을 눌러 T, D, S처럼 바꿀 수 있어요.',
@@ -2395,6 +2451,11 @@ const I18N={
     record:'Record', addStudent:'+ Student', noStudent:'Add a student in Settings first.', count:'Count', duration:'Duration', addBehavior:'Add behavior',
     observer:'Observer', savedQuick:'<b>{name}</b> saved · Add ABC details in Review', timerStarted:'<b>{name}</b> timer started - tap again to stop',
     recordedQuick:'<b>{name}</b> recorded · Add ABC details in Review',
+    intensity:'Intensity', behaviorIntensity:'Behavior intensity', editIntensityScale:'Edit scale', intensityScore:'{value}/{max}',
+    intensityDragHint:'Drag left/right to choose intensity', intensityScalePrompt:'What should the behavior intensity scale maximum be? (2-20)',
+    intensityScaleSaved:'Behavior intensity scale changed to {max}.', intensityScaleInvalid:'Enter a number from 2 to 20.',
+    recordedQuickIntensity:'<b>{name}</b> recorded at {value}/{max} · Add ABC details in Review',
+    savedQuickIntensity:'<b>{name}</b> saved at {value}/{max} · Add ABC details in Review',
     saveFailed:'Save failed', offline:'Offline', recordsToUpload:'{n} record{plural} to upload', savedJustNow:'Saved just now', savedSeconds:'Saved {n}s ago', savedMinutes:'Saved {n}m ago',
     intervalSetup:'Interval Recording Setup', recordingMethod:'Recording method', oxSingle:'O/X single<span class="sd">One target behavior</span>', timeSampling:'Time sampling<span class="sd">Multiple behavior codes</span>',
     targetBehavior:'Target behavior', timeSamplingCodes:'Time sampling codes', timeSamplingHelp:'Only checked behaviors appear as buttons at the end of each interval. Tap a code field to edit labels such as T, D, or S.',
@@ -2437,7 +2498,7 @@ const STATIC_EN={
   '활동·교시 편집':'Edit Activities / Periods','활동 추가':'Add Activity','＋ 활동 추가':'+ Add Activity',
   '기록 화면에서 활동을 고르면 이후 누르는 모든 기록에 자동으로 첨부돼요. 분석 탭에서 활동별 발생을 볼 수 있어요.':'When you pick an activity on the Record screen, it is attached to every record you tap afterward. See occurrences by activity on the Analysis tab.',
   '행동평정척도 (MAS)':'Motivation Assessment Scale (MAS)','MAS 항목 편집 / 추가':'Edit / Add MAS Items','면담 질문':'Interview Questions','면담 질문 편집 / 추가':'Edit / Add Interview Questions',
-  '계정':'Account','도움말':'Help','화면 안내 다시 보기':'Show Screen Guide','탭별 핵심 기능을 코치마크로 확인':'Review key features by tab with coach marks',
+  '계정':'Account','도움말':'Help','홈 화면 위젯':'Home Screen Widget','위젯 설정 저장':'Save Widget Setup','현재 학생 · 앞 4개 행동':'Current student · first 4 behaviors','화면 안내 다시 보기':'Show Screen Guide','탭별 핵심 기능을 코치마크로 확인':'Review key features by tab with coach marks',
   '데이터':'Data','공유 코드로 참가 (다른 교사 학생)':'Join with Share Code (another teacher)','기록 전체 초기화':'Reset All Records',
   'MAS 항목 편집':'Edit MAS Items','항목 추가':'Add Item','＋ 항목 추가':'+ Add Item','면담 질문 편집':'Edit Interview Questions','＋ 질문 추가':'+ Add Question',
   '행동정의 편집':'Edit Behavior Definitions','＋ 행동 추가':'+ Add Behavior','현재 학생 행동 순서 편집':'Edit Current Student Behavior Order',
@@ -2514,6 +2575,7 @@ const STATIC_EN={
   '시간표집':'Time sampling','간격 기록':'Interval recording','지속시간':'Duration','그래프로 표시할 값이 없어요.':'No values to graph.',
   '로그아웃 하시겠어요?':'Sign out?','로그인 후 사용하세요':'Please log in first.','로그인이 필요해요':'Login is required.','현재 계정의 관찰 데이터를 초기화할까요? 내가 만든 학생/기록은 서버에서도 삭제됩니다.':'Reset observation data for this account? Students and records you created will also be deleted from the server.',
   '서버 데이터까지 초기화했어요':'Server data has been reset.','기존 공유 데이터를 새 구조로 옮겼어요':'Existing shared data has been moved to the new structure.','공유 코드는 학생을 만든 계정만 생성할 수 있어요':'Only the account that created the student can generate a share code.',
+  'Android 앱에서만 위젯 설정을 저장할 수 있어요':'Widget setup can be saved only in the Android app.','위젯에 넣을 행동이 없어요':'No behaviors are available for the widget.','위젯 설정을 저장했어요':'Widget setup saved.','위젯 기록 {n}건을 가져왔어요':'Imported {n} widget record(s).',
   '공유 코드를 입력해 주세요':'Enter a share code.','유효하지 않은 코드예요':'This code is not valid.','만료된 코드예요. 새 코드를 받아주세요':'This code has expired. Please request a new code.','초대 코드 정보가 올바르지 않아요':'The invite code information is invalid.',
   '코드를 찾을 수 없어요':'Code not found.','코드를 다시 확인해 주세요':'Check the code again.','공유 관찰에서 나왔어요':'You left the shared observation.','코드를 입력해 주세요':'Enter a code.','참가 중…':'Joining...','참가':'Join',
   '가설의 4요소를 모두 입력해 주세요':'Enter all four hypothesis elements.','기능 가설을 저장했어요':'Function hypothesis saved.','이름을 입력하세요':'Enter a name.','공유받은 학생 정보는 만든 계정에서만 수정할 수 있어요':'Shared student information can only be edited by the account that created it.',
@@ -2865,6 +2927,7 @@ function caseDefaults(){
     activities: d.activities.map(x=>({...x})),
     settingEvents: d.settingEvents.map(x=>({...x})),
     settingLogs: {},
+    intensityMax: 10,
     masItems: MAS_DEFAULTS.map(x=>({...x})),
     ivQuestions: d.ivQuestions.map(x=>({...x})),
     notes: [],
@@ -2893,6 +2956,7 @@ function normalizeCase(raw, id){
     activities: raw.activities || base.activities,
     settingEvents: raw.settingEvents || base.settingEvents,
     settingLogs: raw.settingLogs || {},
+    intensityMax: clampIntensityMax(raw.intensityMax || base.intensityMax || 10),
     masItems: raw.masItems || base.masItems,
     ivQuestions: raw.ivQuestions || base.ivQuestions,
     notes: raw.notes || [],
@@ -2919,6 +2983,7 @@ function syncActiveCaseFromDb(){
   s.activities = db.activities || [];
   s.settingEvents = db.settingEvents || [];
   s.settingLogs = db.settingLogs || {};
+  s.intensityMax = getIntensityMax();
   s.masItems = db.masItems || [];
   s.ivQuestions = db.ivQuestions || [];
   s.notes = (db.notes || []).filter(n=>n.sid===s.id);
@@ -2934,6 +2999,7 @@ function applyCaseToDb(s){
   db.activities = (s.activities || caseDefaults().activities).map(x=>({...x}));
   db.settingEvents = (s.settingEvents || caseDefaults().settingEvents).map(x=>({...x}));
   db.settingLogs = {...(s.settingLogs || {})};
+  db.intensityMax = clampIntensityMax(s.intensityMax || caseDefaults().intensityMax || 10);
   db.masItems = (s.masItems || caseDefaults().masItems).map(x=>({...x}));
   db.ivQuestions = (s.ivQuestions || caseDefaults().ivQuestions).map(x=>({...x}));
 
@@ -2965,6 +3031,7 @@ function buildCasePayload(s){
     activities:  s.activities  || [],
     settingEvents: s.settingEvents || [],
     settingLogs:   s.settingLogs   || {},
+    intensityMax:  clampIntensityMax(s.intensityMax || db.intensityMax || 10),
     masItems:    s.masItems    || [],
     ivQuestions: s.ivQuestions || [],
     notes:        s.notes      || [],
@@ -3343,6 +3410,7 @@ async function loadData(){
       behaviors:   firstCase.behaviors,
       aChips:      firstCase.aChips,
       cChips:      firstCase.cChips,
+      intensityMax: firstCase.intensityMax || 10,
       masItems:    firstCase.masItems,
       ivQuestions: firstCase.ivQuestions,
       notes,
@@ -3861,6 +3929,7 @@ async function initApp(){
     if(!db.activities?.length) db.activities = defaults().activities;
     if(!db.settingEvents?.length) db.settingEvents = defaults().settingEvents;
     if(!db.settingLogs) db.settingLogs = {};
+    if(!db.intensityMax) db.intensityMax = 10;
   } else {
     // 첫 로그인 — 기본값으로 시작
     db = defaults();
@@ -3882,6 +3951,8 @@ async function initApp(){
   restoreLastStudent();
   applyCaseToDb(activeCase());
   reindex();
+  await importWidgetRecords();
+  reindex();
   paintStudent();
   renderSwitcher();
   renderGrid();
@@ -3901,7 +3972,7 @@ function resumeSharedListeners(){
 
 
 // ============ state ============
-const state={tab:'record',sid:'s1',timer:null,sheetId:null,sel:{a:new Set(),c:new Set()},date:null,ed:null,noteTab:'memo',memoTag:'before',masTemp:{},ivTemp:{},currentEnv:'school',currentAct:'',hypSid:null,hypDraft:null};
+const state={tab:'record',sid:'s1',timer:null,sheetId:null,sel:{a:new Set(),c:new Set()},sheetIntensity:5,sheetIntensityMax:10,lastIntensity:{},date:null,ed:null,noteTab:'memo',memoTag:'before',masTemp:{},ivTemp:{},currentEnv:'school',currentAct:'',hypSid:null,hypDraft:null};
 try{state.currentAct=localStorage.getItem('fba_current_act')||'';}catch(_){}
 let lastUndo=null, voiceRec=null, voiceTargetId=null;
 let bMap={},sMap={};
@@ -3965,6 +4036,30 @@ function getObserverId(){
   return o;
 }
 const OBSERVER_ID=getObserverId();
+
+function clampIntensityMax(v){
+  const n=Math.round(Number(v));
+  return Number.isFinite(n)?Math.min(20,Math.max(2,n)):10;
+}
+function getIntensityMax(){
+  return clampIntensityMax(db?.intensityMax || activeCase()?.intensityMax || 10);
+}
+function clampIntensity(v,max=getIntensityMax()){
+  const m=clampIntensityMax(max);
+  const n=Math.round(Number(v));
+  return Number.isFinite(n)?Math.min(m,Math.max(1,n)):Math.ceil(m/2);
+}
+function defaultIntensity(max=getIntensityMax(),bid=''){
+  const remembered=state.lastIntensity?.[bid];
+  return clampIntensity(remembered ?? Math.ceil(clampIntensityMax(max)/2),max);
+}
+function hasIntensity(r){
+  return r && Number.isFinite(Number(r.intensity));
+}
+function intensityText(r){
+  const max=clampIntensityMax(r?.intensityMax || getIntensityMax());
+  return msg('intensityScore',{value:clampIntensity(r?.intensity,max),max});
+}
 
 // ============ P0: Repository 추상화 계층 ============
 // UI 코드는 이 인터페이스만 사용 — 나중에 구현만 IndexedDB/Firebase로 교체
@@ -4138,13 +4233,13 @@ function downloadTextFile(name,text,type='text/plain;charset=utf-8'){
 function exportCsv(){
   const s=cur(); if(!s){toast(localText('학생을 먼저 선택해 주세요'));return;}
   const rows=activeRecords().filter(r=>r.sid===s.id).sort((a,b)=>new Date(a.ts)-new Date(b.ts));
-  const headers=['student','record_id','date','time','timestamp','behavior','measurement','duration_seconds','activity','antecedents','antecedent_note','behavior_note','consequences','consequence_note','remarks','recorder','created_by_uid','device_id'];
+  const headers=['student','record_id','date','time','timestamp','behavior','intensity','intensity_max','measurement','duration_seconds','activity','antecedents','antecedent_note','behavior_note','consequences','consequence_note','remarks','recorder','created_by_uid','device_id'];
   const lines=[headers.map(csvCell).join(',')];
   rows.forEach(r=>{
     const d=new Date(r.ts), b=bMap[r.bid]||{};
     const row=[
       localText(s.name),r.id,dkey(d),`${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`,r.ts,
-      localText(b.name||msg('deletedBehavior')),b.type==='dur'?'duration':'frequency',r.dur??'',localText(r.act||''),
+      localText(b.name||msg('deletedBehavior')),hasIntensity(r)?clampIntensity(r.intensity,r.intensityMax):'',hasIntensity(r)?clampIntensityMax(r.intensityMax||getIntensityMax()):'',b.type==='dur'?'duration':'frequency',r.dur??'',localText(r.act||''),
       (r.a||[]).map(localText).join('; '),r.aNote||'',r.bNote||'',(r.c||[]).map(localText).join('; '),r.cNote||'',r.note||'',
       r.createdByName||r.observerId||'',r.createdByUid||'',r.deviceId||''
     ];
@@ -4266,6 +4361,8 @@ function tapBehavior(bid,btn,e,opts={}){
   const eventMs=opts.eventTime||Date.now();
   const eventIso=new Date(eventMs).toISOString();
   const b=bMap[bid]; if(!b)return;
+  const recIntensityMax=clampIntensityMax(opts.intensityMax || getIntensityMax());
+  const recIntensity=opts.intensity==null?defaultIntensity(recIntensityMax,bid):clampIntensity(opts.intensity,recIntensityMax);
   const rip=document.createElement('span');rip.className='ripple';
   const rect=btn.getBoundingClientRect();const sz=Math.max(rect.width,rect.height);
   rip.style.width=rip.style.height=sz+'px';rip.style.left=(e.clientX-rect.left-sz/2)+'px';rip.style.top=(e.clientY-rect.top-sz/2)+'px';
@@ -4277,13 +4374,13 @@ function tapBehavior(bid,btn,e,opts={}){
       const sec=Math.max(0,Math.round((eventMs-state.timer.start)/1000));
       clearInterval(state.timer.iv);state.timer=null;
       const now=new Date().toISOString();
-      let rec={id:ulid(),sid:state.sid,bid,ts:eventIso,dur:sec,a:[],c:[],note:'',act:state.currentAct||'',
+      let rec={id:ulid(),sid:state.sid,bid,ts:eventIso,dur:sec,intensity:recIntensity,intensityMax:recIntensityMax,a:[],c:[],note:'',act:state.currentAct||'',
         observerId:fbUser?.uid||OBSERVER_ID,createdByUid:fbUser?.uid||OBSERVER_ID,createdByName:fbUser?.displayName||fbUser?.email||msg('observer'),deviceId:DEVICE_ID,env:state.currentEnv,
         updatedAt:now,deleted:false,dirty:true};
       rec=captureLatency(rec); // 지연시간 자동 첨부
       Repository.putRecord(rec);renderGrid();paintStudent();
       if(openDetails) openSheet(rec.id);
-      else offerCreatedRecordUndo(rec,msg('savedQuick',{name:localText(b.name)}));
+      else offerCreatedRecordUndo(rec,msg('savedQuickIntensity',{name:localText(b.name),value:recIntensity,max:recIntensityMax}));
     }else{
       if(state.timer){clearInterval(state.timer.iv);}
       state.timer={bid,start:eventMs,iv:null};
@@ -4293,13 +4390,13 @@ function tapBehavior(bid,btn,e,opts={}){
     return;
   }
   const now2=eventIso;
-  let rec={id:ulid(),sid:state.sid,bid,ts:now2,dur:null,a:[],c:[],note:'',act:state.currentAct||'',
+  let rec={id:ulid(),sid:state.sid,bid,ts:now2,dur:null,intensity:recIntensity,intensityMax:recIntensityMax,a:[],c:[],note:'',act:state.currentAct||'',
     observerId:fbUser?.uid||OBSERVER_ID,createdByUid:fbUser?.uid||OBSERVER_ID,createdByName:fbUser?.displayName||fbUser?.email||msg('observer'),deviceId:DEVICE_ID,env:state.currentEnv,
     updatedAt:now2,deleted:false,dirty:true};
   rec=captureLatency(rec); // 지연시간 자동 첨부
   Repository.putRecord(rec);renderGrid();paintStudent();
   if(openDetails) openSheet(rec.id);
-  else offerCreatedRecordUndo(rec,msg('recordedQuick',{name:localText(b.name)}));
+  else offerCreatedRecordUndo(rec,msg('recordedQuickIntensity',{name:localText(b.name),value:recIntensity,max:recIntensityMax}));
 }
 
 // ============ ABC sheet ============
@@ -4316,6 +4413,7 @@ function openSheet(id){
   $('#noteB').value=rec.bNote||'';
   $('#noteC').value=rec.cNote||'';
   const ig=$('#shInterval'); if(ig){ ig.innerHTML=rec.intervalData?renderSoloIntervalDetail(rec,appLang==='en'):''; }
+  renderSheetIntensity(rec);
   renderChips();
   $('#scrim').classList.add('show');$('#sheet').classList.add('open');
 }
@@ -4328,10 +4426,69 @@ function renderChips(){
   $('#chipsC').innerHTML=(cHtml||`<span style="font-size:12.5px;color:#9aa6aa">${msg('addConsequenceChips')}</span>`)+`<button class="chip edit-chip" data-action="open-c-manager">${editIcon}${editLabel}</button>`;
   translateStaticDom($('#sheet'));
 }
+function setSheetIntensity(value){
+  const max=clampIntensityMax(state.sheetIntensityMax || getIntensityMax());
+  state.sheetIntensityMax=max;
+  state.sheetIntensity=clampIntensity(value,max);
+  const range=$('#intensityRange');
+  if(range){
+    range.max=String(max);
+    range.value=String(state.sheetIntensity);
+    range.style.setProperty('--pct',((state.sheetIntensity-1)/Math.max(1,max-1)*100)+'%');
+  }
+  const valueEl=$('#intensityValue');
+  if(valueEl) valueEl.textContent=msg('intensityScore',{value:state.sheetIntensity,max});
+  const maxText=$('#intensityMaxText');
+  if(maxText) maxText.textContent=String(max);
+}
+function renderSheetIntensity(rec){
+  const max=clampIntensityMax(rec?.intensityMax || getIntensityMax());
+  state.sheetIntensityMax=max;
+  state.sheetIntensity=hasIntensity(rec)?clampIntensity(rec.intensity,max):defaultIntensity(max,rec?.bid);
+  const title=$('#intensityTitle'); if(title) title.textContent=msg('behaviorIntensity');
+  const edit=$('#intensityScaleEdit'); if(edit) edit.textContent=msg('editIntensityScale');
+  const range=$('#intensityRange');
+  if(range){
+    range.min='1';
+    range.max=String(max);
+    range.step='1';
+    range.setAttribute('aria-label',msg('behaviorIntensity'));
+  }
+  setSheetIntensity(state.sheetIntensity);
+}
+function editIntensityScale(){
+  const current=getIntensityMax();
+  const raw=prompt(msg('intensityScalePrompt'),String(current));
+  if(raw===null) return;
+  const text=String(raw).trim();
+  const n=Math.round(Number(text));
+  if(!text || !Number.isFinite(n) || n<2 || n>20){
+    toast(msg('intensityScaleInvalid'));
+    return;
+  }
+  db.intensityMax=n;
+  const s=activeCase();
+  if(s) s.intensityMax=n;
+  state.sheetIntensityMax=n;
+  state.sheetIntensity=clampIntensity(state.sheetIntensity,n);
+  if(state.sheetId){
+    const rec=db.records.find(r=>r.id===state.sheetId);
+    if(rec){
+      rec.intensityMax=n;
+      if(hasIntensity(rec)) rec.intensity=clampIntensity(rec.intensity,n);
+    }
+    renderSheetIntensity(rec);
+  }
+  persist();
+  toast(msg('intensityScaleSaved',{max:n}));
+}
 function closeSheet(){$('#scrim').classList.remove('show');$('#sheet').classList.remove('open');state.sheetId=null;}
 function saveSheet(){
   const rec=db.records.find(r=>r.id===state.sheetId);if(!rec)return;
-  rec.a=[...state.sel.a];rec.c=[...state.sel.c];rec.note=$('#note').value;rec.aNote=$('#noteA').value;rec.bNote=$('#noteB').value;rec.cNote=$('#noteC').value;rec.updatedAt=new Date().toISOString();rec.dirty=true;saveRecord(rec).catch(e=>console.warn('saveSheet 기록 저장 오류:',e));persist();
+  rec.a=[...state.sel.a];rec.c=[...state.sel.c];rec.note=$('#note').value;rec.aNote=$('#noteA').value;rec.bNote=$('#noteB').value;rec.cNote=$('#noteC').value;
+  rec.intensityMax=clampIntensityMax(state.sheetIntensityMax || getIntensityMax());
+  rec.intensity=clampIntensity(state.sheetIntensity,rec.intensityMax);
+  rec.updatedAt=new Date().toISOString();rec.dirty=true;saveRecord(rec).catch(e=>console.warn('saveSheet 기록 저장 오류:',e));persist();
   closeSheet();paintStudent();if(state.tab==='review')renderTimeline();
   toast(rec.a.length&&rec.c.length?msg('abcComplete'):msg('recordSavedReview'));
 }
@@ -4406,7 +4563,7 @@ function renderTimeline(){
       </div>
       <div class="tl-dot" style="background:${b.color}"></div>
       <div class="tl-body">
-        <div class="bh">${escHtml(localText(b.name))}<span class="tag ${b.type}">${b.type==='freq'?msg('count'):(r.dur?fmtDur(r.dur):msg('duration'))}</span><span class="observer-badge">${msg('recorder',{name:observerName})}</span></div>
+        <div class="bh">${escHtml(localText(b.name))}<span class="tag ${b.type}">${b.type==='freq'?msg('count'):(r.dur?fmtDur(r.dur):msg('duration'))}</span>${hasIntensity(r)?`<span class="tag intensity">${msg('intensity')} ${intensityText(r)}</span>`:''}<span class="observer-badge">${msg('recorder',{name:observerName})}</span></div>
         ${pills?`<div class="abc-line">${pills}</div>`:''}
         ${r.intervalData?`<div class="abc-line"><span class="abc-pill" style="background:#eef6f5;color:#0F6E6C"><span class="k">${msg('intervalShort')}</span>${intervalBadgeText(r)}</span></div>`:''}
         ${r.latency?`<div class="abc-line"><span class="abc-pill" style="background:#f3eef9;color:#5B4A8A"><span class="k">${msg('latencyShort')}</span>${r.latency}${appLang==='en'?'s':'초'}</span></div>`:''}
@@ -5493,7 +5650,7 @@ function renderAbcTableFor(sid,dateKey,en){
       <td class="abc-rec-no">${i+1}</td>
       <td class="abc-rec-when">${escHtml(timeOnly)}${r.act?`<div class="abc-rec-act">${escHtml(r.act)}</div>`:''}</td>
       <td>${cell(r.aChips,r.aNote,'#eef3df')}</td>
-      <td><div class="abc-rec-bname" style="color:${r.bcolor}">${escHtml(r.bname)}</div>${r.bNote?`<div class="abc-rec-note">${nl(r.bNote)}</div>`:''}</td>
+      <td><div class="abc-rec-bname" style="color:${r.bcolor}">${escHtml(r.bname)}</div>${r.intensityLabel?`<div class="abc-rec-note">${msg('intensity')} ${escHtml(r.intensityLabel)}</div>`:''}${r.bNote?`<div class="abc-rec-note">${nl(r.bNote)}</div>`:''}</td>
       <td>${cell(r.cChips,r.cNote,'#fbe8de')}</td>
       <td class="abc-rec-remark">${r.note?nl(r.note):'<span class="abc-rec-empty">—</span>'}</td>
     </tr>`;
@@ -5544,6 +5701,7 @@ function renderSettings(){
   setText('#consequenceManagerSub',countPhrase('consequence',(db.cChips||[]).length));
   setText('#actManagerSub',(appLang==='en'?`${(db.activities||[]).length} item${(db.activities||[]).length===1?'':'s'}`:`활동 ${(db.activities||[]).length}개`));
   setText('#seManagerSub',(appLang==='en'?`${(db.settingEvents||[]).length} item${(db.settingEvents||[]).length===1?'':'s'}`:`항목 ${(db.settingEvents||[]).length}개`));
+  setText('#widgetConfigSub',appLang==='en'?`${localText(cur()?.name||'Student')} · first ${Math.min(4,(db.behaviors||[]).length)} behaviors`:`${localText(cur()?.name||'학생')} · 앞 ${Math.min(4,(db.behaviors||[]).length)}개 행동`);
   if($('#behaviorManagerSheet')?.classList.contains('open')) renderBehaviorManagerList();
   if($('#antecedentManagerSheet')?.classList.contains('open')) renderChipManager('a');
   if($('#consequenceManagerSheet')?.classList.contains('open')) renderChipManager('c');
@@ -5724,6 +5882,80 @@ function refreshAll(){
   if(state.tab==='plan'&&SUPPORT_PLAN_ENABLED)renderSupportPlan();
   updateNoteBadge();updateSyncUI();
   if(isDesktop()&&db){renderStudioSidebar();switchStTab(stTab);updateStudioSync();}
+}
+
+function widgetBridge(){
+  return window.Capacitor?.Plugins?.WidgetBridge || null;
+}
+function widgetBehaviorConfig(){
+  return getBehaviorOrder(state.sid).slice(0,4).map(b=>({
+    id:b.id,
+    name:localText(b.name),
+    icon:b.icon||'',
+    type:b.type||'freq',
+    color:b.color||'#0F6E6C'
+  }));
+}
+async function saveWidgetConfig(){
+  const bridge=widgetBridge();
+  if(!bridge?.configure){toast(localText('Android 앱에서만 위젯 설정을 저장할 수 있어요'));return;}
+  const s=cur();
+  const behaviors=widgetBehaviorConfig();
+  if(!s || !behaviors.length){toast(localText('위젯에 넣을 행동이 없어요'));return;}
+  const max=clampIntensityMax(db?.intensityMax || activeCase()?.intensityMax || 10);
+  await bridge.configure({
+    sid:s.id,
+    studentName:localText(s.name),
+    studentColor:s.color||'#0F6E6C',
+    userUid:fbUser?.uid||'',
+    userName:fbUser?.displayName||fbUser?.email||msg('observer'),
+    intensityMax:max,
+    defaultIntensity:Math.ceil(max/2),
+    behaviors
+  });
+  toast(localText('위젯 설정을 저장했어요'));
+}
+async function importWidgetRecords(){
+  const bridge=widgetBridge();
+  if(!bridge?.drainRecords || !db || !fbUser) return 0;
+  let result;
+  try{ result=await bridge.drainRecords(); }
+  catch(e){ console.warn('위젯 기록 가져오기 실패:', e); return 0; }
+  const records=Array.isArray(result?.records)?result.records:[];
+  let imported=0;
+  const clearIds=[];
+  for(const raw of records){
+    if(!raw || !raw.sid || !raw.bid) continue;
+    if(!db.students?.some(s=>s.id===raw.sid)) continue;
+    if(!db.behaviors?.some(b=>b.id===raw.bid)) continue;
+    if(db.records?.some(r=>r.id===raw.id)){clearIds.push(raw.id);continue;}
+    const rec={
+      ...raw,
+      a:Array.isArray(raw.a)?raw.a:[],
+      c:Array.isArray(raw.c)?raw.c:[],
+      note:raw.note||'위젯 빠른 기록',
+      updatedAt:raw.updatedAt||new Date().toISOString(),
+      deleted:false,
+      dirty:true
+    };
+    db.records.push(rec);
+    try{
+      await saveRecord(rec);
+      imported++;
+      clearIds.push(rec.id);
+    }catch(e){
+      console.warn('위젯 기록 저장 실패:',e);
+    }
+  }
+  if(clearIds.length && bridge.clearRecords){
+    try{await bridge.clearRecords({ids:clearIds});}
+    catch(e){console.warn('위젯 기록 큐 정리 실패:',e);}
+  }
+  if(imported){
+    persist();
+    toast(localText('위젯 기록 {n}건을 가져왔어요').replace('{n}',imported));
+  }
+  return imported;
 }
 
 // ============ 관찰 노트 ============
@@ -6426,7 +6658,7 @@ function _printReport(){
       <td class="ac-no">${r.num}</td>
       <td class="ac-when">${nl(r.when)}</td>
       <td>${r.aChips?`<span class="ac-chip a">${escHtml(r.aChips)}</span>`:''}${r.aNote?`<div class="ac-note">${nl(r.aNote)}</div>`:''}${(!r.aChips&&!r.aNote)?'<span class="ac-dash">—</span>':''}</td>
-      <td><b style="color:${r.bcolor}">${escHtml(r.bname)}</b>${r.bNote?`<div class="ac-note">${nl(r.bNote)}</div>`:''}</td>
+      <td><b style="color:${r.bcolor}">${escHtml(r.bname)}</b>${r.intensityLabel?`<div class="ac-note">${msg('intensity')} ${escHtml(r.intensityLabel)}</div>`:''}${r.bNote?`<div class="ac-note">${nl(r.bNote)}</div>`:''}</td>
       <td>${r.cChips?`<span class="ac-chip c">${escHtml(r.cChips)}</span>`:''}${r.cNote?`<div class="ac-note">${nl(r.cNote)}</div>`:''}${(!r.cChips&&!r.cNote)?'<span class="ac-dash">—</span>':''}</td>
       <td class="ac-note">${r.note?nl(r.note):'<span class="ac-dash">—</span>'}</td>
     </tr>`).join('');
@@ -7028,7 +7260,7 @@ function getAbcRows(sid){
     const when=`${d.getFullYear()}.${p2(d.getMonth()+1)}.${p2(d.getDate())} (${wkd[d.getDay()]})\n${p2(d.getHours())}:${p2(d.getMinutes())}${r.dur?' · '+fmtDur(r.dur):''}`;
     return {
       num:i+1, when, tsMs:d.getTime(), act:r.act?localText(r.act):'',
-      bname:localText(b.name), bcolor:b.color||'#0F6E6C',
+      bname:localText(b.name), bcolor:b.color||'#0F6E6C', intensityLabel:hasIntensity(r)?intensityText(r):'',
       aChips:(r.a||[]).map(localText).join(', '), aNote:r.aNote||'',
       bNote:r.bNote||'',
       cChips:(r.c||[]).map(localText).join(', '), cNote:r.cNote||'',
@@ -7055,7 +7287,7 @@ function renderStAbc(){
     <td class="abc-rec-no">${r.num}</td>
     <td class="abc-rec-when">${nl(r.when)}${r.act?`<div class="abc-rec-act">${escHtml(r.act)}</div>`:''}</td>
     <td>${acCell(r.aChips,r.aNote,'#eef3df')}</td>
-    <td><div class="abc-rec-bname" style="color:${r.bcolor}">${escHtml(r.bname)}</div>${r.bNote?`<div class="abc-rec-note">${nl(r.bNote)}</div>`:''}</td>
+    <td><div class="abc-rec-bname" style="color:${r.bcolor}">${escHtml(r.bname)}</div>${r.intensityLabel?`<div class="abc-rec-note">${msg('intensity')} ${escHtml(r.intensityLabel)}</div>`:''}${r.bNote?`<div class="abc-rec-note">${nl(r.bNote)}</div>`:''}</td>
     <td>${acCell(r.cChips,r.cNote,'#fbe8de')}</td>
     <td class="abc-rec-remark">${r.note?nl(r.note):'<span class="abc-rec-empty">—</span>'}</td>
   </tr>`).join('');
@@ -8313,16 +8545,55 @@ function placeCoach(step,target,total){
 const BEHAVIOR_LONG_PRESS_MS = 1500;
 let behaviorPress = null;
 let suppressBehaviorClickUntil = 0;
+function shouldRecordIntensityFor(bid){
+  const b=bMap[bid];
+  return !!b && (b.type!=='dur' || (state.timer && state.timer.bid===bid));
+}
+function intensityFromClientX(btn,clientX,max){
+  const rect=btn.getBoundingClientRect();
+  const ratio=Math.max(0,Math.min(1,(clientX-rect.left)/Math.max(1,rect.width)));
+  return clampIntensity(1+ratio*(clampIntensityMax(max)-1),max);
+}
+function updateIntensityHud(press){
+  const hud=$('#intensityHud'); if(!hud||!press) return;
+  const max=clampIntensityMax(press.intensityMax);
+  const val=clampIntensity(press.intensity,max);
+  const rect=press.btn.getBoundingClientRect();
+  const vw=window.innerWidth, vh=window.innerHeight, w=Math.min(300,vw-40);
+  const left=Math.max(20+w/2,Math.min(vw-20-w/2,rect.left+rect.width/2));
+  const topAbove=rect.top-72;
+  const top=topAbove>24?topAbove:Math.min(vh-84,rect.bottom+72);
+  hud.style.left=left+'px';
+  hud.style.top=top+'px';
+  $('#intensityHudTitle').textContent=msg('behaviorIntensity');
+  $('#intensityHudValue').textContent=msg('intensityScore',{value:val,max});
+  $('#intensityHudHelp').textContent=msg('intensityDragHint');
+  const fill=$('#intensityHudFill');
+  if(fill) fill.style.width=((val-1)/Math.max(1,max-1)*100)+'%';
+}
+function showIntensityHud(press){
+  const hud=$('#intensityHud'); if(!hud) return;
+  updateIntensityHud(press);
+  hud.classList.add('show');
+  hud.setAttribute('aria-hidden','false');
+}
+function hideIntensityHud(){
+  const hud=$('#intensityHud'); if(!hud) return;
+  hud.classList.remove('show');
+  hud.setAttribute('aria-hidden','true');
+}
 function clearBehaviorPress(){
   if(!behaviorPress) return;
   clearTimeout(behaviorPress.timer);
   if(behaviorPress.btn) behaviorPress.btn.classList.remove('holding');
+  hideIntensityHud();
   behaviorPress = null;
 }
 document.addEventListener('pointerdown', e=>{
   const btn=e.target.closest('[data-bh]');
   if(!btn || e.button>0) return;
   const bid=btn.dataset.bh;
+  const max=getIntensityMax();
   btn.classList.add('holding');
   behaviorPress={
     btn,
@@ -8330,21 +8601,58 @@ document.addEventListener('pointerdown', e=>{
     pointerId:e.pointerId,
     x:e.clientX,
     y:e.clientY,
+    lastX:e.clientX,
+    lastY:e.clientY,
+    moved:false,
+    longFired:false,
+    willRecord:shouldRecordIntensityFor(bid),
+    intensityMax:max,
+    intensity:defaultIntensity(max,bid),
     downAt:Date.now(),
     timer:setTimeout(()=>{
       if(!behaviorPress || behaviorPress.bid!==bid) return;
+      behaviorPress.longFired=true;
       suppressBehaviorClickUntil=Date.now()+900;
       if(navigator.vibrate) navigator.vibrate([35,35,35]);
-      tapBehavior(bid, btn, {clientX:behaviorPress.x, clientY:behaviorPress.y}, {openDetails:true,eventTime:behaviorPress.downAt});
+      tapBehavior(bid, btn, {clientX:behaviorPress.lastX, clientY:behaviorPress.lastY}, {openDetails:true,eventTime:behaviorPress.downAt,intensity:behaviorPress.intensity,intensityMax:behaviorPress.intensityMax});
       clearBehaviorPress();
     }, BEHAVIOR_LONG_PRESS_MS)
   };
+  try{btn.setPointerCapture?.(e.pointerId);}catch(_){}
+  if(behaviorPress.willRecord) showIntensityHud(behaviorPress);
 }, {passive:true});
-document.addEventListener('pointerup', clearBehaviorPress, {passive:true});
+document.addEventListener('pointerup', e=>{
+  if(!behaviorPress || e.pointerId!==behaviorPress.pointerId) return;
+  const press=behaviorPress;
+  clearTimeout(press.timer);
+  if(press.btn) press.btn.classList.remove('holding');
+  behaviorPress=null;
+  hideIntensityHud();
+  suppressBehaviorClickUntil=Date.now()+900;
+  if(press.longFired) return;
+  const point={clientX:e.clientX||press.lastX,clientY:e.clientY||press.lastY};
+  if(press.willRecord){
+    state.lastIntensity[press.bid]=press.intensity;
+    tapBehavior(press.bid, press.btn, point, {openDetails:false,eventTime:press.downAt,intensity:press.intensity,intensityMax:press.intensityMax});
+  }else{
+    tapBehavior(press.bid, press.btn, point, {openDetails:false,eventTime:press.downAt});
+  }
+}, {passive:true});
 document.addEventListener('pointercancel', clearBehaviorPress, {passive:true});
 document.addEventListener('pointermove', e=>{
   if(!behaviorPress || e.pointerId!==behaviorPress.pointerId) return;
-  if(Math.abs(e.clientX-behaviorPress.x)>14 || Math.abs(e.clientY-behaviorPress.y)>14) clearBehaviorPress();
+  behaviorPress.lastX=e.clientX;
+  behaviorPress.lastY=e.clientY;
+  const moved=Math.abs(e.clientX-behaviorPress.x)>12 || Math.abs(e.clientY-behaviorPress.y)>12;
+  if(moved && !behaviorPress.moved){
+    behaviorPress.moved=true;
+    clearTimeout(behaviorPress.timer);
+    behaviorPress.timer=null;
+  }
+  if(behaviorPress.willRecord){
+    behaviorPress.intensity=intensityFromClientX(behaviorPress.btn,e.clientX,behaviorPress.intensityMax);
+    updateIntensityHud(behaviorPress);
+  }
 }, {passive:true});
 document.addEventListener('contextmenu', e=>{
   if(e.target.closest('[data-bh]')) e.preventDefault();
@@ -8430,6 +8738,7 @@ document.addEventListener('click',e=>{
     else if(a==='dismiss-sheet')saveSheet();
     else if(a==='save-sheet')saveSheet();
     else if(a==='del-record')delRecord();
+    else if(a==='edit-intensity-scale')editIntensityScale();
     else if(a==='add-student'){$('#switcher').classList.remove('open');openEditor('student',null);}
     else if(a==='add-behavior')openEditor('behavior',null);
     else if(a==='toggle-fav'){state.ed.fav=!state.ed.fav;renderEditor();}
@@ -8469,6 +8778,7 @@ document.addEventListener('click',e=>{
     else if(a==='add-se-item')openSeEditor(null);
     else if(a==='open-behavior-manager')openBehaviorManager();
     else if(a==='close-behavior-manager')closeBehaviorManager();
+    else if(a==='save-widget-config')saveWidgetConfig();
     else if(a==='open-a-manager')openChipManager('a');
     else if(a==='close-a-manager')closeChipManager('a');
     else if(a==='open-c-manager')openChipManager('c');
@@ -8535,6 +8845,7 @@ document.addEventListener('click',e=>{
   }
 });
 document.addEventListener('input',e=>{
+  if(e.target.id==='intensityRange'){setSheetIntensity(e.target.value);return;}
   if(state.ed&&(e.target.id==='edName'||e.target.id==='edSub'))syncEd();
   if(state.masEd&&e.target.id==='masEdQ')state.masEd.q=e.target.value;
   if(state.ivEd&&e.target.id==='ivEdQ')state.ivEd.q=e.target.value;
