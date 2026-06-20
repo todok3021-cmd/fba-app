@@ -44,6 +44,24 @@
   .splash-copy{font-size:13px;font-weight:650;color:var(--sub);margin-top:7px;line-height:1.55;word-break:keep-all;}
   #splashScreen.hide .splash-inner{opacity:0;transform:translateY(-8px) scale(.985);transition:opacity .42s ease,transform .42s ease;}
   @keyframes splashIn{to{opacity:1;transform:translateY(0) scale(1);}}
+  #coachOverlay{position:fixed;inset:0;z-index:10070;display:none;pointer-events:none;}
+  #coachOverlay.show{display:block;}
+  .coach-scrim{position:absolute;inset:0;background:rgba(10,28,31,.58);pointer-events:auto;}
+  .coach-hole{position:absolute;border-radius:22px;box-shadow:0 0 0 9999px rgba(10,28,31,.58),0 0 0 3px rgba(255,255,255,.95),0 14px 42px -20px rgba(0,0,0,.65);pointer-events:none;transition:.22s;}
+  .coach-card{position:absolute;left:22px;right:22px;background:#fff;color:var(--ink);border-radius:20px;padding:16px 16px 14px;box-shadow:0 24px 60px -28px rgba(0,0,0,.55);pointer-events:auto;transition:.22s;}
+  .coach-card::before{content:"";position:absolute;left:28px;width:16px;height:16px;background:#fff;transform:rotate(45deg);}
+  .coach-card.below::before{top:-7px;}
+  .coach-card.above::before{bottom:-7px;}
+  .coach-kicker{font-size:11px;font-weight:950;color:var(--primary);letter-spacing:.08em;text-transform:uppercase;margin-bottom:5px;}
+  .coach-title{font-size:17px;font-weight:950;line-height:1.25;margin-bottom:6px;word-break:keep-all;}
+  .coach-text{font-size:13.5px;font-weight:650;color:var(--sub);line-height:1.55;word-break:keep-all;}
+  .coach-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:14px;}
+  .coach-dots{display:flex;gap:5px;align-items:center;}
+  .coach-dot{width:6px;height:6px;border-radius:999px;background:#d7d1c6;}
+  .coach-dot.on{width:18px;background:var(--primary);}
+  .coach-actions{display:flex;gap:8px;}
+  .coach-btn{border:1px solid var(--line);background:#fff;color:var(--sub);border-radius:12px;padding:9px 11px;font-size:12.5px;font-weight:900;font-family:inherit;cursor:pointer;}
+  .coach-btn.primary{border:none;background:var(--primary);color:#fff;padding:10px 13px;}
   @media(prefers-reduced-motion:reduce){
     .splash-inner{animation:none;opacity:1;transform:none;}
     #splashScreen.hide,.splash-inner{transition:none!important;}
@@ -279,6 +297,14 @@
   .ia-meta b{font-size:13.5px; font-weight:800; color:var(--ink); display:block;}
   .ia-meta span{font-size:12px; color:var(--sub); display:block; margin-top:1px;}
   .ia-go{border:none; background:none; color:var(--primary); font-weight:800; font-size:12.5px; font-family:inherit; cursor:pointer; flex:none;}
+  /* 지원계획 탭 */
+  .plan-summary{background:#fff; border:1px solid var(--line); border-radius:18px; margin:12px 18px; padding:16px 18px;}
+  .plan-sum-note{font-size:11.5px; color:var(--sub); margin-top:13px; background:#f6f4ee; padding:9px 11px; border-radius:10px; line-height:1.4;}
+  .plan-form{margin:4px 18px 0;}
+  .plan-field label{display:flex; align-items:center; gap:7px;}
+  .plan-num{display:inline-flex; align-items:center; justify-content:center; width:20px; height:20px; border-radius:7px; background:#eef3f1; color:var(--primary); font-size:11px; font-weight:800; flex:none;}
+  .plan-form .notebox{width:100%; box-sizing:border-box;}
+  .plan-updated{font-size:11.5px; color:var(--sub); margin:2px 20px 0; text-align:right;}
   .acc-csub{font-size:12px; color:var(--sub); margin:0 0 12px; font-weight:600;}
   .measure-bare{padding:0; border:none; background:none; margin:0;}
   .measure-bare h3{margin:16px 0 4px; font-size:14px; font-weight:800; letter-spacing:-.01em; color:var(--ink);}
@@ -576,6 +602,12 @@
   .auth-submit{width:100%;padding:13px;background:var(--primary);color:#fff;border:none;border-radius:13px;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;transition:background .15s;}
   .auth-submit:hover{background:var(--primary-press);}
   .auth-submit:disabled{opacity:.6;cursor:not-allowed;}
+  .auth-divider{display:flex;align-items:center;gap:10px;margin:18px 0 14px;color:#aeb6b9;font-size:12px;font-weight:700;}
+  .auth-divider::before,.auth-divider::after{content:"";flex:1;height:1px;background:var(--line);}
+  .auth-guest{width:100%;padding:13px;background:#fff;color:var(--ink);border:1.5px solid var(--line);border-radius:13px;font-size:15px;font-weight:800;font-family:inherit;cursor:pointer;transition:border-color .15s,background .15s;}
+  .auth-guest:hover{border-color:var(--primary);background:#f7faf9;}
+  .auth-guest:disabled{opacity:.6;cursor:not-allowed;}
+  .auth-guest-note{font-size:11.5px;color:var(--sub);line-height:1.5;margin-top:11px;text-align:center;}
   .auth-loading{text-align:center;padding:20px;color:var(--sub);font-size:14px;}
   .auth-lang{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#f8f6ef;border:1px solid var(--line);border-radius:12px;padding:9px 11px;margin:-8px 0 18px;}
   .auth-lang label{font-size:12px;font-weight:800;color:var(--sub);}
@@ -1128,6 +1160,24 @@
     </div>
   </div>
 
+  <!-- 화면 코치마크 -->
+  <div id="coachOverlay" aria-modal="true" role="dialog" aria-label="FBA 기록 화면 안내">
+    <div class="coach-scrim" data-action="close-coach"></div>
+    <div class="coach-hole" id="coachHole"></div>
+    <div class="coach-card below" id="coachCard">
+      <div class="coach-kicker" id="coachKicker">Guide</div>
+      <div class="coach-title" id="coachTitle"></div>
+      <div class="coach-text" id="coachText"></div>
+      <div class="coach-foot">
+        <div class="coach-dots" id="coachDots"></div>
+        <div class="coach-actions">
+          <button class="coach-btn" data-action="close-coach" id="coachSkip">닫기</button>
+          <button class="coach-btn primary" data-action="next-coach" id="coachNext">다음</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- 로그인 화면 -->
   <div id="authWall">
     <div class="auth-card">
@@ -1162,6 +1212,10 @@
         <div class="auth-err" id="suErr"></div>
         <button class="auth-submit" id="suBtn" onclick="doSignup()" data-i18n="signupSubmit">가입하기</button>
       </div>
+      <div class="auth-divider"><span data-i18n="orText">또는</span></div>
+      <button class="auth-guest" id="guestBtn" onclick="doGuest()" data-i18n="guestStart">비회원으로 시작</button>
+      <div class="auth-err" id="guestErr"></div>
+      <div class="auth-guest-note" data-i18n="guestNote">웹에서의 분석 조회·데이터 영구 보관은 회원만 가능해요. 비회원으로 기록한 자료는 나중에 가입하면 그대로 이어집니다.</div>
     </div>
   </div>
 
@@ -1425,7 +1479,21 @@
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9aa6aa" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
           </div>
 
+          <div class="gh" style="padding-top:22px"><span>도움말</span></div>
+          <div class="row" style="cursor:pointer" data-action="open-coach">
+            <div class="rdisc" style="background:#0F6E6C">?</div>
+            <div class="rmeta"><b>화면 안내 다시 보기</b><span>탭별 핵심 기능을 코치마크로 확인</span></div>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9aa6aa" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          </div>
+
           <div class="gh" style="padding-top:22px"><span>계정</span></div>
+          <div id="guestUpgradeCard" class="row" style="display:none;cursor:pointer;border-color:#ead38a;background:#fdf8ec" data-action="open-upgrade">
+            <div class="rdisc" style="background:#E0972F">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15 9 22 9 16.5 13.5 18.5 21 12 16.5 5.5 21 7.5 13.5 2 9 9 9"/></svg>
+            </div>
+            <div class="rmeta"><b data-i18n="guestUpgradeTitle">가입하고 데이터 지키기</b><span data-i18n="guestUpgradeSub">지금까지 기록한 자료가 그대로 이어져요 · 웹에서 조회 가능</span></div>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c79a3a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          </div>
           <div class="row" style="cursor:pointer" data-action="do-signout">
             <div class="rdisc" style="background:#E2603F">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
@@ -1899,6 +1967,26 @@
       </div>
     </div>
 
+    <!-- 비회원 → 회원 전환 시트 -->
+    <div class="scrim" id="upgradeScrim" data-action="close-upgrade"></div>
+    <div class="sheet" id="upgradeSheet">
+      <div class="grab"></div>
+      <div class="sheet-head">
+        <div class="stit"><b data-i18n="guestUpgradeTitle">가입하고 데이터 지키기</b></div>
+        <button class="ghostbtn" data-action="close-upgrade" data-i18n="close">닫기</button>
+      </div>
+      <div class="sheet-body">
+        <p style="font-size:12.5px;color:var(--sub);line-height:1.55;margin:0 0 16px" data-i18n="guestUpgradeSub">지금까지 기록한 자료가 그대로 이어져요 · 웹에서 조회 가능</p>
+        <div class="field"><label data-i18n="name">이름</label><input class="tin" id="upName" type="text" placeholder="홍길동" data-i18n-placeholder="namePlaceholder" maxlength="20"></div>
+        <div class="field"><label data-i18n="email">이메일</label><input class="tin" id="upEmail" type="email" placeholder="teacher@school.kr" data-i18n-placeholder="emailPlaceholder" autocomplete="email"></div>
+        <div class="field"><label data-i18n="signupPassword">비밀번호 (6자 이상)</label><input class="tin" id="upPw" type="password" placeholder="비밀번호 입력" data-i18n-placeholder="passwordPlaceholder" autocomplete="new-password"></div>
+        <div class="auth-err" id="upErr"></div>
+      </div>
+      <div class="sheet-foot">
+        <button class="btn-prim" id="upBtn" style="flex:1" onclick="doUpgrade()" data-i18n="guestUpgradeBtn">가입하고 이어받기</button>
+      </div>
+    </div>
+
     <div class="toast" id="toast"></div>
 
     <div class="tabbar">
@@ -2109,6 +2197,10 @@ const I18N={
     appTitle:'FBA 기록·분석', appSub:'특수교육 현장용 기능평가 앱', language:'언어', languageSettingSub:'앱 화면 언어',
     loginTab:'로그인', signupTab:'회원가입', email:'이메일', password:'비밀번호', signupPassword:'비밀번호 (6자 이상)',
     name:'이름', loginSubmit:'로그인', signupSubmit:'가입하기', emailPlaceholder:'teacher@school.kr', passwordPlaceholder:'비밀번호 입력', namePlaceholder:'홍길동',
+    orText:'또는', guestStart:'비회원으로 시작', guestNote:'웹에서의 분석 조회·데이터 영구 보관은 회원만 가능해요. 비회원으로 기록한 자료는 나중에 가입하면 그대로 이어집니다.',
+    guestMode:'비회원 이용 중', guestUpgradeTitle:'가입하고 데이터 지키기', guestUpgradeSub:'지금까지 기록한 자료가 그대로 이어져요 · 웹에서 조회 가능', guestUpgradeBtn:'가입하고 이어받기',
+    guestSaved:'가입 완료 · 데이터가 안전하게 연결됐어요', guestErrEmailUsed:'이미 가입된 이메일이에요. 로그아웃 후 그 계정으로 로그인하세요.', guestSignout:'비회원 종료 (기록 사라짐)',
+    guestSignoutConfirm:'비회원으로 기록한 자료는 이 기기에서 사라질 수 있어요. 그래도 종료할까요? (가입하면 안전하게 보관됩니다)',
     pleaseWait:'잠시만요…', errUserNotFound:'등록되지 않은 이메일이에요', errWrongPassword:'비밀번호가 틀렸어요', errInvalidCredential:'이메일 또는 비밀번호가 올바르지 않아요',
     errEmailInUse:'이미 사용 중인 이메일이에요', errWeakPassword:'비밀번호는 6자 이상이어야 해요', errInvalidEmail:'이메일 형식이 올바르지 않아요', errTooMany:'잠시 후 다시 시도해 주세요',
     errGeneric:'오류가 발생했어요 ({code})', enterName:'이름을 입력해 주세요',
@@ -2156,6 +2248,10 @@ const I18N={
     appTitle:'FBA Record & Analysis', appSub:'Functional assessment for special education teams', language:'Language', languageSettingSub:'App display language',
     loginTab:'Log in', signupTab:'Sign up', email:'Email', password:'Password', signupPassword:'Password (6+ characters)',
     name:'Name', loginSubmit:'Log in', signupSubmit:'Create account', emailPlaceholder:'teacher@school.edu', passwordPlaceholder:'Enter password', namePlaceholder:'Your name',
+    orText:'or', guestStart:'Continue as guest', guestNote:'Web analysis viewing & permanent backup require an account. Records made as a guest carry over when you sign up.',
+    guestMode:'Using as guest', guestUpgradeTitle:'Sign up & keep your data', guestUpgradeSub:'Your records carry over · viewable on the web', guestUpgradeBtn:'Sign up & carry over',
+    guestSaved:'Account created · your data is safely linked', guestErrEmailUsed:'That email already has an account. Sign out and log in with it.', guestSignout:'Exit guest (records may be lost)',
+    guestSignoutConfirm:'Records made as a guest may be lost on this device. Exit anyway? (Sign up to keep them safely.)',
     pleaseWait:'Please wait...', errUserNotFound:'No account was found for this email.', errWrongPassword:'The password is incorrect.', errInvalidCredential:'The email or password is incorrect.',
     errEmailInUse:'This email is already in use.', errWeakPassword:'Use a password with at least 6 characters.', errInvalidEmail:'Enter a valid email address.', errTooMany:'Too many attempts. Please try again later.',
     errGeneric:'An error occurred ({code})', enterName:'Enter your name.',
@@ -2216,7 +2312,8 @@ const STATIC_EN={
   '활동·교시 편집':'Edit Activities / Periods','활동 추가':'Add Activity','＋ 활동 추가':'+ Add Activity',
   '기록 화면에서 활동을 고르면 이후 누르는 모든 기록에 자동으로 첨부돼요. 분석 탭에서 활동별 발생을 볼 수 있어요.':'When you pick an activity on the Record screen, it is attached to every record you tap afterward. See occurrences by activity on the Analysis tab.',
   '행동평정척도 (MAS)':'Motivation Assessment Scale (MAS)','MAS 항목 편집 / 추가':'Edit / Add MAS Items','면담 질문':'Interview Questions','면담 질문 편집 / 추가':'Edit / Add Interview Questions',
-  '계정':'Account','데이터':'Data','공유 코드로 참가 (다른 교사 학생)':'Join with Share Code (another teacher)','기록 전체 초기화':'Reset All Records',
+  '계정':'Account','도움말':'Help','화면 안내 다시 보기':'Show Screen Guide','탭별 핵심 기능을 코치마크로 확인':'Review key features by tab with coach marks',
+  '데이터':'Data','공유 코드로 참가 (다른 교사 학생)':'Join with Share Code (another teacher)','기록 전체 초기화':'Reset All Records',
   'MAS 항목 편집':'Edit MAS Items','항목 추가':'Add Item','＋ 항목 추가':'+ Add Item','면담 질문 편집':'Edit Interview Questions','＋ 질문 추가':'+ Add Question',
   '행동정의 편집':'Edit Behavior Definitions','＋ 행동 추가':'+ Add Behavior','현재 학생 행동 순서 편집':'Edit Current Student Behavior Order',
   '선행사건 추가':'Add Antecedent','＋ 선행사건 추가':'+ Add Antecedent','후속결과 추가':'Add Consequence','＋ 후속결과 추가':'+ Add Consequence',
@@ -2389,6 +2486,7 @@ function applyStaticI18n(){
 }
 function refreshLanguageSensitiveUi(){
   applyStaticI18n();
+  if($('#coachOverlay')?.classList.contains('show')) renderCoachStep();
   if(!db) return;
   try{
     paintStudent(); renderSwitcher(); renderGrid(); updateNoteBadge(); updateSyncUI();
@@ -2451,6 +2549,63 @@ async function doSignup(){
     await cred.user.updateProfile({displayName:name});
     await fbStore.collection('users').doc(cred.user.uid).set({name,email,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
   }catch(e){ authErr('suErr',errMsg(e.code)); authBtnState('suBtn',false,msg('signupSubmit')); }
+}
+
+// ── 비회원(익명) 시작 ──
+async function doGuest(){
+  authErr('guestErr',''); authBtnState('guestBtn',true,msg('guestStart'));
+  try{
+    await fbAuth.signInAnonymously();
+    // onAuthStateChanged가 initApp 실행
+  }catch(e){
+    authBtnState('guestBtn',false,msg('guestStart'));
+    const m=e.code==='auth/operation-not-allowed'
+      ? (appLang==='en'?'Anonymous sign-in is not enabled in Firebase. Enable it in Authentication → Sign-in method.':'Firebase에서 익명 로그인이 비활성화돼 있어요. Authentication → 로그인 방법에서 켜주세요.')
+      : errMsg(e.code);
+    authErr('guestErr',m);
+  }
+}
+
+// ── 비회원 → 정식 계정 전환 (데이터 그대로 이어받기) ──
+async function doUpgrade(){
+  const name=($('#upName')||{}).value?.trim()||'';
+  const email=($('#upEmail')||{}).value?.trim()||'';
+  const pw=($('#upPw')||{}).value||'';
+  if(!name){authErr('upErr',msg('enterName'));return;}
+  if(!fbUser||!fbUser.isAnonymous){authErr('upErr',appLang==='en'?'Not in guest mode.':'비회원 상태가 아니에요.');return;}
+  authErr('upErr',''); authBtnState('upBtn',true,msg('guestUpgradeBtn'));
+  try{
+    const cred=firebase.auth.EmailAuthProvider.credential(email,pw);
+    const result=await fbUser.linkWithCredential(cred); // uid 유지 → 기존 데이터 그대로
+    await result.user.updateProfile({displayName:name});
+    await fbStore.collection('users').doc(result.user.uid).set({name,email,createdAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});
+    fbUser=result.user;
+    closeUpgradeSheet();
+    renderSettings();
+    toast(msg('guestSaved'));
+  }catch(e){
+    authBtnState('upBtn',false,msg('guestUpgradeBtn'));
+    const m=e.code==='auth/email-already-in-use'?msg('guestErrEmailUsed'):errMsg(e.code);
+    authErr('upErr',m);
+  }
+}
+function openUpgradeSheet(){
+  const nm=$('#upName'); if(nm)nm.value=fbUser?.displayName||'';
+  const em=$('#upEmail'); if(em)em.value='';
+  const pw=$('#upPw'); if(pw)pw.value='';
+  authErr('upErr','');
+  $('#upgradeScrim').classList.add('show');$('#upgradeSheet').classList.add('open');
+}
+function closeUpgradeSheet(){$('#upgradeScrim').classList.remove('show');$('#upgradeSheet').classList.remove('open');}
+function isGuest(){return !!fbUser?.isAnonymous;}
+function updateAccountUI(){
+  const guest=isGuest();
+  const card=document.getElementById('guestUpgradeCard');
+  if(card){card.style.display=guest?'flex':'none';}
+  const un=document.getElementById('settingUserName');
+  const ue=document.getElementById('settingUserEmail');
+  if(un) un.textContent = guest ? (msg('guestMode')+' · '+msg('guestSignout')) : ((fbUser?.displayName||fbUser?.email||msg('user'))+' · '+msg('signout'));
+  if(ue) ue.textContent = guest ? '' : (fbUser?.email||'');
 }
 
 // ── 로그아웃 ──
@@ -2971,6 +3126,8 @@ async function loadData(){
       .get();
 
     if(snap.empty){
+      // 비회원(익명)은 옮길 옛 데이터가 없으므로 마이그레이션 시도 안 함 (권한 오류 방지)
+      if(fbUser.isAnonymous) return null;
       // prototype6 students 구조 → prototype7 cases 구조 → 아주 오래된 userData 순서로 마이그레이션 시도
       return await migrateFromPrototype6Students() || await migrateFromUserData();
     }
@@ -3180,8 +3337,9 @@ async function migrateFromUserData(){
     toast(`데이터 업그레이드 완료 (${students.length}명)`);
     return await loadData();
   }catch(e){
-    console.error('[마이그레이션] 오류:', e.code, e.message);
-    toast('업그레이드 오류: ' + e.message);
+    console.warn('[마이그레이션] userData 건너뜀:', e.code, e.message);
+    // 권한 오류는 옮길 옛 데이터가 없거나 규칙 미허용 — 새 사용자에겐 정상이므로 조용히 건너뜀
+    if(e.code!=='permission-denied') toast('업그레이드 오류: ' + e.message);
     return null;
   }
 }
@@ -3490,7 +3648,9 @@ async function leaveShared(sid){
 
 // ── 로그아웃 ──
 async function doSignout(){
-  if(!confirm(localText('로그아웃 하시겠어요?'))) return;
+  // 비회원은 로그아웃 시 익명 계정 접근이 끊겨 데이터를 다시 못 볼 수 있음 → 강한 경고
+  if(isGuest()){ if(!confirm(msg('guestSignoutConfirm'))) return; }
+  else { if(!confirm(localText('로그아웃 하시겠어요?'))) return; }
   try{ await persistNow(); }catch(e){ console.warn('로그아웃 전 저장 실패:', e); }
   clearClientSession();
   await fbAuth.signOut();
@@ -3505,6 +3665,8 @@ fbAuth.onAuthStateChanged(async user => {
     if(wall) wall.classList.remove('hidden');
     authBtnState('liBtn', false, msg('loginSubmit'));
     authBtnState('suBtn', false, msg('signupSubmit'));
+    authBtnState('guestBtn', false, msg('guestStart'));
+    authErr('guestErr','');
     return;
   }
   clearClientSession();
@@ -3571,13 +3733,11 @@ async function initApp(){
   updateNoteBadge();
   updateSyncUI();
   // 사용자 정보
-  const un = document.getElementById('settingUserName');
-  const ue = document.getElementById('settingUserEmail');
-  if(un) un.textContent = (fbUser?.displayName || fbUser?.email || msg('user')) + ' · ' + msg('signout');
-  if(ue) ue.textContent = fbUser?.email || '';
+  updateAccountUI();
   syncSupportPlanVisibility();
   if(isDesktop()) initStudio();
   resumeSharedListeners();
+  window.setTimeout(maybeShowCoachMarks,300);
 }
 
 function resumeSharedListeners(){
@@ -5232,6 +5392,7 @@ function renderSettings(){
   if($('#behaviorManagerSheet')?.classList.contains('open')) renderBehaviorManagerList();
   if($('#antecedentManagerSheet')?.classList.contains('open')) renderChipManager('a');
   if($('#consequenceManagerSheet')?.classList.contains('open')) renderChipManager('c');
+  updateAccountUI();
   translateStaticDom($('#s-settings'));
 }
 
@@ -6990,6 +7151,15 @@ function renderStSettings(){
           <button data-action="st-add-chip-c">${addLabel}</button>
         </div>
       </div>
+
+      <div class="settings-panel st-wide">
+        <div class="st-set-head">
+          <h3>${tr('화면 안내','Screen Guide')}</h3>
+          <button class="st-set-add" data-action="open-coach">${tr('다시 보기','Show Again')}</button>
+        </div>
+        <div class="st-set-desc">${tr('현재 화면 위에 표시되는 코치마크로 탭별 핵심 기능만 빠르게 확인합니다.','Review the most important features on each tab with on-screen coach marks.')}</div>
+      </div>
+
     </div>`;
   translateStaticDom(body);
 }
@@ -7951,6 +8121,109 @@ function saveOrder(){
   toast(localText('행동 순서가 저장됐어요'));
 }
 
+// ============ coach marks ============
+let coachIndex=0;
+const COACH_SEEN_KEY='fba_coach_seen_v1';
+function coachSteps(){
+  const en=appLang==='en';
+  if(typeof isDesktop==='function'&&isDesktop()) return en?[
+    {stab:'dashboard',selector:'#stStudentList',kicker:'Students',title:'Choose a student first',text:'Select the student you want to review. The desktop workspace shows each student’s recent status.'},
+    {stab:'dashboard',selector:'#stBody',kicker:'Dashboard',title:'Scan the current status',text:'Dashboard cards summarize recent records, incomplete ABC items, and key behavior activity.'},
+    {stab:'analysis',selector:'#stBody',kicker:'Analysis',title:'Review evidence and hypotheses',text:'Behavior definitions, ABC patterns, indirect assessment data, IOA, and hypotheses are organized here.'},
+    {stab:'pdf',selector:'#stBody',kicker:'Export',title:'Create report files',text:'Use PDF reports and CSV raw data when you need documentation or external analysis.'},
+    {stab:'settings',selector:'#stBody',kicker:'Settings',title:'Prepare recording items',text:'Edit students, setting events, activities, behaviors, antecedents, consequences, MAS, and interviews here.'}
+  ]:[
+    {stab:'dashboard',selector:'#stStudentList',kicker:'학생',title:'먼저 학생을 선택합니다',text:'확인할 학생을 선택하세요. 데스크톱 작업실에서는 학생별 최근 상태를 넓게 볼 수 있습니다.'},
+    {stab:'dashboard',selector:'#stBody',kicker:'대시보드',title:'현재 상태를 훑어봅니다',text:'최근 기록, ABC 미완성, 주요 행동 현황을 카드로 빠르게 확인합니다.'},
+    {stab:'analysis',selector:'#stBody',kicker:'분석',title:'근거와 가설을 확인합니다',text:'행동정의, ABC 패턴, 간접평가 자료, IOA, 기능가설이 이 화면에 정리됩니다.'},
+    {stab:'pdf',selector:'#stBody',kicker:'내보내기',title:'보고서 파일을 만듭니다',text:'기록을 문서화하거나 외부 분석에 활용할 때 PDF 리포트와 CSV 원자료를 사용합니다.'},
+    {stab:'settings',selector:'#stBody',kicker:'설정',title:'기록 항목을 준비합니다',text:'학생, 배경사건, 활동, 행동정의, 선행사건, 후속결과, MAS와 면담 질문을 편집합니다.'}
+  ];
+  return en?[
+    {tab:'record',selector:'.hero-stats',kicker:'Record',title:'Watch today at a glance',text:'Today, incomplete ABC, and weekly totals update for the selected student.'},
+    {tab:'record',selector:'.hero-fabs',kicker:'Context',title:'Add background and notes',text:'Use setting events for daily context and observation notes for interviews, scales, and memos.'},
+    {tab:'record',selector:'#behaviorGrid .btn',kicker:'Fast tap',title:'Tap or long-press behaviors',text:'Tap once to record quickly. Long-press for 1.5 seconds to open ABC entry.'},
+    {tab:'review',selector:'#s-review .daystrip',kicker:'Review',title:'Complete ABC later',text:'Choose a day and tap an incomplete record to fill in antecedents and consequences.'},
+    {tab:'analysis',selector:'#analysisBody',kicker:'Analysis',title:'Use records as evidence',text:'Patterns, indirect assessment data, IOA, and hypotheses collect here as records build up.'},
+    {tab:'settings',selector:'#s-settings .setgrp',kicker:'Settings',title:'Prepare the recording items',text:'Edit students, background events, activities, behaviors, antecedents, consequences, MAS, and interviews here.'}
+  ]:[
+    {tab:'record',selector:'.hero-stats',kicker:'기록',title:'오늘 상태를 한눈에 봅니다',text:'선택한 학생의 오늘 기록, ABC 미완성, 주간 합계가 바로 갱신됩니다.'},
+    {tab:'record',selector:'.hero-fabs',kicker:'맥락',title:'배경사건과 관찰노트를 남깁니다',text:'배경사건은 그날의 컨디션, 관찰노트는 면담·척도·메모 같은 간접평가 근거입니다.'},
+    {tab:'record',selector:'#behaviorGrid .btn',kicker:'빠른 기록',title:'짧게 누르고, 길게 눌러요',text:'짧게 누르면 바로 기록됩니다. 1.5초 길게 누르면 ABC 입력창이 열립니다.'},
+    {tab:'review',selector:'#s-review .daystrip',kicker:'검토',title:'ABC는 나중에 완성할 수 있어요',text:'날짜를 고르고 미완성 기록을 누르면 선행사건과 후속결과를 보완할 수 있습니다.'},
+    {tab:'analysis',selector:'#analysisBody',kicker:'분석',title:'기록을 근거로 가설을 세웁니다',text:'기록이 쌓이면 패턴, 간접평가 자료, IOA, 기능가설을 한 흐름으로 확인합니다.'},
+    {tab:'settings',selector:'#s-settings .setgrp',kicker:'설정',title:'기록 항목을 미리 준비합니다',text:'학생, 배경사건, 활동, 행동정의, 선행사건, 후속결과, MAS와 면담 질문을 편집합니다.'}
+  ];
+}
+function closeCoach(save=true){
+  if(save)try{localStorage.setItem(COACH_SEEN_KEY,'1');}catch(_){}
+  $('#coachOverlay')?.classList.remove('show');
+}
+function openCoach(opts={}){
+  coachIndex=0;
+  if(opts.manual)try{localStorage.removeItem(COACH_SEEN_KEY);}catch(_){}
+  renderCoachStep();
+}
+function maybeShowCoachMarks(){
+  try{if(localStorage.getItem(COACH_SEEN_KEY)==='1')return;}catch(_){}
+  if(!db || !fbUser) return;
+  openCoach();
+}
+function nextCoach(){
+  const steps=coachSteps();
+  if(coachIndex>=steps.length-1){closeCoach(true);return;}
+  coachIndex++;
+  renderCoachStep();
+}
+function ensureCoachTab(tab,stab){
+  if(typeof isDesktop==='function'&&isDesktop()){
+    if(stab&&stTab!==stab)switchStTab(stab);
+    return;
+  }
+  if(tab&&state.tab!==tab)switchTab(tab);
+}
+function findCoachTarget(selector){
+  let el=document.querySelector(selector);
+  if(selector==='#behaviorGrid .btn'&&!el)el=$('#behaviorGrid');
+  if(selector==='#analysisBody'&&(!el||!el.children.length))el=$('#s-analysis .pagehead');
+  if(selector==='#s-settings .setgrp'&&!el)el=$('#s-settings .pagehead');
+  return el;
+}
+function renderCoachStep(){
+  const steps=coachSteps();
+  const step=steps[coachIndex];
+  if(!step)return closeCoach(true);
+  ensureCoachTab(step.tab,step.stab);
+  window.setTimeout(()=>{
+    const target=findCoachTarget(step.selector);
+    if(!target){nextCoach();return;}
+    target.scrollIntoView({block:'center',inline:'nearest',behavior:'smooth'});
+    window.setTimeout(()=>placeCoach(step,target,steps.length),180);
+  },80);
+}
+function placeCoach(step,target,total){
+  const overlay=$('#coachOverlay'), hole=$('#coachHole'), card=$('#coachCard');
+  if(!overlay||!hole||!card)return;
+  const r=target.getBoundingClientRect();
+  const pad=8;
+  const vw=window.innerWidth, vh=window.innerHeight;
+  const left=Math.max(12,r.left-pad), top=Math.max(12,r.top-pad);
+  const right=Math.min(vw-12,r.right+pad), bottom=Math.min(vh-12,r.bottom+pad);
+  hole.style.left=left+'px'; hole.style.top=top+'px'; hole.style.width=Math.max(40,right-left)+'px'; hole.style.height=Math.max(40,bottom-top)+'px';
+  $('#coachKicker').textContent=step.kicker;
+  $('#coachTitle').textContent=step.title;
+  $('#coachText').textContent=step.text;
+  $('#coachSkip').textContent=appLang==='en'?'Close':'닫기';
+  $('#coachNext').textContent=coachIndex===total-1?(appLang==='en'?'Done':'완료'):(appLang==='en'?'Next':'다음');
+  $('#coachDots').innerHTML=Array.from({length:total},(_,i)=>`<span class="coach-dot ${i===coachIndex?'on':''}"></span>`).join('');
+  const cardH=card.offsetHeight||170;
+  const below=bottom+16+cardH<vh-12;
+  card.classList.toggle('below',below);
+  card.classList.toggle('above',!below);
+  card.style.top=(below?bottom+16:Math.max(12,top-16-cardH))+'px';
+  overlay.classList.add('show');
+}
+
 // ============ behavior long press ============
 const BEHAVIOR_LONG_PRESS_MS = 1500;
 let behaviorPress = null;
@@ -8083,6 +8356,9 @@ document.addEventListener('click',e=>{
     else if(a==='editor-cancel'){if(state.masEd)closeMasEditor();else if(state.ivEd)closeIvEditor();else if(state.actEd)closeActEditor();else if(state.seEd)closeSeEditor();else closeEditor();}
     else if(a==='open-note')openNoteSheet();
     else if(a==='close-note')closeNoteSheet();
+    else if(a==='open-coach')openCoach({manual:true});
+    else if(a==='close-coach')closeCoach(true);
+    else if(a==='next-coach')nextCoach();
     else if(a==='add-memo')addMemo();
     else if(a==='close-hypothesis')closeHypothesisEditor();
     else if(a==='save-hypothesis')saveHypothesis();
@@ -8163,6 +8439,8 @@ document.addEventListener('click',e=>{
     else if(a==='close-order')closeOrderSheet();
     else if(a==='save-order')saveOrder();
     else if(a==='do-signout')doSignout();
+    else if(a==='open-upgrade')openUpgradeSheet();
+    else if(a==='close-upgrade')closeUpgradeSheet();
     else if(a==='close-time-edit')closeTimeEdit();
     else if(a==='save-time-edit')saveTimeEdit();
     else if(a==='reset-all'){
@@ -8190,12 +8468,13 @@ function initSplashScreen(){
   if(!splash)return;
   if(document.documentElement.classList.contains('skip-splash')){
     splash.remove();
+    window.setTimeout(maybeShowCoachMarks,120);
     return;
   }
   window.setTimeout(()=>{
     try{sessionStorage.setItem('fba_splash_seen_v2','1');}catch(_){}
     splash.classList.add('hide');
-    window.setTimeout(()=>splash.remove(),650);
+    window.setTimeout(()=>{splash.remove();maybeShowCoachMarks();},650);
   },2000);
 }
 initSplashScreen();
