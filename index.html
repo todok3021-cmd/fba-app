@@ -489,13 +489,13 @@
   .toast-undo{border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.13);color:#fff;border-radius:10px;padding:5px 9px;font-size:12px;font-weight:900;font-family:inherit;cursor:pointer;white-space:nowrap;}
 
   /* 관찰 노트 버튼 */
-  .hero-fabs{display:flex; gap:8px; margin:12px 20px 4px;}
-  .note-fab{display:flex; align-items:center; gap:8px; margin:0; flex:1; min-width:0; overflow:hidden; background:rgba(255,255,255,.18); border:1.5px solid rgba(255,255,255,.28); border-radius:14px; padding:11px 13px; cursor:pointer; color:#fff; font-size:13.5px; font-weight:700;}
+  .hero-fabs{display:flex; gap:8px; margin:12px 12px 4px;}
+  .note-fab{display:flex; align-items:center; gap:8px; margin:0; flex:1; min-width:0; overflow:hidden; background:rgba(255,255,255,.18); border:1.5px solid rgba(255,255,255,.28); border-radius:14px; padding:11px 12px; cursor:pointer; color:#fff; font-size:13.5px; font-weight:700;}
   .note-fab svg{width:17px;height:17px;flex:none;opacity:.9;}
   .note-fab .nf-text{min-width:0; flex:1;}
   .note-fab .nf-text>div{white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
   .note-fab .nf-sub{font-size:11px; opacity:.75; margin-top:1px;}
-  .note-fab .nf-badge{margin-left:auto; flex:0 1 auto; min-width:0; max-width:58%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; background:rgba(255,255,255,.25); border-radius:8px; padding:3px 8px; font-size:11px; font-weight:800;}
+  .note-fab .nf-badge{margin-left:auto; flex:0 1 auto; min-width:0; max-width:44%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; background:rgba(255,255,255,.25); border-radius:8px; padding:3px 8px; font-size:11px; font-weight:800;}
   .note-fab.set-on{background:rgba(255,255,255,.30); border-color:rgba(255,255,255,.55);}
 
   /* 관찰 노트 시트 탭 */
@@ -570,21 +570,6 @@
   .mas-edit-item .func-dot{width:9px;height:9px;border-radius:50%;flex:none;}
   .mas-edit-item .me-text{flex:1; font-size:13px; font-weight:600; color:var(--ink); line-height:1.4;}
   .mas-edit-item .me-func{font-size:10.5px; font-weight:800; padding:3px 8px; border-radius:7px; flex:none;}
-  .widget-help{font-size:12.5px;color:var(--sub);line-height:1.55;margin:0 0 12px;}
-  .widget-picked{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
-  .widget-rank-chip{border:1px solid #cfe5e2;background:#eef6f5;color:var(--primary);border-radius:999px;padding:5px 9px;font-size:11px;font-weight:900;}
-  .widget-rank-chip.empty{border-color:var(--line);background:#fbfaf6;color:#9aa6aa;}
-  .widget-beh-item{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:10px;background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:11px 12px;margin-bottom:8px;cursor:pointer;}
-  .widget-beh-item.on{border-color:var(--primary);background:#eef6f5;}
-  .widget-beh-icon{width:36px;height:36px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#fff;flex:none;}
-  .widget-beh-icon svg{width:20px;height:20px;}
-  .widget-beh-main{min-width:0;}
-  .widget-beh-main b{display:block;font-size:13.5px;color:var(--ink);font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .widget-beh-main span{display:block;font-size:11px;color:var(--sub);font-weight:750;margin-top:2px;}
-  .widget-rank{min-width:30px;height:30px;border-radius:10px;background:#0F6E6C;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:950;}
-  .widget-rank.off{background:#f3f0e8;color:#9aa6aa;}
-  .widget-order{display:flex;gap:4px;margin-top:8px;}
-  .widget-order button{border:1px solid var(--line);background:#fff;color:var(--sub);border-radius:8px;padding:5px 9px;font-size:11px;font-weight:900;font-family:inherit;cursor:pointer;}
   /* 목표행동 ★ 지정 */
   .starbtn{width:30px;height:30px;border:none;background:none;cursor:pointer;font-size:18px;line-height:1;color:#cdd3d6;flex:none;font-family:inherit;padding:0;}
   .starbtn.on{color:#E0972F;}
@@ -920,6 +905,7 @@
   .meas-btn svg{width:15px;height:15px;stroke:currentColor;fill:none;
     stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;flex:none;}
   .meas-btn .mb-sub{font-size:10.5px;color:var(--sub);margin-top:1px;font-weight:600;}
+  .precision-label{padding-top:12px;}
 
   /* ── 간격 기록 진행 오버레이 ── */
   #intervalOverlay{
@@ -1464,11 +1450,11 @@
         <div class="hero-fabs">
           <div class="note-fab" data-action="open-setting">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-            <div class="nf-text"><div data-i18n="settingEventTitle">배경사건</div><div class="nf-sub" id="setFabSummary">기록 ＋</div></div>
+            <div class="nf-text"><div data-i18n="settingEventTitle">배경사건</div><div class="nf-sub" id="setFabSummary">오늘 컨디션 어떤가요?</div></div>
           </div>
           <div class="note-fab" data-action="open-note">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-9"/><path d="M14 3l5 5"/><path d="M9 13h6M9 17h4"/></svg>
-            <div class="nf-text"><div data-i18n="observationNotes">관찰 노트</div><div class="nf-sub" data-i18n="noteSub">면담 · 척도 · 메모</div></div>
+            <div class="nf-text"><div data-i18n="observationNotes">간접평가 자료</div><div class="nf-sub" data-i18n="noteSub">면담 · 척도 · 메모</div></div>
             <span class="nf-badge" id="noteBadge">열기</span>
           </div>
         </div>
@@ -1508,24 +1494,25 @@
           <button class="iv-stop-btn" data-action="stop-interval" data-i18n="endObservation">관찰 종료</button>
         </div>
 
-        <div class="sect-label" data-i18n-html="behaviorRecording">행동 기록 <em>간격 · 지연 · 행동</em></div>
+        <div class="sect-label" data-i18n-html="activityContext">지금 활동 <em>기록에 자동 첨부됩니다</em></div>
+        <div class="act-bar" id="actBar"></div>
+        <div class="sect-label">행동 기록 <em>짧게 기록 · 길게 ABC</em></div>
+        <div class="grid" id="behaviorGrid"></div>
+        <div class="sect-label precision-label" data-i18n-html="precisionTools">측정 도구 <em>필요할 때만 사용합니다</em></div>
         <div class="measure-row">
           <button class="meas-btn" id="btnInterval" data-action="open-interval-setup">
             <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18"/></svg>
-            <div><div data-i18n="intervalRecording">간격 기록</div><div class="mb-sub">Interval</div></div>
+            <div><div data-i18n="intervalRecording">일정시간마다 체크</div><div class="mb-sub">간격기록법</div></div>
           </button>
           <button class="meas-btn" id="btnLatency" data-action="start-latency">
             <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 8 14"/></svg>
-            <div><div data-i18n="startAntecedent">선행 시작</div><div class="mb-sub">Latency</div></div>
+            <div><div data-i18n="startAntecedent">선행사건 시작</div><div class="mb-sub">지연시간 기록법</div></div>
           </button>
           <button class="meas-btn" id="btnIoa" data-action="open-ioa-setup" style="grid-column:1/-1">
             <svg viewBox="0 0 24 24"><circle cx="8" cy="8" r="3"/><circle cx="16" cy="8" r="3"/><path d="M4 20c.7-3 2.2-5 4-5s3.3 2 4 5M12 20c.7-3 2.2-5 4-5s3.3 2 4 5"/></svg>
-            <div><div>IOA 공동관찰</div><div class="mb-sub">Interobserver Agreement</div></div>
+            <div><div data-i18n="ioaJoint">2명 이상이 관찰하여 일치도 측정</div><div class="mb-sub" data-i18n="ioaCaption">학생 공유 필요</div></div>
           </button>
         </div>
-        <div class="sect-label" data-i18n-html="activityContext">지금 활동 <em>기록에 자동 첨부됩니다</em></div>
-        <div class="act-bar" id="actBar"></div>
-        <div class="grid" id="behaviorGrid"></div>
       </div>
 
       <!-- REVIEW -->
@@ -1618,13 +1605,6 @@
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 4H4v12h4v4l5-4h7z" stroke-linejoin="round"/></svg>
             </div>
             <div class="rmeta"><b>면담 질문 편집 / 추가</b><span id="ivManagerSub">질문 8개</span></div>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9aa6aa" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
-          </div>
-
-          <div class="gh" style="padding-top:22px"><span>홈 화면 위젯</span></div>
-          <div class="row" style="cursor:pointer" data-action="open-widget-settings">
-            <div class="rdisc" style="background:#5E9A57">W</div>
-            <div class="rmeta"><b>위젯 설정</b><span id="widgetConfigSub">위젯 행동 1~4순위 선택</span></div>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9aa6aa" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
           </div>
 
@@ -2055,25 +2035,6 @@
       </div>
     </div>
 
-    <!-- 홈 화면 위젯 설정 시트 -->
-    <div class="scrim" id="widgetScrim" data-action="close-widget-settings"></div>
-    <div class="sheet" id="widgetSheet" style="max-height:85%">
-      <div class="grab"></div>
-      <div class="sheet-head">
-        <div class="stit"><b>위젯 설정</b><span id="widgetSheetSub">현재 학생의 행동 중 최대 4개를 고르세요</span></div>
-        <button class="ghostbtn" data-action="close-widget-settings">닫기</button>
-      </div>
-      <div class="sheet-body">
-        <p class="widget-help">홈 화면 위젯에 표시할 행동을 1순위부터 4순위까지 지정합니다. 선택한 행동은 앱을 열지 않아도 위젯에서 바로 기록할 수 있어요.</p>
-        <div class="widget-picked" id="widgetPicked"></div>
-        <div id="widgetBehaviorList"></div>
-      </div>
-      <div class="sheet-foot">
-        <button class="btn-ghost" data-action="close-widget-settings">취소</button>
-        <button class="btn-prim" data-action="save-widget-config">저장</button>
-      </div>
-    </div>
-
     <!-- 행동 순서 편집 시트 -->
     <div class="scrim" id="orderScrim" data-action="close-order"></div>
     <div class="sheet" id="orderSheet" style="max-height:85%">
@@ -2394,13 +2355,15 @@ const I18N={
     studioLogo:'touch ABA 작업실<span>데스크톱 분석 환경</span>', students:'학생', dashboard:'대시보드', analysis:'분석', notesShort:'관찰 노트', pdfReport:'PDF 리포트',
     settings:'설정', signout:'로그아웃', user:'사용자', synced:'동기화됨', savePdf:'PDF 저장',
     recording:'기록 중', todayRecords:'오늘 기록', abcIncomplete:'ABC 미완성', thisWeek:'이번 주 합계', todayShort:'오늘', abcShort:'ABC', weekShort:'주간',
-    observationNotes:'관찰 노트', noteSub:'면담 · 척도 · 메모', open:'열기', close:'닫기', closeView:'화면 닫기', memoCount:'메모 {n}', scaleDone:'척도 ✓', interviewDone:'면담 ✓',
+    observationNotes:'간접평가 자료', noteSub:'면담 · 척도 · 메모', open:'열기', close:'닫기', closeView:'화면 닫기', memoCount:'메모 {n}', scaleDone:'척도 ✓', interviewDone:'면담 ✓',
     latencyRunning:'지연시간 측정 중 — 행동 버튼을 눌러 종료', cancel:'취소',
     intervalObservingOx:'관찰 중 — 간격 종료 시 O/X 입력', intervalObservingSample:'관찰 중 — 간격 종료 시 코드 입력',
     withBehavior:'발생 간격', withoutBehavior:'미발생 간격', occurrence:'발생률', endObservation:'관찰 종료',
     activityContext:'지금 활동 <em>기록에 자동 첨부됩니다</em>',
     settingEventTitle:'배경사건',
-    behaviorRecording:'행동 기록 <em>간격 · 지연 · 행동</em>', intervalRecording:'간격 기록', startAntecedent:'선행 시작',
+    behaviorRecording:'행동 기록 <em>간격 · 지연 · 행동</em>', precisionTools:'측정 도구 <em>필요할 때만 사용합니다</em>',
+    intervalRecording:'일정시간마다 체크', startAntecedent:'선행사건 시작',
+    ioaJoint:'2명 이상이 관찰하여 일치도 측정', ioaCaption:'학생 공유 필요',
     review:'검토', analysisSub:'최근 7일 패턴과 기능 가설입니다.', settingsSub:'미리 정의해 두면 현장에선 누르기만 하면 됩니다.',
     planTab:'지원계획', planSub:'기능 가설에 근거한 행동지원계획(BSP/BIP)', sharePlan:'공유하기', savePlan:'지원계획 저장', autoDraftPlan:'빈 칸 자동 채우기',
     record:'기록', addStudent:'+ 학생', noStudent:'설정 탭에서 학생을 먼저 추가해 주세요', count:'빈도', duration:'시간', addBehavior:'행동 추가',
@@ -2456,13 +2419,15 @@ const I18N={
     studioLogo:'touch ABA Studio<span>Desktop analysis workspace</span>', students:'Students', dashboard:'Dashboard', analysis:'Analysis', notesShort:'Notes', pdfReport:'PDF Report',
     settings:'Settings', signout:'Sign out', user:'User', synced:'Synced', savePdf:'Save PDF',
     recording:'Recording', todayRecords:'Today', abcIncomplete:'ABC incomplete', thisWeek:'This week', todayShort:'Today', abcShort:'ABC', weekShort:'Week',
-    observationNotes:'Observation Notes', noteSub:'Interview · Scale · Memo', open:'Open', close:'Close', closeView:'Close View', memoCount:'Memo {n}', scaleDone:'Scale ✓', interviewDone:'Interview ✓',
+    observationNotes:'Indirect Assessment Data', noteSub:'Interview · Scale · Memo', open:'Open', close:'Close', closeView:'Close View', memoCount:'Memo {n}', scaleDone:'Scale ✓', interviewDone:'Interview ✓',
     latencyRunning:'Latency timer running - tap a behavior to stop', cancel:'Cancel',
     intervalObservingOx:'Observing - mark O/X at the end of each interval', intervalObservingSample:'Observing - choose a code at the end of each interval',
     withBehavior:'With behavior', withoutBehavior:'Without', occurrence:'Occurrence', endObservation:'End Observation',
     activityContext:'Current activity <em>auto-attached to records</em>',
     settingEventTitle:'Setting events',
-    behaviorRecording:'Behavior Recording <em>Interval · Latency · Behavior</em>', intervalRecording:'Interval Recording', startAntecedent:'Start Antecedent',
+    behaviorRecording:'Behavior Recording <em>Interval · Latency · Behavior</em>', precisionTools:'Measurement Tools <em>Use when needed</em>',
+    intervalRecording:'Check at Set Intervals', startAntecedent:'Start Antecedent Event',
+    ioaJoint:'Measure Agreement with 2+ Observers', ioaCaption:'Student sharing required',
     review:'Review', analysisSub:'Recent 7-day patterns and function hypothesis.', settingsSub:'Set up items in advance so field recording stays quick.',
     planTab:'Support Plan', planSub:'Behavior Support Plan (BSP/BIP) based on the hypothesis', sharePlan:'Share', savePlan:'Save Plan', autoDraftPlan:'Auto-fill blanks',
     record:'Record', addStudent:'+ Student', noStudent:'Add a student in Settings first.', count:'Count', duration:'Duration', addBehavior:'Add behavior',
@@ -2515,7 +2480,7 @@ const STATIC_EN={
   '활동·교시 편집':'Edit Activities / Periods','활동 추가':'Add Activity','＋ 활동 추가':'+ Add Activity',
   '기록 화면에서 활동을 고르면 이후 누르는 모든 기록에 자동으로 첨부돼요. 분석 탭에서 활동별 발생을 볼 수 있어요.':'When you pick an activity on the Record screen, it is attached to every record you tap afterward. See occurrences by activity on the Analysis tab.',
   '행동평정척도 (MAS)':'Motivation Assessment Scale (MAS)','MAS 항목 편집 / 추가':'Edit / Add MAS Items','면담 질문':'Interview Questions','면담 질문 편집 / 추가':'Edit / Add Interview Questions',
-  '계정':'Account','도움말':'Help','홈 화면 위젯':'Home Screen Widget','위젯 설정':'Widget Setup','위젯 설정 저장':'Save Widget Setup','현재 학생 · 앞 4개 행동':'Current student · first 4 behaviors','위젯 행동 1~4순위 선택':'Choose widget behaviors 1-4','현재 학생의 행동 중 최대 4개를 고르세요':'Choose up to 4 behaviors for this student','홈 화면 위젯에 표시할 행동을 1순위부터 4순위까지 지정합니다. 선택한 행동은 앱을 열지 않아도 위젯에서 바로 기록할 수 있어요.':'Choose the behavior buttons shown on the home-screen widget. You can record them directly without opening the app.','비어 있음':'Empty','화면 안내 다시 보기':'Show Screen Guide','탭별 핵심 기능을 코치마크로 확인':'Review key features by tab with coach marks',
+  '계정':'Account','도움말':'Help','화면 안내 다시 보기':'Show Screen Guide','탭별 핵심 기능을 코치마크로 확인':'Review key features by tab with coach marks',
   '데이터':'Data','공유 코드로 참가 (다른 교사 학생)':'Join with Share Code (another teacher)','기록 전체 초기화':'Reset All Records',
   'MAS 항목 편집':'Edit MAS Items','항목 추가':'Add Item','＋ 항목 추가':'+ Add Item','면담 질문 편집':'Edit Interview Questions','＋ 질문 추가':'+ Add Question',
   '행동정의 편집':'Edit Behavior Definitions','＋ 행동 추가':'+ Add Behavior','현재 학생 행동 순서 편집':'Edit Current Student Behavior Order',
@@ -2592,7 +2557,6 @@ const STATIC_EN={
   '시간표집':'Time sampling','간격 기록':'Interval recording','지속시간':'Duration','그래프로 표시할 값이 없어요.':'No values to graph.',
   '로그아웃 하시겠어요?':'Sign out?','로그인 후 사용하세요':'Please log in first.','로그인이 필요해요':'Login is required.','현재 계정의 관찰 데이터를 초기화할까요? 내가 만든 학생/기록은 서버에서도 삭제됩니다.':'Reset observation data for this account? Students and records you created will also be deleted from the server.',
   '서버 데이터까지 초기화했어요':'Server data has been reset.','기존 공유 데이터를 새 구조로 옮겼어요':'Existing shared data has been moved to the new structure.','공유 코드는 학생을 만든 계정만 생성할 수 있어요':'Only the account that created the student can generate a share code.',
-  'Android 앱에서만 위젯 설정을 저장할 수 있어요':'Widget setup can be saved only in the Android app.','위젯에 넣을 행동이 없어요':'No behaviors are available for the widget.','위젯 설정을 저장했어요':'Widget setup saved.','위젯 기록 {n}건을 가져왔어요':'Imported {n} widget record(s).',
   '공유 코드를 입력해 주세요':'Enter a share code.','유효하지 않은 코드예요':'This code is not valid.','만료된 코드예요. 새 코드를 받아주세요':'This code has expired. Please request a new code.','초대 코드 정보가 올바르지 않아요':'The invite code information is invalid.',
   '코드를 찾을 수 없어요':'Code not found.','코드를 다시 확인해 주세요':'Check the code again.','공유 관찰에서 나왔어요':'You left the shared observation.','코드를 입력해 주세요':'Enter a code.','참가 중…':'Joining...','참가':'Join',
   '가설의 4요소를 모두 입력해 주세요':'Enter all four hypothesis elements.','기능 가설을 저장했어요':'Function hypothesis saved.','이름을 입력하세요':'Enter a name.','공유받은 학생 정보는 만든 계정에서만 수정할 수 있어요':'Shared student information can only be edited by the account that created it.',
@@ -2957,6 +2921,7 @@ function normalizeCase(raw, id){
   const base = caseDefaults();
   return {
     ...raw,
+    ...orgCompatForCase(raw),
     id,
     name: raw.name || raw.studentName || '학생',
     color: raw.color || '#0F6E6C',
@@ -2989,6 +2954,25 @@ function activeCase(){
 
 function activeCaseId(){
   return activeCase()?.id || state.sid;
+}
+
+// 기관 기능 확장 대비용 호환 필드.
+// 현재 앱은 개인용으로만 동작하며, 기관 기능을 켜지 않는 한 orgId는 null로 유지한다.
+function orgCompatForCase(raw={}){
+  const orgId=raw.orgId || null;
+  return {
+    orgId,
+    accountScope: raw.accountScope || (orgId ? 'organization' : 'personal')
+  };
+}
+
+function orgCompatForRecord(sid=state.sid){
+  const s=db?.students?.find(x=>x.id===sid) || activeCase() || {};
+  const orgId=s.orgId || null;
+  return {
+    orgId,
+    accountScope: s.accountScope || (orgId ? 'organization' : 'personal')
+  };
 }
 
 function syncActiveCaseFromDb(){
@@ -3034,6 +3018,7 @@ function applyCaseToDb(s){
 function buildCasePayload(s){
   const memberUids = Array.from(new Set([...(s.memberUids || s.members || []), s.ownerUid || fbUser.uid].filter(Boolean)));
   return {
+    ...orgCompatForCase(s),
     name:          s.name,
     color:         s.color,
     sub:           s.sub || '',
@@ -3130,6 +3115,7 @@ async function saveRecord(rec){
   rec.createdByName = rec.createdByName || fbUser.displayName || fbUser.email || '관찰자';
   rec.observerId = fbUser.uid;
   rec.deviceId = DEVICE_ID;
+  Object.assign(rec, orgCompatForRecord(rec.sid));
   try{
     await FS.record(rec.sid, rec.id).set(rec, {merge:true});
   }catch(e){ console.warn('기록 저장 실패:', e.code || e.message || e, {caseId:rec.sid, recordId:rec.id, currentUid:fbUser?.uid}); }
@@ -3148,6 +3134,7 @@ async function saveSharedExtra(kind, item){
   if(!isCaseMember) return;
   const payload = {
     ...item,
+    ...orgCompatForRecord(item.sid),
     sid: item.sid,
     createdByUid: item.createdByUid || fbUser.uid,
     createdByName: item.createdByName || fbUser.displayName || fbUser.email || '관찰자',
@@ -3365,7 +3352,7 @@ async function resetAllData(){
     await resetCloudDataForCurrentUser();
     db=defaults();
     const base=caseDefaults(), sid=ulid();
-    db.students=[{id:sid,name:appLang==='en'?'Student 1':'학생 1',color:'#0F6E6C',sub:'',ownerUid:fbUser.uid,memberUids:[fbUser.uid],members:[fbUser.uid],shareCode:null,shareCodeExpiresAt:null,...base}];
+    db.students=[{id:sid,name:appLang==='en'?'Student 1':'학생 1',color:'#0F6E6C',sub:'',orgId:null,accountScope:'personal',ownerUid:fbUser.uid,memberUids:[fbUser.uid],members:[fbUser.uid],shareCode:null,shareCodeExpiresAt:null,...base}];
     db.records=[];db.notes=[];db.interviews=[];db.masScores=[];
     state.sid=sid;state.date=null;applyCaseToDb(db.students[0]);reindex();refreshAll();switchTab('record');
     await saveStudent(db.students[0]);
@@ -3958,6 +3945,7 @@ async function initApp(){
     const base = caseDefaults();
     db.students   = [{
       id: ulid(), name: appLang==='en'?'Student 1':'학생 1', color: '#0F6E6C', sub: '',
+      orgId: null, accountScope: 'personal',
       ownerUid: fbUser.uid, memberUids: [fbUser.uid], members: [fbUser.uid],
       shareCode: null, shareCodeExpiresAt: null,
       ...base
@@ -3967,8 +3955,6 @@ async function initApp(){
 
   restoreLastStudent();
   applyCaseToDb(activeCase());
-  reindex();
-  await importWidgetRecords();
   reindex();
   paintStudent();
   renderSwitcher();
@@ -3989,7 +3975,7 @@ function resumeSharedListeners(){
 
 
 // ============ state ============
-const state={tab:'record',sid:'s1',timer:null,sheetId:null,sel:{a:new Set(),c:new Set()},sheetIntensity:5,sheetIntensityMax:10,lastIntensity:{},date:null,ed:null,noteTab:'memo',memoTag:'before',masTemp:{},ivTemp:{},currentEnv:'school',currentAct:'',hypSid:null,hypDraft:null,widgetTemp:[]};
+const state={tab:'record',sid:'s1',timer:null,sheetId:null,sel:{a:new Set(),c:new Set()},sheetIntensity:5,sheetIntensityMax:10,lastIntensity:{},date:null,ed:null,noteTab:'memo',memoTag:'before',masTemp:{},ivTemp:{},currentEnv:'school',currentAct:'',hypSid:null,hypDraft:null};
 try{state.currentAct=localStorage.getItem('fba_current_act')||'';}catch(_){}
 let lastUndo=null, voiceRec=null, voiceTargetId=null;
 let bMap={},sMap={};
@@ -4392,7 +4378,7 @@ function tapBehavior(bid,btn,e,opts={}){
       const sec=Math.max(0,Math.round((eventMs-state.timer.start)/1000));
       clearInterval(state.timer.iv);state.timer=null;
       const now=new Date().toISOString();
-      let rec={id:ulid(),sid:state.sid,bid,ts:eventIso,dur:sec,a:[],c:[],note:'',act:state.currentAct||'',
+      let rec={id:ulid(),sid:state.sid,...orgCompatForRecord(state.sid),bid,ts:eventIso,dur:sec,a:[],c:[],note:'',act:state.currentAct||'',
         observerId:fbUser?.uid||OBSERVER_ID,createdByUid:fbUser?.uid||OBSERVER_ID,createdByName:fbUser?.displayName||fbUser?.email||msg('observer'),deviceId:DEVICE_ID,env:state.currentEnv,
         updatedAt:now,deleted:false,dirty:true};
       if(hasExplicitIntensity){rec.intensity=recIntensity;rec.intensityMax=recIntensityMax;}
@@ -4409,7 +4395,7 @@ function tapBehavior(bid,btn,e,opts={}){
     return;
   }
   const now2=eventIso;
-  let rec={id:ulid(),sid:state.sid,bid,ts:now2,dur:null,a:[],c:[],note:'',act:state.currentAct||'',
+  let rec={id:ulid(),sid:state.sid,...orgCompatForRecord(state.sid),bid,ts:now2,dur:null,a:[],c:[],note:'',act:state.currentAct||'',
     observerId:fbUser?.uid||OBSERVER_ID,createdByUid:fbUser?.uid||OBSERVER_ID,createdByName:fbUser?.displayName||fbUser?.email||msg('observer'),deviceId:DEVICE_ID,env:state.currentEnv,
     updatedAt:now2,deleted:false,dirty:true};
   if(hasExplicitIntensity){rec.intensity=recIntensity;rec.intensityMax=recIntensityMax;}
@@ -4944,6 +4930,7 @@ async function saveHypothesis(){
   const hyp={
     ...existing,
     ...data,
+    ...orgCompatForRecord(sid),
     id:hypDocId(sid),
     sid,
     kind:'hypothesis',
@@ -5509,6 +5496,7 @@ function readSupportPlanForm(prefix='plan',sid=state.sid,existing={}){
   const now=new Date().toISOString();
   return {
     ...existing,
+    ...orgCompatForRecord(sid),
     id:planDocId(sid), sid, kind:'supportPlan', type:'supportPlan',
     longGoal:get('longGoal'), shortGoal:get('shortGoal'), prevention:get('prevention'), settingEvents:get('settingEvents'),
     replacement:get('replacement'), communication:get('communication'), teach:get('teach'),
@@ -5721,9 +5709,6 @@ function renderSettings(){
   setText('#consequenceManagerSub',countPhrase('consequence',(db.cChips||[]).length));
   setText('#actManagerSub',(appLang==='en'?`${(db.activities||[]).length} item${(db.activities||[]).length===1?'':'s'}`:`활동 ${(db.activities||[]).length}개`));
   setText('#seManagerSub',(appLang==='en'?`${(db.settingEvents||[]).length} item${(db.settingEvents||[]).length===1?'':'s'}`:`항목 ${(db.settingEvents||[]).length}개`));
-  const widgetNames=loadWidgetSelection().map(id=>getBehaviorOrder(state.sid).find(b=>b.id===id)).filter(Boolean).map(b=>localText(b.name));
-  const widgetSub=widgetNames.length?widgetNames.join(' · '):(appLang==='en'?'Choose up to 4 widget behaviors':'위젯 행동 1~4순위 선택');
-  setText('#widgetConfigSub',widgetSub);
   if($('#behaviorManagerSheet')?.classList.contains('open')) renderBehaviorManagerList();
   if($('#antecedentManagerSheet')?.classList.contains('open')) renderChipManager('a');
   if($('#consequenceManagerSheet')?.classList.contains('open')) renderChipManager('c');
@@ -5836,7 +5821,7 @@ async function saveEditor(){
   if(ed.kind==='student'){
     if(!ed.name.trim()){toast('이름을 입력하세요');return;}
     if(ed.id){const s=sMap[ed.id];if(s.ownerUid&&s.ownerUid!==fbUser?.uid){toast('공유받은 학생 정보는 만든 계정에서만 수정할 수 있어요');return;}s.name=ed.name.trim();s.color=ed.color;s.sub=ed.sub;}
-    else{syncActiveCaseFromDb();const s={id:ulid(),name:ed.name.trim(),color:ed.color,sub:ed.sub,ownerUid:fbUser?.uid||null,memberUids:fbUser?[fbUser.uid]:[],members:fbUser?[fbUser.uid]:[],shareCode:null,shareCodeExpiresAt:null,...caseDefaults()};db.students.push(s);state.sid=s.id;rememberLastStudent(s.id);applyCaseToDb(s);}
+    else{syncActiveCaseFromDb();const s={id:ulid(),name:ed.name.trim(),color:ed.color,sub:ed.sub,orgId:null,accountScope:'personal',ownerUid:fbUser?.uid||null,memberUids:fbUser?[fbUser.uid]:[],members:fbUser?[fbUser.uid]:[],shareCode:null,shareCodeExpiresAt:null,...caseDefaults()};db.students.push(s);state.sid=s.id;rememberLastStudent(s.id);applyCaseToDb(s);}
   }else if(ed.kind==='behavior'){
     if(!ed.name.trim()){toast('행동 이름을 입력하세요');return;}
     let savedB;
@@ -5906,167 +5891,6 @@ function refreshAll(){
   if(isDesktop()&&db){renderStudioSidebar();switchStTab(stTab);updateStudioSync();}
 }
 
-function widgetBridge(){
-  return window.Capacitor?.Plugins?.WidgetBridge || null;
-}
-function widgetSelectionKey(sid=state.sid){
-  return `touchaba_widget_behaviors_${sid||'default'}`;
-}
-function loadWidgetSelection(sid=state.sid){
-  const valid=new Set(getBehaviorOrder(sid).map(b=>b.id));
-  let ids=[];
-  try{
-    const raw=localStorage.getItem(widgetSelectionKey(sid));
-    ids=raw?JSON.parse(raw):[];
-  }catch(_){ids=[];}
-  ids=Array.isArray(ids)?ids.filter(id=>valid.has(id)).slice(0,4):[];
-  return ids.length?ids:getBehaviorOrder(sid).slice(0,4).map(b=>b.id);
-}
-function saveWidgetSelection(ids,sid=state.sid){
-  const valid=new Set(getBehaviorOrder(sid).map(b=>b.id));
-  const clean=[...new Set((ids||[]).filter(id=>valid.has(id)))].slice(0,4);
-  try{localStorage.setItem(widgetSelectionKey(sid),JSON.stringify(clean));}catch(_){}
-  return clean;
-}
-function widgetBehaviorConfig(ids=loadWidgetSelection()){
-  const byId=new Map(getBehaviorOrder(state.sid).map(b=>[b.id,b]));
-  return ids.map(id=>byId.get(id)).filter(Boolean).slice(0,4).map(b=>({
-    id:b.id,
-    name:localText(b.name),
-    icon:b.icon||'',
-    type:b.type||'freq',
-    color:b.color||'#0F6E6C'
-  }));
-}
-function openWidgetSettings(){
-  state.widgetTemp=loadWidgetSelection();
-  renderWidgetSettings();
-  $('#widgetScrim').classList.add('show');$('#widgetSheet').classList.add('open');
-}
-function closeWidgetSettings(){
-  $('#widgetScrim').classList.remove('show');$('#widgetSheet').classList.remove('open');
-}
-function renderWidgetSettings(){
-  const behaviors=getBehaviorOrder(state.sid);
-  const selected=state.widgetTemp||[];
-  const picked=$('#widgetPicked');
-  if(picked){
-    picked.innerHTML=Array.from({length:4},(_,i)=>{
-      const b=behaviors.find(x=>x.id===selected[i]);
-      return b?`<span class="widget-rank-chip">${i+1}. ${escHtml(localText(b.name))}</span>`:`<span class="widget-rank-chip empty">${i+1}. ${appLang==='en'?'Empty':'비어 있음'}</span>`;
-    }).join('');
-  }
-  const sub=$('#widgetSheetSub');
-  if(sub)sub.textContent=appLang==='en'?'Choose up to 4 behaviors for this student':'현재 학생의 행동 중 최대 4개를 고르세요';
-  const help=$('#widgetSheet .widget-help');
-  if(help)help.textContent=appLang==='en'
-    ?'Choose the behavior buttons shown on the home-screen widget. The order here becomes widget slot order.'
-    :'홈 화면 위젯에 표시할 행동을 1순위부터 4순위까지 지정합니다. 선택한 순서가 위젯 슬롯 순서가 됩니다.';
-  const list=$('#widgetBehaviorList'); if(!list)return;
-  if(!behaviors.length){
-    list.innerHTML=`<div class="empty" style="padding:26px 12px">${appLang==='en'?'No behaviors are available.':'위젯에 넣을 행동이 없어요.'}</div>`;
-    return;
-  }
-  list.innerHTML=behaviors.map(b=>{
-    const rank=selected.indexOf(b.id);
-    const on=rank>=0;
-    return `<div class="widget-beh-item ${on?'on':''}" data-widget-toggle="${b.id}">
-      <div class="widget-beh-icon" style="background:${b.color||'#0F6E6C'}">${svg(b.icon).replace('stroke="currentColor"','stroke="#fff"')}</div>
-      <div class="widget-beh-main">
-        <b>${escHtml(localText(b.name))}</b>
-        <span>${b.type==='dur'?(appLang==='en'?'Duration recording':'시간 기록'):(appLang==='en'?'Frequency recording':'빈도 기록')}</span>
-        ${on?`<div class="widget-order"><button data-action="widget-rank-up" data-widget-id="${b.id}">▲</button><button data-action="widget-rank-down" data-widget-id="${b.id}">▼</button></div>`:''}
-      </div>
-      <div class="widget-rank ${on?'':'off'}">${on?(rank+1):'+'}</div>
-    </div>`;
-  }).join('');
-}
-function toggleWidgetBehavior(id){
-  const arr=state.widgetTemp||[];
-  const idx=arr.indexOf(id);
-  if(idx>=0) arr.splice(idx,1);
-  else{
-    if(arr.length>=4){toast(appLang==='en'?'You can choose up to 4 behaviors.':'위젯 행동은 최대 4개까지 선택할 수 있어요.');return;}
-    arr.push(id);
-  }
-  state.widgetTemp=arr;
-  renderWidgetSettings();
-}
-function moveWidgetBehavior(id,dir){
-  const arr=state.widgetTemp||[];
-  const idx=arr.indexOf(id);
-  const next=idx+dir;
-  if(idx<0 || next<0 || next>=arr.length)return;
-  [arr[idx],arr[next]]=[arr[next],arr[idx]];
-  state.widgetTemp=arr;
-  renderWidgetSettings();
-}
-async function saveWidgetConfig(){
-  const bridge=widgetBridge();
-  if(!bridge?.configure){toast(localText('Android 앱에서만 위젯 설정을 저장할 수 있어요'));return;}
-  const s=cur();
-  const selected=saveWidgetSelection(Array.isArray(state.widgetTemp)?state.widgetTemp:loadWidgetSelection());
-  const behaviors=widgetBehaviorConfig(selected);
-  if(!s || !behaviors.length){toast(localText('위젯에 넣을 행동이 없어요'));return;}
-  const max=clampIntensityMax(db?.intensityMax || activeCase()?.intensityMax || 10);
-  await bridge.configure({
-    sid:s.id,
-    studentName:localText(s.name),
-    studentColor:s.color||'#0F6E6C',
-    userUid:fbUser?.uid||'',
-    userName:fbUser?.displayName||fbUser?.email||msg('observer'),
-    intensityMax:max,
-    defaultIntensity:Math.ceil(max/2),
-    behaviors
-  });
-  closeWidgetSettings();
-  renderSettings();
-  toast(localText('위젯 설정을 저장했어요'));
-}
-async function importWidgetRecords(){
-  const bridge=widgetBridge();
-  if(!bridge?.drainRecords || !db || !fbUser) return 0;
-  let result;
-  try{ result=await bridge.drainRecords(); }
-  catch(e){ console.warn('위젯 기록 가져오기 실패:', e); return 0; }
-  const records=Array.isArray(result?.records)?result.records:[];
-  let imported=0;
-  const clearIds=[];
-  for(const raw of records){
-    if(!raw || !raw.sid || !raw.bid) continue;
-    if(!db.students?.some(s=>s.id===raw.sid)) continue;
-    if(!db.behaviors?.some(b=>b.id===raw.bid)) continue;
-    if(db.records?.some(r=>r.id===raw.id)){clearIds.push(raw.id);continue;}
-    const rec={
-      ...raw,
-      a:Array.isArray(raw.a)?raw.a:[],
-      c:Array.isArray(raw.c)?raw.c:[],
-      note:raw.note||'위젯 빠른 기록',
-      updatedAt:raw.updatedAt||new Date().toISOString(),
-      deleted:false,
-      dirty:true
-    };
-    db.records.push(rec);
-    try{
-      await saveRecord(rec);
-      imported++;
-      clearIds.push(rec.id);
-    }catch(e){
-      console.warn('위젯 기록 저장 실패:',e);
-    }
-  }
-  if(clearIds.length && bridge.clearRecords){
-    try{await bridge.clearRecords({ids:clearIds});}
-    catch(e){console.warn('위젯 기록 큐 정리 실패:',e);}
-  }
-  if(imported){
-    persist();
-    toast(localText('위젯 기록 {n}건을 가져왔어요').replace('{n}',imported));
-  }
-  return imported;
-}
-
-// ============ 관찰 노트 ============
 function isPlanDoc(n){return n?.kind==='supportPlan'||n?.type==='supportPlan';}
 function getNotes(sid){return (db.notes||[]).filter(n=>n.sid===sid&&!isHypothesisDoc(n)&&!isPlanDoc(n));}
 function getSupportPlan(sid){return (db?.notes||[]).filter(n=>n.sid===sid&&isPlanDoc(n)).sort((a,b)=>new Date(b.updatedAt||b.ts||0)-new Date(a.updatedAt||a.ts||0))[0]||null;}
@@ -6147,7 +5971,7 @@ async function addMemo(){
   const inp=$('#memoInput'); if(!inp)return;
   const text=inp.value.trim(); if(!text){toast(localText('메모 내용을 입력하세요'));return;}
   if(!db.notes)db.notes=[];
-  const memo={id:uid('n'),sid:state.sid,ts:new Date().toISOString(),tag:state.memoTag,text};
+  const memo={id:uid('n'),sid:state.sid,...orgCompatForRecord(state.sid),ts:new Date().toISOString(),tag:state.memoTag,text};
   db.notes.push(memo);
   inp.value=''; renderMemoList(); updateNoteBadge();
   await saveSharedExtra('notes', memo);
@@ -6196,7 +6020,7 @@ async function saveInterview(){
   document.querySelectorAll('[data-ivq]').forEach(el=>{if(el.value.trim())answers[el.dataset.ivq]=el.value.trim();});
   if(!respondent&&!Object.keys(answers).length){toast(localText('면담 대상이나 답변을 입력하세요'));return;}
   if(!db.interviews)db.interviews=[];
-  const interview={id:uid('iv'),sid:state.sid,ts:new Date().toISOString(),respondent,answers};
+  const interview={id:uid('iv'),sid:state.sid,...orgCompatForRecord(state.sid),ts:new Date().toISOString(),respondent,answers};
   db.interviews.push(interview);
   updateNoteBadge();
   await saveSharedExtra('interviews', interview);
@@ -6253,7 +6077,7 @@ async function saveMas(){
   const filled=Object.keys(state.masTemp).length;
   if(!filled){toast(localText('최소 한 항목에 점수를 입력하세요'));return;}
   if(!db.masScores)db.masScores=[];
-  const score={id:uid('ms'),sid:state.sid,ts:new Date().toISOString(),scores:{...state.masTemp}};
+  const score={id:uid('ms'),sid:state.sid,...orgCompatForRecord(state.sid),ts:new Date().toISOString(),scores:{...state.masTemp}};
   db.masScores.push(score);
   updateNoteBadge();
   await saveSharedExtra('masScores', score);
@@ -6450,7 +6274,7 @@ function updateSettingFab(){
   let txt;
   if(names.length) txt=names.join(' · ');
   else if(log&&log.memo) txt=en?'Memo':'메모';
-  else txt=en?'Add ＋':'기록 ＋';
+  else txt=en?'How is today?':'오늘 컨디션 어떤가요?';
   sum.textContent=txt;
   if(fab) fab.classList.toggle('set-on', names.length>0 || !!(log&&log.memo));
 }
@@ -7828,7 +7652,7 @@ async function createIoaSession(){
   const id=uid('ioa');
   const uid0=ioaUid();
   const session={
-    id,sid:state.sid,type,behaviorId:bid,behaviorName:b.name,behaviorType:b.type,
+    id,sid:state.sid,...orgCompatForRecord(state.sid),type,behaviorId:bid,behaviorName:b.name,behaviorType:b.type,
     intervalSec:type==='interval'?intervalSec:null,totalSec:totalMin*60,totalIntervals:type==='interval'?Math.floor(totalMin*60/intervalSec):null,
     status:'waiting',phase:'waiting',currentIndex:0,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString(),
     createdByUid:uid0,createdByName:ioaName(),
@@ -8447,7 +8271,7 @@ function stopInterval(){
     ? iv.codes.map(c=>`${c.code} ${iv.marks.filter(m=>m===c.code).length}`).join(', ')
     : msg('intervalsWithBehavior',{on:oCount,total:iv.marks.length});
   const rec={
-    id:ulid(), sid:state.sid, bid:iv.mode==='sample'?(iv.codes[0]?.bid||iv.bid):iv.bid,
+    id:ulid(), sid:state.sid, ...orgCompatForRecord(state.sid), bid:iv.mode==='sample'?(iv.codes[0]?.bid||iv.bid):iv.bid,
     ts:now, dur:iv.elapsed,
     a:[], c:[], act:state.currentAct||'', note:iv.mode==='sample'
       ? msg('timeSamplingNote',{summary:labelSummary,pct,sec:iv.intervalSec})
@@ -8569,7 +8393,7 @@ function coachSteps(){
     {tab:'settings',selector:'#s-settings .setgrp',kicker:'Settings',title:'Prepare the recording items',text:'Edit students, background events, activities, behaviors, antecedents, consequences, MAS, and interviews here.'}
   ]:[
     {tab:'record',selector:'.hero-stats',kicker:'기록',title:'오늘 상태를 한눈에 봅니다',text:'선택한 학생의 오늘 기록, ABC 미완성, 주간 합계가 바로 갱신됩니다.'},
-    {tab:'record',selector:'.hero-fabs',kicker:'맥락',title:'배경사건과 관찰노트를 남깁니다',text:'배경사건은 그날의 컨디션, 관찰노트는 면담·척도·메모 같은 간접평가 근거입니다.'},
+    {tab:'record',selector:'.hero-fabs',kicker:'맥락',title:'배경사건과 간접평가 자료를 남깁니다',text:'배경사건은 그날의 컨디션, 간접평가 자료는 면담·척도·메모 같은 근거입니다.'},
     {tab:'record',selector:'#behaviorGrid .btn .disc',shape:'circle',kicker:'빠른 기록',title:'짧게 누르고, 길게 눌러요',text:'짧게 누르면 바로 기록됩니다. 1.5초 길게 누르면 ABC 입력창이 열립니다. 스크롤하려고 손가락이 움직이면 기록되지 않아요.'},
     {tab:'review',selector:'#s-review .daystrip',kicker:'검토',title:'ABC는 나중에 완성할 수 있어요',text:'날짜를 고르고 미완성 기록을 누르면 선행사건과 후속결과를 보완할 수 있습니다.'},
     {tab:'analysis',selector:'#analysisBody',kicker:'분석',title:'기록을 근거로 가설을 세웁니다',text:'기록이 쌓이면 패턴, 간접평가 자료, IOA, 기능가설을 한 흐름으로 확인합니다.'},
@@ -8769,8 +8593,6 @@ document.addEventListener('click',e=>{
   const col=t.closest('[data-color]'); if(col){state.ed.color=col.dataset.color;renderEditor();return;}
   const ic=t.closest('[data-icon]'); if(ic){state.ed.icon=ic.dataset.icon;renderEditor();return;}
   const ty=t.closest('[data-type]'); if(ty){state.ed.type=ty.dataset.type;renderEditor();return;}
-  const widgetToggle=t.closest('[data-widget-toggle]');
-  if(widgetToggle&&!t.closest('[data-action]')){toggleWidgetBehavior(widgetToggle.dataset.widgetToggle);return;}
   // 관찰 노트 이벤트
   const ntab=t.closest('[data-ntab]'); if(ntab){switchNoteTab(ntab.dataset.ntab);return;}
   const mtag=t.closest('[data-mtag]'); if(mtag){state.memoTag=mtag.dataset.mtag;document.querySelectorAll('[data-mtag]').forEach(b=>b.classList.toggle('on',b.dataset.mtag===state.memoTag));return;}
@@ -8845,11 +8667,6 @@ document.addEventListener('click',e=>{
     else if(a==='add-se-item')openSeEditor(null);
     else if(a==='open-behavior-manager')openBehaviorManager();
     else if(a==='close-behavior-manager')closeBehaviorManager();
-    else if(a==='open-widget-settings')openWidgetSettings();
-    else if(a==='close-widget-settings')closeWidgetSettings();
-    else if(a==='widget-rank-up')moveWidgetBehavior(act.dataset.widgetId,-1);
-    else if(a==='widget-rank-down')moveWidgetBehavior(act.dataset.widgetId,1);
-    else if(a==='save-widget-config')saveWidgetConfig();
     else if(a==='open-a-manager')openChipManager('a');
     else if(a==='close-a-manager')closeChipManager('a');
     else if(a==='open-c-manager')openChipManager('c');
