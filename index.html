@@ -12,7 +12,10 @@
 <script>
   document.documentElement.classList.add('local-v1');
   try{
-    if(sessionStorage.getItem('fba_splash_seen_v2')==='1'){
+    // Capacitor 네이티브 앱에선 네이티브 스플래시가 실행 즉시 뜨므로 HTML 스플래시는 생략(이중 방지)
+    if(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()){
+      document.documentElement.classList.add('skip-splash');
+    } else if(sessionStorage.getItem('fba_splash_seen_v2')==='1'){
       document.documentElement.classList.add('skip-splash');
     }
   }catch(_){}
@@ -24,6 +27,7 @@
     --line2:#F2EFE7; --primary:#0F6E6C; --primary-press:#0B5957;
     --rec:#E2603F; --chip-on:#0F6E6C;
     --shadow:0 30px 70px -20px rgba(14,40,45,.55);
+    --ad-shell-height:0px;
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
   html,body{margin:0;height:100%;height:100dvh;width:100%;overflow:hidden;}
@@ -80,7 +84,7 @@
   .statusbar{display:none;}
 
   .app{position:absolute; inset:0; display:flex; flex-direction:column;}
-  .screen{flex:1; overflow-y:auto; overflow-x:hidden; padding-bottom:calc(104px + env(safe-area-inset-bottom, 16px)); -webkit-overflow-scrolling:touch; display:none;}
+  .screen{flex:1; overflow-y:auto; overflow-x:hidden; padding-bottom:calc(104px + var(--ad-shell-height, 0px) + env(safe-area-inset-bottom, 16px)); -webkit-overflow-scrolling:touch; display:none;}
   .screen.active{display:block;}
   .screen::-webkit-scrollbar{width:0;}
 
@@ -483,7 +487,13 @@
   .tab.on{color:var(--primary); font-weight:900;}
   @media(min-width:500px){.tabbar{position:absolute;z-index:42;}}
 
-  .toast{position:fixed; bottom:calc(88px + env(safe-area-inset-bottom, 0px)); left:50%; transform:translateX(-50%) translateY(20px); background:var(--ink); color:#fff; font-size:13px; font-weight:600; padding:11px 18px; border-radius:13px; z-index:55; opacity:0; pointer-events:none; transition:.3s; white-space:nowrap; box-shadow:0 12px 30px -8px rgba(0,0,0,.4); max-width:88%;}
+  .ad-shell{position:absolute;left:0;right:0;bottom:88px;height:0;min-height:0;z-index:9997;background:#FBFAF6;border-top:0 solid transparent;display:flex;align-items:center;justify-content:center;padding:0 12px;overflow:hidden;pointer-events:none;transition:height .22s ease,border-color .22s ease;}
+  .ads-visible .ad-shell{height:var(--ad-shell-height,56px);min-height:var(--ad-shell-height,56px);border-top:1px solid #E5E0D5;pointer-events:auto;}
+  .ad-mount{width:100%;height:100%;display:flex;align-items:center;justify-content:center;}
+  .ad-placeholder{display:none;width:100%;height:40px;border:1.5px dashed #cfd8d6;border-radius:10px;align-items:center;justify-content:center;color:#8a999d;font-size:11px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;background:#f6f8f7;}
+  .ad-shell[data-state="placeholder"] .ad-placeholder{display:flex;}
+
+  .toast{position:fixed; bottom:calc(88px + var(--ad-shell-height, 0px) + env(safe-area-inset-bottom, 0px)); left:50%; transform:translateX(-50%) translateY(20px); background:var(--ink); color:#fff; font-size:13px; font-weight:600; padding:11px 18px; border-radius:13px; z-index:55; opacity:0; pointer-events:none; transition:.3s; white-space:nowrap; box-shadow:0 12px 30px -8px rgba(0,0,0,.4); max-width:88%;}
   .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
   .toast.has-action{pointer-events:auto;display:flex;align-items:center;gap:12px;}
   .toast b{color:#7fd9c4;}
@@ -532,10 +542,6 @@
   .iv-item .iv-q{font-size:13px; font-weight:800; color:var(--ink); margin-bottom:9px; line-height:1.4;}
   .iv-item textarea{width:100%; border:1.5px solid var(--line); border-radius:10px; padding:9px 11px; font-size:13px; font-family:inherit; resize:none; color:var(--ink); background:#fafaf7; min-height:60px;}
   .iv-item textarea:focus{outline:none; border-color:var(--primary);}
-  .voice-row{display:flex;justify-content:flex-end;margin-top:7px;}
-  .voice-btn{display:inline-flex;align-items:center;gap:5px;border:1.5px solid var(--line);background:#fff;color:var(--sub);border-radius:999px;padding:5px 10px;font-size:11.5px;font-weight:900;font-family:inherit;cursor:pointer;}
-  .voice-btn svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;}
-  .voice-btn.listening{background:#eef6f5;border-color:var(--primary);color:var(--primary);}
   .iv-history{padding:4px 18px 14px;display:flex;flex-direction:column;gap:9px;}
   .iv-history-title{font-size:12px;font-weight:900;color:var(--sub);margin:4px 0 2px;}
   .iv-record{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 14px;position:relative;}
@@ -1565,7 +1571,7 @@
             <div class="rdisc" style="background:#5E7CA8">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7"/><path d="M12 4v12"/><path d="M7 11l5 5 5-5"/></svg>
             </div>
-            <div class="rmeta"><b>관찰기록 가져오기</b><span>받은 .tABA 파일 열기</span></div>
+            <div class="rmeta"><b>관찰기록 가져오기</b><span>받은 관찰기록 파일 열기</span></div>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9aa6aa" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
           </div>
 
@@ -1916,7 +1922,6 @@
         <div class="grp-tit" data-i18n-html="abcA"><span class="badge" style="background:#7a8a3a">A</span> 선행사건 <em>행동 직전 무슨 일이?</em></div>
         <div class="chips" id="chipsA"></div>
         <textarea class="notebox" id="noteA" rows="2" style="margin-top:8px" placeholder="선행사건 세부 내용 (선택)" data-i18n-placeholder="aNotePlaceholder"></textarea>
-        <div class="voice-row"><button class="voice-btn" data-action="voice-note" data-voice-target="noteA"><svg viewBox="0 0 24 24"><path d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v3"/><path d="M8 22h8"/></svg><span>음성입력</span></button></div>
         <div class="grp-tit" data-i18n-html="abcB"><span class="badge" style="background:#0F6E6C">B</span> 행동 <em>구체적으로 어떻게 행동했나?</em></div>
         <div class="intensity-card">
           <div class="intensity-card-head">
@@ -1930,11 +1935,9 @@
           <div class="intensity-scale-row"><span>1</span><span id="intensityMaxText">10</span></div>
         </div>
         <textarea class="notebox" id="noteB" rows="2" placeholder="문제행동 세부 내용 (선택)" data-i18n-placeholder="bNotePlaceholder"></textarea>
-        <div class="voice-row"><button class="voice-btn" data-action="voice-note" data-voice-target="noteB"><svg viewBox="0 0 24 24"><path d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v3"/><path d="M8 22h8"/></svg><span>음성입력</span></button></div>
         <div class="grp-tit" data-i18n-html="abcC"><span class="badge" style="background:#b4502f">C</span> 후속결과 <em>행동 직후 어떻게 됐나?</em></div>
         <div class="chips" id="chipsC"></div>
         <textarea class="notebox" id="noteC" rows="2" style="margin-top:8px" placeholder="후속결과 세부 내용 (선택)" data-i18n-placeholder="cNotePlaceholder"></textarea>
-        <div class="voice-row"><button class="voice-btn" data-action="voice-note" data-voice-target="noteC"><svg viewBox="0 0 24 24"><path d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v3"/><path d="M8 22h8"/></svg><span>음성입력</span></button></div>
         <div class="grp-tit" data-i18n-html="noteOptional">비고 <em>선택</em></div>
         <textarea class="notebox" id="note" rows="2" placeholder="예: 수학 학습지 제시 직후 발생" data-i18n-placeholder="recordNotePlaceholder"></textarea>
       </div>
@@ -1981,6 +1984,12 @@
     </div>
 
     <div class="toast" id="toast"></div>
+
+    <div class="ad-shell" id="adShell" aria-hidden="true" data-state="disabled">
+      <div class="ad-mount" id="adMount" data-ad-provider="admob-banner" data-ad-unit-id="">
+        <div class="ad-placeholder">Ad space</div>
+      </div>
+    </div>
 
     <div class="tabbar">
       <div class="tabbar-bg" aria-hidden="true"></div>
@@ -2322,7 +2331,7 @@ function msg(key, vars={}){
   return String(raw).replace(/\{(\w+)\}/g,(_,k)=>vars[k]??'');
 }
 const STATIC_EN={
-  '기록자':'Recorder','기록자 이름':'Recorder name','공유 · 백업':'Share · Backup','관찰기록 내보내기':'Export records','암호화 파일로 공유':'Share as an encrypted file','관찰기록 가져오기':'Import records','받은 .tABA 파일 열기':'Open a received .tABA file',
+  '기록자':'Recorder','기록자 이름':'Recorder name','공유 · 백업':'Share · Backup','관찰기록 내보내기':'Export records','암호화 파일로 공유':'Share as an encrypted file','관찰기록 가져오기':'Import records','받은 관찰기록 파일 열기':'Open a received observation file',
   '이용권':'Plan','구매 복원':'Restore purchase','이전 구매를 다시 적용':'Re-apply a previous purchase','학생 무제한 잠금 해제':'Unlock unlimited students',
   '학생 명단':'Student List','학생 추가':'Add Student','＋ 학생 추가':'+ Add Student','＋ 추가':'+ Add',
   '기록 항목':'Recording Items','행동정의 편집':'Edit Behavior Definitions','선행사건 편집':'Edit Antecedents','후속결과 편집':'Edit Consequences',
@@ -3059,6 +3068,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 async function initApp(){
   loadEntitlement();
+  updateAdShell();
   updateSyncUI('Loading...');
   let saved = await loadData();
 
@@ -3120,7 +3130,7 @@ function resumeSharedListeners(){
 // ============ state ============
 const state={tab:'record',sid:'s1',timer:null,sheetId:null,sel:{a:new Set(),c:new Set()},sheetIntensity:5,sheetIntensityMax:10,lastIntensity:{},date:null,ed:null,noteTab:'memo',memoTag:'before',masTemp:{},ivTemp:{},currentEnv:'school',currentAct:'',hypSid:null,hypDraft:null};
 try{state.currentAct=localStorage.getItem('fba_current_act')||'';}catch(_){}
-let lastUndo=null, voiceRec=null, voiceTargetId=null;
+let lastUndo=null;
 let bMap={},sMap={};
 function reindex(){ bMap=Object.fromEntries(db.behaviors.map(b=>[b.id,b])); sMap=Object.fromEntries(db.students.map(s=>[s.id,s])); }
 function activeRecords(){ return (db.records||[]).filter(r=>!r.deleted); }
@@ -3345,29 +3355,6 @@ function applyBehaviorSuggestion(token){
   const name=$('#edName'); if(name) name.focus();
 }
 
-function startVoiceInput(targetId, btn){
-  const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
-  const target=$('#'+targetId);
-  if(!SpeechRecognition||!target){toast(appLang==='en'?'Speech input is not supported in this browser.':'이 브라우저에서는 음성입력을 지원하지 않아요');return;}
-  if(voiceRec){try{voiceRec.stop();}catch(_){} voiceRec=null; document.querySelectorAll('.voice-btn.listening').forEach(b=>b.classList.remove('listening'));}
-  const rec=new SpeechRecognition();
-  voiceRec=rec; voiceTargetId=targetId;
-  rec.lang=appLang==='en'?'en-US':'ko-KR';
-  rec.interimResults=false; rec.continuous=false; rec.maxAlternatives=1;
-  if(btn)btn.classList.add('listening');
-  toast(appLang==='en'?'Listening... speak now.':'듣고 있어요. 내용을 말해주세요');
-  rec.onresult=e=>{
-    const text=Array.from(e.results).map(r=>r[0]?.transcript||'').join(' ').trim();
-    if(text){
-      const sep=target.value.trim()?'\n':'';
-      target.value+=sep+text;
-      target.dispatchEvent(new Event('input',{bubbles:true}));
-    }
-  };
-  rec.onerror=()=>toast(appLang==='en'?'Speech input failed. Please try again.':'음성입력에 실패했어요. 다시 시도해 주세요');
-  rec.onend=()=>{voiceRec=null;voiceTargetId=null;document.querySelectorAll('.voice-btn.listening').forEach(b=>b.classList.remove('listening'));};
-  try{rec.start();}catch(_){toast(appLang==='en'?'Speech input is already running.':'음성입력이 이미 실행 중이에요');}
-}
 
 function csvCell(v){return `"${String(v??'').replace(/\r?\n/g,' ').replace(/"/g,'""')}"`;}
 function downloadTextFile(name,text,type='text/plain;charset=utf-8'){
@@ -3398,12 +3385,16 @@ function exportCsv(){
 
 // ════════════════════════════════════════════════════════════════════
 // 파일 기반 공유 — 기록자 이름(로컬 프로필) · 내보내기 · 가져오기
-// 서버를 쓰지 않고, 관찰 데이터를 암호화 파일(.tABA)로 주고받는다.
+// 서버를 쓰지 않고, 관찰 데이터를 암호화 파일(.json)로 주고받는다.
 // ════════════════════════════════════════════════════════════════════
 const RECORDER_NAME_KEY='touchaba_recorder_name';
 const RECORDER_PROMPTED_KEY='touchaba_recorder_prompted';
 const EXPORT_FORMAT_VERSION=1;
-const EXPORT_EXT='.tABA';
+// 메신저(카카오톡 등)는 확장자로 추론된 MIME으로 처리한다.
+//   .tABA(커스텀) → MIME 불명 → */* 폴백(파일 무시됨), .txt → text/plain(텍스트로 취급) → 둘 다 실패.
+//   .json → application/json(파일 타입) → 카톡이 파일 첨부로 정상 처리.
+// 내용은 여전히 암호화 JSON 봉투. 가져오기는 확장자가 아니라 내용(touchaba_export)으로 검증.
+const EXPORT_EXT='.json';
 
 function defaultRecorderName(){return appLang==='en'?'Recorder':'기록자';}
 function getRecorderName(){try{const n=(localStorage.getItem(RECORDER_NAME_KEY)||'').trim();return n||defaultRecorderName();}catch(_){return defaultRecorderName();}}
@@ -3489,17 +3480,42 @@ function buildExportBody(sid){
 
 // ── 진짜 "파일"로 공유 (시스템 공유 시트 → 미지원 시 다운로드 폴백) ──
 async function shareExportFile(filename,jsonText){
+  const en=appLang==='en';
+  const dialogTitle=en?'Share observation file':'관찰기록 파일 공유';
+
+  // 1) Capacitor 네이티브(설치된 앱): 파일로 저장한 뒤 OS 공유 시트를 띄운다.
+  const cap=window.Capacitor;
+  if(cap&&cap.isNativePlatform&&cap.isNativePlatform()&&cap.Plugins&&cap.Plugins.Filesystem&&cap.Plugins.Share){
+    try{
+      const {Filesystem,Share}=cap.Plugins;
+      // 캐시 디렉터리에 기록 (Capacitor FileProvider가 다른 앱에 임시 읽기 권한 부여)
+      await Filesystem.writeFile({path:filename,data:jsonText,directory:'CACHE',encoding:'utf8'});
+      const {uri}=await Filesystem.getUri({directory:'CACHE',path:filename});
+      // 파일 공유 시 title/text(EXTRA_TEXT/EXTRA_SUBJECT)를 넣지 않는다 —
+      // 넣으면 카카오톡 등 메신저가 "텍스트 공유"로 라우팅해 파일 대신 글자만 전송됨.
+      await Share.share({files:[uri],dialogTitle});
+      return 'shared';
+    }catch(err){
+      const m=String(err&&(err.message||err)||'').toLowerCase();
+      if(m.includes('cancel')||m.includes('abort')) return 'cancelled';
+      console.warn('native share failed, falling back',err);
+      // 폴백으로 진행
+    }
+  }
+
+  // 2) 웹(Safari 등): Web Share API(파일) → 미지원 시 다운로드
   try{
-    const file=new File([jsonText],filename,{type:'application/octet-stream'});
+    const file=new File([jsonText],filename,{type:'application/json'});
     if(navigator.canShare&&navigator.canShare({files:[file]})){
-      await navigator.share({files:[file],title:'touchABA',text:appLang==='en'?'touchABA observation data':'touchABA 관찰 데이터'});
+      // 파일만 공유(텍스트 제외) — 메신저가 텍스트로 처리하는 것 방지
+      await navigator.share({files:[file]});
       return 'shared';
     }
   }catch(err){
     if(err&&err.name==='AbortError') return 'cancelled';
     // 그 외에는 다운로드로 폴백
   }
-  downloadTextFile(filename,jsonText,'application/octet-stream');
+  downloadTextFile(filename,jsonText,'application/json');
   return 'downloaded';
 }
 
@@ -3530,10 +3546,36 @@ const PREMIUM = Object.freeze({
 });
 let premiumEntitled = false;
 function loadEntitlement(){ try{ premiumEntitled = localStorage.getItem(PREMIUM.entitlementKey)==='1'; }catch(_){ premiumEntitled=false; } return premiumEntitled; }
-function setEntitlement(on){ premiumEntitled=!!on; try{ on ? localStorage.setItem(PREMIUM.entitlementKey,'1') : localStorage.removeItem(PREMIUM.entitlementKey); }catch(_){} }
+function setEntitlement(on){ premiumEntitled=!!on; try{ on ? localStorage.setItem(PREMIUM.entitlementKey,'1') : localStorage.removeItem(PREMIUM.entitlementKey); }catch(_){} updateAdShell(); }
 function isPremium(){ return PREMIUM.betaUnlockAll || premiumEntitled; }
 function studentCount(){ return (db && Array.isArray(db.students)) ? db.students.length : 0; }
 function canAddStudent(){ return isPremium() || studentCount() < PREMIUM.freeStudentLimit; }
+
+// Ad scaffold only. Keep disabled until the real AdMob bridge is added after testing.
+const ADS_CONFIG = Object.freeze({
+  enabled: false,
+  provider: 'admob-banner',
+  unitId: '',
+  reserveHeight: 56,
+  showPlaceholder: false,
+});
+function shouldShowAdShell(){ return !!ADS_CONFIG.enabled && !isPremium(); }
+function updateAdShell(){
+  const show = shouldShowAdShell();
+  const h = show ? Math.max(0, Number(ADS_CONFIG.reserveHeight)||56) : 0;
+  document.documentElement.classList.toggle('ads-visible', show);
+  document.documentElement.style.setProperty('--ad-shell-height', h + 'px');
+  const shell = document.getElementById('adShell');
+  if(shell){
+    shell.setAttribute('aria-hidden', show ? 'false' : 'true');
+    shell.dataset.state = show && ADS_CONFIG.showPlaceholder ? 'placeholder' : (show ? 'ready' : 'disabled');
+  }
+  const mount = document.getElementById('adMount');
+  if(mount){
+    mount.dataset.adProvider = ADS_CONFIG.provider || 'admob-banner';
+    mount.dataset.adUnitId = ADS_CONFIG.unitId || '';
+  }
+}
 
 // 결제 브릿지 — Capacitor 네이티브 IAP 연결 지점.
 // 웹/로컬 빌드에선 스텁(미지원). Capacitor 빌드에서 window.TouchABABilling 을 주입하면 실제 동작:
@@ -3689,7 +3731,7 @@ function openImportFlow(){
   if(!cryptoOk()){toast(appLang==='en'?'Decryption is not available in this environment.':'이 환경에서는 복호화를 사용할 수 없어요');return;}
   const inp=document.createElement('input');
   inp.type='file';
-  // 확장자 필터를 두지 않는다 — 일부 안드로이드 파일선택기가 커스텀 .tABA 확장자를 숨겨버리기 때문.
+  // 확장자 필터를 두지 않는다 — 어떤 확장자로 받았든 내용(touchaba_export)으로 검증하므로 안전.
   // 파일 내용(touchaba_export)으로 검증하므로 무엇을 골라도 안전하다.
   inp.style.display='none';
   document.body.appendChild(inp);
@@ -8311,7 +8353,6 @@ document.addEventListener('click',e=>{
     else if(a==='restore-purchases')restorePurchases();
     else if(a==='buy-unlimited')buyUnlimited();
     else if(a==='undo-last')runLastUndo();
-    else if(a==='voice-note')startVoiceInput(act.dataset.voiceTarget,act);
     else if(a==='open-order')openOrderSheet();
     else if(a==='open-join')openJoinSheet();
     else if(a==='close-join')closeJoinSheet();
